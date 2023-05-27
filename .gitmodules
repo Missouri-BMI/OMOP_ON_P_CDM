@@ -1,0 +1,6 @@
+[submodule "WebAPI"]
+	path = WebAPI
+	url = https://github.com/Missouri-BMI/WebAPI.git
+[submodule "Atlas"]
+	path = Atlas
+	url = https://github.com/Missouri-BMI/Atlas.git
