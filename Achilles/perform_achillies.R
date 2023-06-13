@@ -7,6 +7,7 @@ library(Achilles)
 setwd("/Users/mhmcb/Desktop/Repositories/OMOP_ON_P_CDM/Achilles")
 readRenviron(".env")
 
+rstudio.connectionObserver.errorsSuppressed = TRUE
 
 # Running Achilles: Single-Threaded Mode
 # In single-threaded mode, there is no need to set a `scratchDatabaseSchema`, as temporary tables will be used.
@@ -30,6 +31,7 @@ achilles(connectionDetails = connectionDetails,
          vocabDatabaseSchema = "VOCABULARY",
          resultsDatabaseSchema = "RESULTS", 
          cdmVersion = "5.4",
+        numThreads = 6,
 		 outputFolder = "output")
 
 

@@ -66,7 +66,11 @@ docker push 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-webapi
 ## atlas db
 ohdsi-atlas.ctsvcfrduobf.us-east-2.rds.amazonaws.com
 
-curl -X GET "http://18.119.133.64:8080/WebAPI/ddl/results?dialect=postgresql&schema=results&vocabSchema=cdm&tempSchema=temp&initConceptHierarchy=true" -o OMOPCDM_GENERATE.sql
+## postgresql
+curl -X GET "https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/dl/results?dialect=postgresql&schema=results&vocabSchema=cdm&tempSchema=temp&initConceptHierarchy=true" -o OMOPCDM_GENERATE.sql
+
+## snowflake
+curl -X GET "https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/dl/results?dialect=postgresql&schema=RESULTS&vocabSchema=VOCABULARY&tempSchema=temp&initConceptHierarchy=true" -o OMOPCDM_GENERATE.sql
 
 curl -X GET "http://3.15.30.26:8080/WebAPI/source/refresh"
 
@@ -78,3 +82,6 @@ WEBAPI_URL http://3.15.30.26:8080/WebAPI/
 curl -X GET http://3.15.30.26:8080/WebAPI/info
 
 3.15.30.26
+
+https://atlas-dev.nextgenbmi.umsystem.edu/atlas
+https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/info

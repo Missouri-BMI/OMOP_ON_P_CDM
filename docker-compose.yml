@@ -6,11 +6,11 @@ services:
     image: ohdsi-atlas:latest
     build:
       context: ./Atlas
-      # args:
-      #   - CLIENT_TYPE=${CLIENT_TYPE}
+      args:
+        - WEBAPI_URL=${WEBAPI_URL}
     container_name: ohdsi-atlas
-    # environment: 
-    #   - SERVER_PATH=${SERVER_PATH}
+    environment: 
+      - WEBAPI_URL=${WEBAPI_URL}
     ports:
       - "80:8080"
     depends_on:
@@ -18,7 +18,18 @@ services:
 
   ohdsi-webapi:
     image: ohdsi-webapi:latest
-    build: ./WebAPI
+    build: 
+      context: ./WebAPI
+      args:
+        - ATLAS_URL=${ATLAS_URL}
+        - WEBAPI_URL=${WEBAPI_URL}
+        - WEBAPI_DB=${WEBAPI_DB}
+        - WEBAPI_DB_username=${WEBAPI_DB_username}
+        - WEBAPI_DB_password=${WEBAPI_DB_password}
+        - WEBAPI_SCHEMA=${WEBAPI_SCHEMA}
+        - SECURITY_PROVIDER=${SECURITY_PROVIDER}
+        - SECURITY_ORIGIN=${SECURITY_ORIGIN}
+        - SSL_ENABLED=${SSL_ENABLED}
     container_name: ohdsi-webapi
     ports:
       - "8080:8080"
