@@ -2,7 +2,7 @@
 
 set -e
 
-PGPASSWORD=Password123 psql --host=ohdsi-atlas.ctsvcfrduobf.us-east-2.rds.amazonaws.com --port=5432 --username=mhmcb --dbname=omop_cdm
+PGPASSWORD=Password123 psql -v ON_ERROR_STOP=1 --host=localhost --port=5433 --username=mhmcb --dbname=omop_cdm <<- EOSQL
 
 set search_path to cdm;
 
@@ -24,3 +24,5 @@ set search_path to cdm;
 \COPY CONCEPT_CLASS FROM './vocabulary_v5/CONCEPT_CLASS.csv' WITH DELIMITER E'\t' CSV HEADER QUOTE E'\b' ;
 
 \COPY DOMAIN FROM './vocabulary_v5/DOMAIN.csv' WITH DELIMITER E'\t' CSV HEADER QUOTE E'\b' ;
+
+EOSQL

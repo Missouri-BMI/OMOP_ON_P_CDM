@@ -21,6 +21,7 @@ services:
     build: 
       context: ./WebAPI
       args:
+        - GIT_BRANCH=${GIT_BRANCH}
         - ATLAS_URL=${ATLAS_URL}
         - WEBAPI_URL=${WEBAPI_URL}
         - WEBAPI_DB=${WEBAPI_DB}

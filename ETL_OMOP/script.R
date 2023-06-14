@@ -20,10 +20,10 @@ library(ETLSyntheaBuilder)
  
 cd <- DatabaseConnector::createConnectionDetails(
   dbms     = "postgresql", 
-  server   = "ohdsi-atlas.ctsvcfrduobf.us-east-2.rds.amazonaws.com/omop_cdm", 
+  server   = "localhost/omop_cdm", 
   user     = "mhmcb", 
   password = "Password123", 
-  port     = 5432, 
+  port     = 5433, 
   pathToDriver = "./"  
 )
 
