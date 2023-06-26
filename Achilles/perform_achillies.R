@@ -1,5 +1,5 @@
 if (!require("remotes")) install.packages("remotes")
-remotes::install_github("OHDSI/Achilles")
+remotes::install_github("Missouri-BMI/Achilles")
 library(DatabaseConnector)
 library(Achilles)
 
@@ -9,13 +9,14 @@ readRenviron(".env")
 # Running Achilles: Single-Threaded Mode
 # In single-threaded mode, there is no need to set a `scratchDatabaseSchema`, as temporary tables will be used.
 
+
 connectionDetails <- DatabaseConnector::createConnectionDetails(
   dbms     = "snowflake", 
   connectionString = "jdbc:snowflake://xp02744.us-east-2.aws.snowflakecomputing.com/?db=OMOP_CDM&schema=RESULTS&warehouse=ATLAS_WH&role=OMOP_ATLAS&CLIENT_RESULT_COLUMN_CASE_INSENSITIVE=true",
   port = "443",
   user   = Sys.getenv("user"),
   password = Sys.getenv("password"),
-  pathToDriver = "./snowflake/"  
+  pathToDriver = "./drivers/snowflake/"  
 )
 
 # conn <- connect(connectionDetails)
@@ -29,7 +30,7 @@ achilles(connectionDetails = connectionDetails,
          vocabDatabaseSchema = "VOCABULARY",
          resultsDatabaseSchema = "RESULTS", 
          cdmVersion = "5.4",
-         numThreads = 10,
+         numThreads = 1,
 		 outputFolder = "output")
 
 

@@ -18,19 +18,36 @@ library(ETLSyntheaBuilder)
  
  # For those interested in seeing the CDM changes from 5.3 to 5.4, please see: http://ohdsi.github.io/CommonDataModel/cdm54Changes.html
  
+readRenviron(".env")
+
+
+# Running Achilles: Single-Threaded Mode
+# In single-threaded mode, there is no need to set a `scratchDatabaseSchema`, as temporary tables will be used.
+
 cd <- DatabaseConnector::createConnectionDetails(
-  dbms     = "postgresql", 
-  server   = "localhost/omop_cdm", 
-  user     = "mhmcb", 
-  password = "Password123", 
-  port     = 5433, 
-  pathToDriver = "./"  
+  dbms     = "snowflake", 
+  # connectionString = "jdbc:snowflake://vh77434.us-east-2.aws.snowflakecomputing.com/?db=OMOP_CDM&schema=RESULTS&warehouse=ATLAS_WH&role=OMOP_ATLAS&CLIENT_RESULT_COLUMN_CASE_INSENSITIVE=true",
+  connectionString = "jdbc:snowflake://vh77434.us-east-2.aws.snowflakecomputing.com/?db=OMOP_CDM&schema=RESULTS&warehouse=ATLAS_WH&role=ACCOUNTADMIN&CLIENT_RESULT_COLUMN_CASE_INSENSITIVE=true",
+  port = "443",
+  user   = Sys.getenv("user"),
+  password = Sys.getenv("password"),
+  pathToDriver = "./drivers/snowflake/"  
 )
+
+# cd <- DatabaseConnector::createConnectionDetails(
+#   dbms     = "postgresql", 
+#   server   = "localhost/omop_cdm", 
+#   user     = "mhmcb", 
+#   password = "Password123", 
+#   port     = 5433, 
+#   pathToDriver = "./"  
+# )
 
 
 # master-branch-latest
 
 cdmSchema      <- "cdm"
+vocabSchema      <- "vocabulary"
 cdmVersion     <- "5.4"
 syntheaVersion <- "3.0.0"
 syntheaSchema  <- "native"
@@ -43,6 +60,6 @@ ETLSyntheaBuilder::CreateSyntheaTables(connectionDetails = cd, syntheaSchema = s
                                        
 ETLSyntheaBuilder::LoadSyntheaTables(connectionDetails = cd, syntheaSchema = syntheaSchema, syntheaFileLoc = syntheaFileLoc)
                                      
-ETLSyntheaBuilder::LoadVocabFromCsv(connectionDetails = cd, cdmSchema = cdmSchema, vocabFileLoc = vocabFileLoc)
+ETLSyntheaBuilder::LoadVocabFromCsv(connectionDetails = cd, cdmSchema = vocabSchema, vocabFileLoc = vocabFileLoc)
                                     
 ETLSyntheaBuilder::LoadEventTables(connectionDetails = cd, cdmSchema = cdmSchema, syntheaSchema = syntheaSchema, cdmVersion = cdmVersion, syntheaVersion = syntheaVersion)

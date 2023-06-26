@@ -1,0 +1,2 @@
+2023-06-30 23:59:12	[Main thread]	INFO	Achilles	achilles	[Total Runtime] 8.957247 mins
+2023-06-30 23:59:12	[Main thread]	INFO	DatabaseConnector	unregisterWithRStudio	An error occurred while the 'DatabaseConnector' package was updating the RStudio Connections pane: Error in NULL: host must be a single element of type 'character' If necessary, these warnings can be squelched by setting `options(rstudio.connectionObserver.errorsSuppressed = TRUE)`. 
