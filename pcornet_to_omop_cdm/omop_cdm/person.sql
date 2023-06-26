@@ -22,8 +22,8 @@ SELECT
 
     hc.target_concept_id::INTEGER AS ethnicity_concept_id,
 
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    location.location_id::INTEGER AS location_id,
+  --  location.location_id
+    NULL::INTEGER AS location_id,
 
  -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
     NULL::INTEGER AS provider_id,
@@ -53,10 +53,12 @@ FROM pcornet_CDM.CDM_2023_APRIL.demographic
 left join OMOP_CDM.CROSSWALK.GENDER_XWALK sc on demographic.SEX = sc.SRC_GENDER and sc.CDM_NAME = 'PCORnet'
 left join OMOP_CDM.CROSSWALK.ETHNICITY_XWALK hc on demographic.HISPANIC = hc.SRC_ETHNICITY and hc.CDM_NAME = 'PCORnet'
 left join OMOP_CDM.CROSSWALK.RACE_XWALK rc on demographic.RACE = rc.SRC_RACE and rc.CDM_NAME = 'PCORnet'
+left join pcornet_cdm.cdm_2023_april.death on death.patid = demographic.patid
+);
+/*
 left join pcornet_CDM.CDM_2023_APRIL.lds_address_history on demographic.PATID = lds_address_history.PATID and lds_address_history.ADDRESS_PERIOD_END is NULL
 left join OMOP_CDM.CDM.LOCATION 
     on LOCATION.CITY = lds_address_history.address_city and LOCATION.STATE = lds_address_history.address_state
     and LOCATION.ZIP = lds_address_history.address_zip5
-left join pcornet_cdm.cdm_2023_april.death on death.patid = demographic.patid
-);
+*/
 

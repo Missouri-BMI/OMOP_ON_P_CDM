@@ -1,5 +1,4 @@
 
---visit occurrence view
 Create or replace secure view OMOP_CDM.CDM.visit_occurrence AS
 (SELECT
     enc.encounterid::INTEGER AS visit_occurrence_id,
@@ -10,17 +9,17 @@ Create or replace secure view OMOP_CDM.CDM.visit_occurrence AS
 
     date(enc.admit_date)::DATE AS visit_start_date,
 
-    CONCAT(enc.admit_date, ' ', enc.admit_time)::TIMESTAMP AS visit_start_datetime,
+    CONCAT(date(enc.admit_date), ' ', enc.admit_time)::TIMESTAMP AS visit_start_datetime,
 
-    coalesce(enc.discharge_date, enc.admit_date)::DATE AS visit_end_date,
+    date(coalesce(enc.discharge_date, enc.admit_date))::DATE AS visit_end_date,
 
-    CONCAT(coalesce(enc.discharge_date, enc.admit_date), ' ', enc.discharge_time)::TIMESTAMP AS visit_end_datetime,
+    CONCAT(date(coalesce(enc.discharge_date, enc.admit_date)), ' ', enc.discharge_time)::TIMESTAMP AS visit_end_datetime,
 
     44818518::INTEGER AS visit_type_concept_id,
 
     enc.providerid::INTEGER AS provider_id,
 
-    enc.facilityid::INTEGER AS care_site_id,
+    NULL::INTEGER AS care_site_id,
 
     enc.raw_enc_type::VARCHAR(50) AS visit_source_value,
 
