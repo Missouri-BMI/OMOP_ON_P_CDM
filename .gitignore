@@ -133,5 +133,9 @@ ETL_OMOP/postgresql-42.2.18.jar
 ETL_OMOP/synthea-with-dependencies.jar
 *.RData
 *.Rhistory
+
+#project specific
 ETL_OMOP/output/*
 ETL_OMOP/vocabulary_v5/*
+Achilles/output/*
+Achilles/errorReportSql.txt
