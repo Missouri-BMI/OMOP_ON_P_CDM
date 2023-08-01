@@ -2,19 +2,19 @@ version: '3.5'
 
 services:
 
-  # ohdsi-atlas:
-  #   image: 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-atlas:latest
-  #   build:
-  #     context: ./Atlas
-  #     args:
-  #       - WEBAPI_URL=${WEBAPI_URL}
-  #   container_name: ohdsi-atlas
-  #   environment: 
-  #     - WEBAPI_URL=${WEBAPI_URL}
-  #   ports:
-  #     - "80:8080"
-  #   depends_on:
-  #     - ohdsi-webapi
+  ohdsi-atlas:
+    image: 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-atlas:latest
+    build:
+      context: ./Atlas
+      args:
+        - WEBAPI_URL=${WEBAPI_URL}
+    container_name: ohdsi-atlas
+    environment: 
+      - WEBAPI_URL=${WEBAPI_URL}
+    ports:
+      - "80:8080"
+    depends_on:
+      - ohdsi-webapi
 
   ohdsi-webapi:
     image: 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-webapi:latest
@@ -63,9 +63,9 @@ services:
   #   logging:
   #     driver: none
 
-volumes:
-  postgres-cdm-vol:
-    name: postgres-cdm-vol
-  postgres-webapi-vol:
-    name: postgres-webapi-vol
+# volumes:
+#   postgres-cdm-vol:
+#     name: postgres-cdm-vol
+#   postgres-webapi-vol:
+#     name: postgres-webapi-vol
 
