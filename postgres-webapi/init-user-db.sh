@@ -39,9 +39,6 @@ EOSQL
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" -d ohdsi_webapi<<-EOSQL
 	
-	
-insert into atlas_security.demo_security (username,password) 
-values ('mhmcb@umsystem.edu', '$2a$10$yWxENTszMTH10V.w5hO4TuKetluoCP68Ex7EnpebHYn6nAxIRMr6u');
 
 EOSQL
 
