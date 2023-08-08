@@ -31,6 +31,7 @@ achilles(connectionDetails = connectionDetails,
          resultsDatabaseSchema = "RESULTS", 
          cdmVersion = "5.4",
          numThreads = 1,
+         optimizeAtlasCache = true,
 		 outputFolder = "output")
 
 

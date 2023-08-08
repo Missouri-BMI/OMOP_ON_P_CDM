@@ -102,7 +102,6 @@ CREATE TABLE IF NOT EXISTS results.HERACLES_HEEL_results
 );
 
 --HINT PARTITION(cohort_definition_id int)
---HINT BUCKET(analysis_id, 64)
 CREATE TABLE IF NOT EXISTS results.heracles_results
  (cohort_definition_id int,
 	analysis_id int,
@@ -116,7 +115,6 @@ CREATE TABLE IF NOT EXISTS results.heracles_results
 );
 
 --HINT PARTITION(cohort_definition_id int)
---HINT BUCKET(analysis_id, 64)
 CREATE TABLE IF NOT EXISTS results.heracles_results_dist
  (cohort_definition_id int,
 	analysis_id int,
@@ -126,15 +124,15 @@ CREATE TABLE IF NOT EXISTS results.heracles_results_dist
 	stratum_4 varchar(255),
 	stratum_5 varchar(255),
 	count_value bigint,
-	min_value NUMERIC,
-	max_value NUMERIC,
-	avg_value NUMERIC,
-	stdev_value NUMERIC,
-	median_value NUMERIC,
-	p10_value NUMERIC,
-	p25_value NUMERIC,
-	p75_value NUMERIC,
-	p90_value NUMERIC,
+	min_value float,
+	max_value float,
+	avg_value float,
+	stdev_value float,
+	median_value float,
+	p10_value float,
+	p25_value float,
+	p75_value float,
+	p90_value float,
 	last_update_time TIMESTAMP DEFAULT CURRENT_DATE
 );
 
@@ -160,8 +158,8 @@ CREATE TABLE IF NOT EXISTS results.ir_analysis_dist  (analysis_id int NOT NULL,
   strata_sequence int NULL,
   dist_type int NOT NULL,
   total bigint NOT NULL,
-  avg_value NUMERIC NOT NULL,
-  std_dev NUMERIC NOT NULL,
+  avg_value float NOT NULL,
+  std_dev float NOT NULL,
   min_value int NOT NULL,
   p10_value int NOT NULL,
   p25_value int NOT NULL,
@@ -298,18 +296,18 @@ FROM (
 	SELECT
 		concept_id,
 		concept_name
-	FROM cdm.concept
+	FROM VOCABULARY.concept
 	WHERE domain_id = 'Condition'
 ) snomed
 LEFT JOIN (
 	SELECT
 		c1.concept_id      AS snomed_concept_id,
 		max(c2.concept_id) AS pt_concept_id
-	FROM cdm.concept c1
-	INNER JOIN cdm.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
+	FROM VOCABULARY.concept c1
+	INNER JOIN VOCABULARY.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
 		AND c1.domain_id = 'Condition'
 		AND ca1.min_levels_of_separation = 1
-	INNER JOIN cdm.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
+	INNER JOIN VOCABULARY.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
 		AND c2.vocabulary_id = 'MedDRA'
 	GROUP BY c1.concept_id
 ) snomed_to_pt ON snomed.concept_id = snomed_to_pt.snomed_concept_id
@@ -318,11 +316,11 @@ LEFT JOIN (
 		c1.concept_id      AS pt_concept_id,
 		c1.concept_name    AS pt_concept_name,
 		max(c2.concept_id) AS hlt_concept_id
-	FROM cdm.concept c1
-	INNER JOIN cdm.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
+	FROM VOCABULARY.concept c1
+	INNER JOIN VOCABULARY.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
 		AND c1.vocabulary_id = 'MedDRA'
 		AND ca1.min_levels_of_separation = 1
-	INNER JOIN cdm.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
+	INNER JOIN VOCABULARY.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
 		AND c2.vocabulary_id = 'MedDRA'
 	GROUP BY c1.concept_id, c1.concept_name
 ) pt_to_hlt ON snomed_to_pt.pt_concept_id = pt_to_hlt.pt_concept_id
@@ -331,11 +329,11 @@ LEFT JOIN (
 		c1.concept_id      AS hlt_concept_id,
 		c1.concept_name    AS hlt_concept_name,
 		max(c2.concept_id) AS hlgt_concept_id
-	FROM cdm.concept c1
-	INNER JOIN cdm.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
+	FROM VOCABULARY.concept c1
+	INNER JOIN VOCABULARY.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
 		AND c1.vocabulary_id = 'MedDRA'
 		AND ca1.min_levels_of_separation = 1
-	INNER JOIN cdm.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
+	INNER JOIN VOCABULARY.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
 		AND c2.vocabulary_id = 'MedDRA'
 	GROUP BY c1.concept_id, c1.concept_name
 ) hlt_to_hlgt ON pt_to_hlt.hlt_concept_id = hlt_to_hlgt.hlt_concept_id
@@ -344,15 +342,15 @@ LEFT JOIN (
 		c1.concept_id      AS hlgt_concept_id,
 		c1.concept_name    AS hlgt_concept_name,
 		max(c2.concept_id) AS soc_concept_id
-	FROM cdm.concept c1
-	INNER JOIN cdm.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
+	FROM VOCABULARY.concept c1
+	INNER JOIN VOCABULARY.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
 		AND c1.vocabulary_id = 'MedDRA'
 		AND ca1.min_levels_of_separation = 1
-	INNER JOIN cdm.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
+	INNER JOIN VOCABULARY.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
 		AND c2.vocabulary_id = 'MedDRA'
 	GROUP BY c1.concept_id, c1.concept_name
 ) hlgt_to_soc ON hlt_to_hlgt.hlgt_concept_id = hlgt_to_soc.hlgt_concept_id
-LEFT JOIN cdm.concept soc ON hlgt_to_soc.soc_concept_id = soc.concept_id;
+LEFT JOIN VOCABULARY.concept soc ON hlgt_to_soc.soc_concept_id = soc.concept_id;
 
 /********** DRUG **********/
 INSERT INTO results.concept_hierarchy
@@ -372,10 +370,10 @@ FROM (
 		c1.concept_name,
 		c2.concept_id   AS rxnorm_ingredient_concept_id,
 		c2.concept_name AS RxNorm_ingredient_concept_name
-	FROM cdm.concept c1
-	INNER JOIN cdm.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
+	FROM VOCABULARY.concept c1
+	INNER JOIN VOCABULARY.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
 		AND c1.domain_id = 'Drug'
-	INNER JOIN cdm.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
+	INNER JOIN VOCABULARY.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
 		AND c2.domain_id = 'Drug'
 		AND c2.concept_class_id = 'Ingredient'
 ) rxnorm
@@ -383,11 +381,11 @@ LEFT JOIN (
 	SELECT
 		c1.concept_id      AS rxnorm_ingredient_concept_id,
 		max(c2.concept_id) AS atc5_concept_id
-	FROM cdm.concept c1
-	INNER JOIN cdm.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
+	FROM VOCABULARY.concept c1
+	INNER JOIN VOCABULARY.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
 		AND c1.domain_id = 'Drug'
 		AND c1.concept_class_id = 'Ingredient'
-	INNER JOIN cdm.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
+	INNER JOIN VOCABULARY.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
 		AND c2.vocabulary_id = 'ATC'
 		AND c2.concept_class_id = 'ATC 4th'
 	GROUP BY c1.concept_id
@@ -397,11 +395,11 @@ LEFT JOIN (
 		c1.concept_id      AS atc5_concept_id,
 		c1.concept_name    AS atc5_concept_name,
 		max(c2.concept_id) AS atc3_concept_id
-	FROM cdm.concept c1
-	INNER JOIN cdm.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
+	FROM VOCABULARY.concept c1
+	INNER JOIN VOCABULARY.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
 		AND c1.vocabulary_id = 'ATC'
 		AND c1.concept_class_id = 'ATC 4th'
-	INNER JOIN cdm.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
+	INNER JOIN VOCABULARY.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
 		AND c2.vocabulary_id = 'ATC'
 		AND c2.concept_class_id = 'ATC 2nd'
 	GROUP BY c1.concept_id, c1.concept_name
@@ -411,16 +409,16 @@ LEFT JOIN (
 		c1.concept_id      AS atc3_concept_id,
 		c1.concept_name    AS atc3_concept_name,
 		max(c2.concept_id) AS atc1_concept_id
-	FROM cdm.concept c1
-	INNER JOIN cdm.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
+	FROM VOCABULARY.concept c1
+	INNER JOIN VOCABULARY.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
 		AND c1.vocabulary_id = 'ATC'
 		AND c1.concept_class_id = 'ATC 2nd'
-	INNER JOIN cdm.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
+	INNER JOIN VOCABULARY.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
 		AND c2.vocabulary_id = 'ATC'
 		AND c2.concept_class_id = 'ATC 1st'
 	GROUP BY c1.concept_id, c1.concept_name
 ) atc3_to_atc1 ON atc5_to_atc3.atc3_concept_id = atc3_to_atc1.atc3_concept_id
-LEFT JOIN cdm.concept atc1 ON atc3_to_atc1.atc1_concept_id = atc1.concept_id;
+LEFT JOIN VOCABULARY.concept atc1 ON atc3_to_atc1.atc1_concept_id = atc1.concept_id;
 
 /********** DRUG_ERA **********/
 INSERT INTO results.concept_hierarchy
@@ -438,7 +436,7 @@ FROM (
 	SELECT
 		c2.concept_id   AS rxnorm_ingredient_concept_id,
 		c2.concept_name AS RxNorm_ingredient_concept_name
-	FROM cdm.concept c2
+	FROM VOCABULARY.concept c2
 	WHERE c2.domain_id = 'Drug'
 		AND c2.concept_class_id = 'Ingredient'
 ) rxnorm
@@ -446,11 +444,11 @@ LEFT JOIN (
 	SELECT
 		c1.concept_id      AS rxnorm_ingredient_concept_id,
 		max(c2.concept_id) AS atc5_concept_id
-	FROM cdm.concept c1
-	INNER JOIN cdm.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
+	FROM VOCABULARY.concept c1
+	INNER JOIN VOCABULARY.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
 		AND c1.domain_id = 'Drug'
 		AND c1.concept_class_id = 'Ingredient'
-	INNER JOIN cdm.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
+	INNER JOIN VOCABULARY.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
 		AND c2.vocabulary_id = 'ATC'
 		AND c2.concept_class_id = 'ATC 4th'
 	GROUP BY c1.concept_id
@@ -460,11 +458,11 @@ LEFT JOIN (
 		c1.concept_id      AS atc5_concept_id,
 		c1.concept_name    AS atc5_concept_name,
 		max(c2.concept_id) AS atc3_concept_id
-	FROM cdm.concept c1
-	INNER JOIN cdm.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
+	FROM VOCABULARY.concept c1
+	INNER JOIN VOCABULARY.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
 		AND c1.vocabulary_id = 'ATC'
 		AND c1.concept_class_id = 'ATC 4th'
-	INNER JOIN cdm.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
+	INNER JOIN VOCABULARY.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
 		AND c2.vocabulary_id = 'ATC'
 		AND c2.concept_class_id = 'ATC 2nd'
 	GROUP BY c1.concept_id, c1.concept_name
@@ -474,16 +472,16 @@ LEFT JOIN (
 		c1.concept_id      AS atc3_concept_id,
 		c1.concept_name    AS atc3_concept_name,
 		max(c2.concept_id) AS atc1_concept_id
-	FROM cdm.concept c1
-	INNER JOIN cdm.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
+	FROM VOCABULARY.concept c1
+	INNER JOIN VOCABULARY.concept_ancestor ca1 ON c1.concept_id = ca1.descendant_concept_id
 		AND c1.vocabulary_id = 'ATC'
 		AND c1.concept_class_id = 'ATC 2nd'
-	INNER JOIN cdm.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
+	INNER JOIN VOCABULARY.concept c2 ON ca1.ancestor_concept_id = c2.concept_id
 		AND c2.vocabulary_id = 'ATC'
 		AND c2.concept_class_id = 'ATC 1st'
 	GROUP BY c1.concept_id, c1.concept_name
 ) atc3_to_atc1 ON atc5_to_atc3.atc3_concept_id = atc3_to_atc1.atc3_concept_id
-LEFT JOIN cdm.concept atc1 ON atc3_to_atc1.atc1_concept_id = atc1.concept_id;
+LEFT JOIN VOCABULARY.concept atc1 ON atc3_to_atc1.atc1_concept_id = atc1.concept_id;
 
 /********** MEASUREMENT **********/
 INSERT INTO results.concept_hierarchy
@@ -501,15 +499,15 @@ FROM (
 	SELECT DISTINCT
 		concept_id,
 		concept_name
-	FROM cdm.concept c
+	FROM VOCABULARY.concept c
 	WHERE domain_id = 'Measurement'
 ) m
-LEFT JOIN cdm.concept_ancestor ca1 ON M.concept_id = ca1.DESCENDANT_CONCEPT_ID AND ca1.min_levels_of_separation = 1
-LEFT JOIN cdm.concept c1 ON ca1.ANCESTOR_CONCEPT_ID = c1.concept_id
-LEFT JOIN cdm.concept_ancestor ca2 ON c1.concept_id = ca2.DESCENDANT_CONCEPT_ID AND ca2.min_levels_of_separation = 1
-LEFT JOIN cdm.concept c2 ON ca2.ANCESTOR_CONCEPT_ID = c2.concept_id
-LEFT JOIN cdm.concept_ancestor ca3 ON c2.concept_id = ca3.DESCENDANT_CONCEPT_ID AND ca3.min_levels_of_separation = 1
-LEFT JOIN cdm.concept c3 ON ca3.ANCESTOR_CONCEPT_ID = c3.concept_id
+LEFT JOIN VOCABULARY.concept_ancestor ca1 ON M.concept_id = ca1.DESCENDANT_CONCEPT_ID AND ca1.min_levels_of_separation = 1
+LEFT JOIN VOCABULARY.concept c1 ON ca1.ANCESTOR_CONCEPT_ID = c1.concept_id
+LEFT JOIN VOCABULARY.concept_ancestor ca2 ON c1.concept_id = ca2.DESCENDANT_CONCEPT_ID AND ca2.min_levels_of_separation = 1
+LEFT JOIN VOCABULARY.concept c2 ON ca2.ANCESTOR_CONCEPT_ID = c2.concept_id
+LEFT JOIN VOCABULARY.concept_ancestor ca3 ON c2.concept_id = ca3.DESCENDANT_CONCEPT_ID AND ca3.min_levels_of_separation = 1
+LEFT JOIN VOCABULARY.concept c3 ON ca3.ANCESTOR_CONCEPT_ID = c3.concept_id
 GROUP BY M.concept_id, M.concept_name;
 
 /********** OBSERVATION **********/
@@ -528,15 +526,15 @@ FROM (
 	SELECT
 		concept_id,
 		concept_name
-	FROM cdm.concept
+	FROM VOCABULARY.concept
 	WHERE domain_id = 'Observation'
 ) obs
-LEFT JOIN cdm.concept_ancestor ca1 ON obs.concept_id = ca1.DESCENDANT_CONCEPT_ID AND ca1.min_levels_of_separation = 1
-LEFT JOIN cdm.concept c1 ON ca1.ANCESTOR_CONCEPT_ID = c1.concept_id
-LEFT JOIN cdm.concept_ancestor ca2 ON c1.concept_id = ca2.DESCENDANT_CONCEPT_ID AND ca2.min_levels_of_separation = 1
-LEFT JOIN cdm.concept c2 ON ca2.ANCESTOR_CONCEPT_ID = c2.concept_id
-LEFT JOIN cdm.concept_ancestor ca3 ON c2.concept_id = ca3.DESCENDANT_CONCEPT_ID AND ca3.min_levels_of_separation = 1
-LEFT JOIN cdm.concept c3 ON ca3.ANCESTOR_CONCEPT_ID = c3.concept_id
+LEFT JOIN VOCABULARY.concept_ancestor ca1 ON obs.concept_id = ca1.DESCENDANT_CONCEPT_ID AND ca1.min_levels_of_separation = 1
+LEFT JOIN VOCABULARY.concept c1 ON ca1.ANCESTOR_CONCEPT_ID = c1.concept_id
+LEFT JOIN VOCABULARY.concept_ancestor ca2 ON c1.concept_id = ca2.DESCENDANT_CONCEPT_ID AND ca2.min_levels_of_separation = 1
+LEFT JOIN VOCABULARY.concept c2 ON ca2.ANCESTOR_CONCEPT_ID = c2.concept_id
+LEFT JOIN VOCABULARY.concept_ancestor ca3 ON c2.concept_id = ca3.DESCENDANT_CONCEPT_ID AND ca3.min_levels_of_separation = 1
+LEFT JOIN VOCABULARY.concept c3 ON ca3.ANCESTOR_CONCEPT_ID = c3.concept_id
 GROUP BY obs.concept_id, obs.concept_name;
 
 /********** PROCEDURE **********/
@@ -556,21 +554,21 @@ FROM
 	SELECT
 		c1.concept_id,
 		CONCAT(v1.vocabulary_name, ' ', c1.concept_code, ': ', c1.concept_name) AS proc_concept_name
-	FROM cdm.concept c1
-	INNER JOIN cdm.vocabulary v1 ON c1.vocabulary_id = v1.vocabulary_id
+	FROM VOCABULARY.concept c1
+	INNER JOIN VOCABULARY.vocabulary v1 ON c1.vocabulary_id = v1.vocabulary_id
 	WHERE c1.domain_id = 'Procedure'
 ) procs
 LEFT JOIN (
 	SELECT
 		ca0.DESCENDANT_CONCEPT_ID,
 		max(ca0.ancestor_concept_id) AS ancestor_concept_id
-	FROM cdm.concept_ancestor ca0
+	FROM VOCABULARY.concept_ancestor ca0
 	INNER JOIN (
 		SELECT DISTINCT c2.concept_id AS os3_concept_id
-		FROM cdm.concept_ancestor ca1
-		INNER JOIN cdm.concept c1 ON ca1.DESCENDANT_CONCEPT_ID = c1.concept_id
-		INNER JOIN cdm.concept_ancestor ca2 ON c1.concept_id = ca2.ANCESTOR_CONCEPT_ID
-		INNER JOIN cdm.concept c2 ON ca2.DESCENDANT_CONCEPT_ID = c2.concept_id
+		FROM VOCABULARY.concept_ancestor ca1
+		INNER JOIN VOCABULARY.concept c1 ON ca1.DESCENDANT_CONCEPT_ID = c1.concept_id
+		INNER JOIN VOCABULARY.concept_ancestor ca2 ON c1.concept_id = ca2.ANCESTOR_CONCEPT_ID
+		INNER JOIN VOCABULARY.concept c2 ON ca2.DESCENDANT_CONCEPT_ID = c2.concept_id
 		WHERE ca1.ancestor_concept_id = 4040390
 			AND ca1.Min_LEVELS_OF_SEPARATION = 2
 			AND ca2.MIN_LEVELS_OF_SEPARATION = 1
@@ -587,8 +585,8 @@ LEFT JOIN (
 		SELECT
 			DESCENDANT_CONCEPT_ID AS os1_concept_id,
 			concept_name          AS os1_concept_name
-		FROM cdm.concept_ancestor ca1
-		INNER JOIN cdm.concept c1 ON ca1.DESCENDANT_CONCEPT_ID = c1.concept_id
+		FROM VOCABULARY.concept_ancestor ca1
+		INNER JOIN VOCABULARY.concept c1 ON ca1.DESCENDANT_CONCEPT_ID = c1.concept_id
 		WHERE ancestor_concept_id = 4040390
 			AND Min_LEVELS_OF_SEPARATION = 1
 	) proc_by_os1
@@ -597,10 +595,10 @@ LEFT JOIN (
 			max(c1.CONCEPT_ID) AS os1_concept_id,
 			c2.concept_id      AS os2_concept_id,
 			c2.concept_name    AS os2_concept_name
-		FROM cdm.concept_ancestor ca1
-		INNER JOIN cdm.concept c1 ON ca1.DESCENDANT_CONCEPT_ID = c1.concept_id
-		INNER JOIN cdm.concept_ancestor ca2 ON c1.concept_id = ca2.ANCESTOR_CONCEPT_ID
-		INNER JOIN cdm.concept c2 ON ca2.DESCENDANT_CONCEPT_ID = c2.concept_id
+		FROM VOCABULARY.concept_ancestor ca1
+		INNER JOIN VOCABULARY.concept c1 ON ca1.DESCENDANT_CONCEPT_ID = c1.concept_id
+		INNER JOIN VOCABULARY.concept_ancestor ca2 ON c1.concept_id = ca2.ANCESTOR_CONCEPT_ID
+		INNER JOIN VOCABULARY.concept c2 ON ca2.DESCENDANT_CONCEPT_ID = c2.concept_id
 		WHERE ca1.ancestor_concept_id = 4040390
 			AND ca1.Min_LEVELS_OF_SEPARATION = 1
 			AND ca2.MIN_LEVELS_OF_SEPARATION = 1
@@ -611,10 +609,10 @@ LEFT JOIN (
 			max(c1.CONCEPT_ID) AS os2_concept_id,
 			c2.concept_id      AS os3_concept_id,
 			c2.concept_name    AS os3_concept_name
-		FROM cdm.concept_ancestor ca1
-		INNER JOIN cdm.concept c1 ON ca1.DESCENDANT_CONCEPT_ID = c1.concept_id
-		INNER JOIN cdm.concept_ancestor ca2 ON c1.concept_id = ca2.ANCESTOR_CONCEPT_ID
-		INNER JOIN cdm.concept c2 ON ca2.DESCENDANT_CONCEPT_ID = c2.concept_id
+		FROM VOCABULARY.concept_ancestor ca1
+		INNER JOIN VOCABULARY.concept c1 ON ca1.DESCENDANT_CONCEPT_ID = c1.concept_id
+		INNER JOIN VOCABULARY.concept_ancestor ca2 ON c1.concept_id = ca2.ANCESTOR_CONCEPT_ID
+		INNER JOIN VOCABULARY.concept c2 ON ca2.DESCENDANT_CONCEPT_ID = c2.concept_id
 		WHERE ca1.ancestor_concept_id = 4040390
 			AND ca1.Min_LEVELS_OF_SEPARATION = 2
 			AND ca2.MIN_LEVELS_OF_SEPARATION = 1
@@ -2519,7 +2517,7 @@ NULL as stratum_5_name,
 CAST('HEALTHCARE_UTILIZATION' as VARCHAR(255)) as analysis_type
 ;
 
-CREATE TEMP TABLE digits
+CREATE TEMP TABLE temp.l37sh0q7digits
 AS
 SELECT
 digits.n  
@@ -2528,76 +2526,58 @@ FROM
        select 0 as n union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9
 ) digits;
 
-ANALYZE digits
-;
-
-CREATE TEMP TABLE generate_dates
+CREATE TEMP TABLE temp.l37sh0q7generate_dates
 AS
 SELECT
 y1.n + (10*y10.n) + (100*y100.n) + (1000*y1000.n) AS d_years,
 	mths.n as d_months
 FROM
-digits y1,
-digits y10,
+temp.l37sh0q7digits y1,
+temp.l37sh0q7digits y10,
 (select 0 n union all select 1 union all select 9) y100,
 (select 1 n union all select 2) y1000,
 (select 1 n union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9 union all select 10 union all select 11 union all select 12) mths
 	where y1.n + (10*y10.n) + (100*y100.n) + (1000*y1000.n) >= 1900 and y1.n + (10*y10.n) + (100*y100.n) + (1000*y1000.n) < 2100
 ;
 
-ANALYZE generate_dates
-;
-
-CREATE TEMP TABLE yearly_dates
+CREATE TEMP TABLE temp.l37sh0q7yearly_dates
 AS
 SELECT
-TO_DATE(TO_CHAR(d_years,'0000')||'-'||TO_CHAR(d_months,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') as generated_date
+TO_DATE(TO_CHAR(d_years,'FM0000')||'-'||TO_CHAR(d_months,'FM00')||'-'||TO_CHAR(01,'FM00'), 'YYYY-MM-DD') as generated_date
 FROM
-generate_dates
+temp.l37sh0q7generate_dates
 where d_months = 1
 ;
 
-ANALYZE yearly_dates
-;
-
-CREATE TEMP TABLE monthly_dates
+CREATE TEMP TABLE temp.l37sh0q7monthly_dates
 AS
 SELECT
-TO_DATE(TO_CHAR(d_years,'0000')||'-'||TO_CHAR(d_months,'00')||'-'||TO_CHAR(01,'00'), 'YYYY-MM-DD') as generated_date
+TO_DATE(TO_CHAR(d_years,'FM0000')||'-'||TO_CHAR(d_months,'FM00')||'-'||TO_CHAR(01,'FM00'), 'YYYY-MM-DD') as generated_date
 FROM
-generate_dates
+temp.l37sh0q7generate_dates
 ;
 
-ANALYZE monthly_dates
-;
-
-CREATE TEMP TABLE weekly_dates
+CREATE TEMP TABLE temp.l37sh0q7weekly_dates
 AS
 SELECT
-(TO_DATE(TO_CHAR(1900,'0000')||'-'||TO_CHAR(1,'00')||'-'||TO_CHAR(7,'00'), 'YYYY-MM-DD') + (7 * seq.rn)*INTERVAL'1 day') as generated_date -- first sunday in 1900
+dateadd(d, (7 * seq.rn), TO_DATE(TO_CHAR(1900,'FM0000')||'-'||TO_CHAR(1,'FM00')||'-'||TO_CHAR(7,'FM00'), 'YYYY-MM-DD')) as generated_date -- first sunday in 1900
 FROM
 (
 	select  d1.n + (10 * d10.n) + (100 * d100.n) + (1000 * d1000.n) as rn
-	from digits d1, digits d10, digits d100, digits d1000
+	from temp.l37sh0q7digits d1, temp.l37sh0q7digits d10, temp.l37sh0q7digits d100, temp.l37sh0q7digits d1000
 ) seq;
 
-ANALYZE weekly_dates
-;
-
-CREATE TEMP TABLE quarterly_dates
+CREATE TEMP TABLE temp.l37sh0q7quarterly_dates
 AS
 SELECT
-TO_DATE(TO_CHAR(d_years,'0000')||'-'||TO_CHAR(d_months,'00')||'-'||TO_CHAR(1,'00'), 'YYYY-MM-DD') as generated_date
+TO_DATE(TO_CHAR(d_years,'FM0000')||'-'||TO_CHAR(d_months,'FM00')||'-'||TO_CHAR(1,'FM00'), 'YYYY-MM-DD') as generated_date
 FROM
-generate_dates
+temp.l37sh0q7generate_dates
 	where d_months in (1,4,7,10)
 ;
 
-ANALYZE quarterly_dates
-	;
-
 -- monthly dates
-CREATE TEMP TABLE temp_period
+CREATE TEMP TABLE temp.l37sh0q7temp_period
 AS
 SELECT
 *
@@ -2607,95 +2587,79 @@ select CAST('Monthly' AS VARCHAR(255)) as period_name
   , 1 as period_order
   , CAST( 'mm' AS VARCHAR(50)) as period_type
   , md.generated_date as period_start_date
-  , (md.generated_date + 1*INTERVAL'1 month') as period_end_date
-from monthly_dates md
+  , dateadd(mm,1,md.generated_date) as period_end_date
+from temp.l37sh0q7monthly_dates md
 UNION ALL
 select CAST('Weekly' AS VARCHAR(255)) as period_name
   , 2 as period_order
   , CAST('ww' AS VARCHAR(50)) as period_type
   , wd.generated_date as period_start_date
-  , (wd.generated_date + 7*INTERVAL'1 day') as period_end_date
-from weekly_dates wd
-where wd.generated_date >= TO_DATE(TO_CHAR(1900,'0000')||'-'||TO_CHAR(1,'00')||'-'||TO_CHAR(1,'00'), 'YYYY-MM-DD') and wd.generated_date < TO_DATE(TO_CHAR(2100,'0000')||'-'||TO_CHAR(1,'00')||'-'||TO_CHAR(1,'00'), 'YYYY-MM-DD')
+  , dateadd(d, 7, wd.generated_date) as period_end_date
+from temp.l37sh0q7weekly_dates wd
+where wd.generated_date >= TO_DATE(TO_CHAR(1900,'FM0000')||'-'||TO_CHAR(1,'FM00')||'-'||TO_CHAR(1,'FM00'), 'YYYY-MM-DD') and wd.generated_date < TO_DATE(TO_CHAR(2100,'FM0000')||'-'||TO_CHAR(1,'FM00')||'-'||TO_CHAR(1,'FM00'), 'YYYY-MM-DD')
 UNION ALL
 select CAST('Quarterly' AS VARCHAR(255)) as period_name
   , 3 as period_order
   , CAST('qq' AS VARCHAR(50)) as period_type
   , qd.generated_date as period_start_date
-  , (qd.generated_date + 3*INTERVAL'1 month') as period_end_date
-from quarterly_dates qd
+  , dateadd(mm,3,qd.generated_date) as period_end_date
+from temp.l37sh0q7quarterly_dates qd
 UNION ALL
 select CAST('Yearly' AS VARCHAR(255)) as period_name
   , 4 as period_order
   , CAST('yy' AS VARCHAR(50)) as period_type
   , yd.generated_date as period_start_date
-  , (yd.generated_date + 1*INTERVAL'1 year') as period_end_date
-from yearly_dates yd
+  , dateadd(yy,1,yd.generated_date) as period_end_date
+from temp.l37sh0q7yearly_dates yd
 -- ADD UNION ALLs for additional period definitions
 ) monthlyDates;
-
-ANALYZE temp_period
-;
 
 TRUNCATE TABLE results.heracles_periods;
 
 INSERT INTO results.heracles_periods (period_id, period_name, period_order, period_type, period_start_date, period_end_date)
-select CAST(row_number() over (order by period_order, period_start_date) AS INT) as period_id
+select TRY_CAST(CAST(row_number() over (order by period_order, period_start_date)  AS TEXT) AS int) as period_id
 			, period_name, period_order, period_type, period_start_date, period_end_date
-from temp_period;
+from temp.l37sh0q7temp_period;
 
-truncate table digits;
+truncate table temp.l37sh0q7digits;
 
-drop table digits;
+drop table temp.l37sh0q7digits;
 
-truncate table generate_dates;
+truncate table temp.l37sh0q7generate_dates;
 
-drop table generate_dates;
+drop table temp.l37sh0q7generate_dates;
 
-truncate table yearly_dates;
+truncate table temp.l37sh0q7yearly_dates;
 
-drop table yearly_dates;
+drop table temp.l37sh0q7yearly_dates;
 
-truncate table quarterly_dates;
+truncate table temp.l37sh0q7quarterly_dates;
 
-drop table quarterly_dates;
+drop table temp.l37sh0q7quarterly_dates;
 
-truncate table monthly_dates;
+truncate table temp.l37sh0q7monthly_dates;
 
-drop table monthly_dates;
+drop table temp.l37sh0q7monthly_dates;
 
-truncate table weekly_dates;
+truncate table temp.l37sh0q7weekly_dates;
 
-drop table weekly_dates;
+drop table temp.l37sh0q7weekly_dates;
 
-TRUNCATE TABLE temp_period;
+TRUNCATE TABLE temp.l37sh0q7temp_period;
 
-DROP TABLE temp_period;
+DROP TABLE temp.l37sh0q7temp_period;
 
-CREATE INDEX HRD_IDX_COHORT_DEF_ID ON results.HERACLES_RESULTS_DIST (cohort_definition_id);
-
-CREATE INDEX HRD_IDX_COHORT_ID_ANALYSIS_ID ON results.HERACLES_RESULTS_DIST (cohort_definition_id, analysis_id);
-
-CREATE INDEX HRD_IDX_COHORT_DEF_ID_DT ON results.HERACLES_RESULTS_DIST (cohort_definition_id, last_update_time);
-
-CREATE INDEX HRD_IDX_COHORT_ID_FIRST_RES ON results.HERACLES_RESULTS_DIST (cohort_definition_id, analysis_id, count_value, stratum_1);
-
-CREATE INDEX HR_IDX_COHORT_DEF_ID ON results.HERACLES_RESULTS (cohort_definition_id);
-
-CREATE INDEX HR_IDX_COHORT_ID_ANALYSIS_ID ON results.HERACLES_RESULTS (cohort_definition_id, analysis_id);
-
-CREATE INDEX HR_IDX_COHORT_ANALYSIS_CONCEPT ON results.HERACLES_RESULTS (cohort_definition_id, analysis_id) WHERE stratum_2 <> '';
-
-CREATE INDEX HR_IDX_COHORT_DEF_ID_DT ON results.HERACLES_RESULTS (cohort_definition_id, last_update_time);
-
-CREATE INDEX HR_IDX_COHORT_ID_FIRST_RES ON results.HERACLES_RESULTS (cohort_definition_id, analysis_id, count_value, stratum_1);
-
-CREATE INDEX HH_IDX_COHORT_ID_ANALYSIS_ID ON results.HERACLES_HEEL_RESULTS (cohort_definition_id, analysis_id);
-
-CREATE INDEX idx_heracles_periods_startdate ON results.heracles_periods (period_start_date);
-
-CREATE INDEX idx_heracles_periods_end_date ON results.heracles_periods (period_end_date);
-
-CREATE INDEX idx_cohort_sample_element_rank ON results.cohort_sample_element (cohort_sample_id, rank_value);
-
-CREATE INDEX idx_pathway_events_combo_id ON results.pathway_analysis_events (combo_id);
+-- snowflake does not support indexes
+-- snowflake does not support indexes
+-- snowflake does not support indexes
+-- snowflake does not support indexes
+-- snowflake does not support indexes
+-- snowflake does not support indexes
+-- snowflake does not support indexes
+-- snowflake does not support indexes
+-- snowflake does not support indexes
+-- snowflake does not support indexes
+-- snowflake does not support indexes
+-- snowflake does not support indexes
+-- snowflake does not support indexes
+-- snowflake does not support indexes

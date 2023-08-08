@@ -67,7 +67,10 @@ docker push 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-webapi
 ohdsi-atlas.ctsvcfrduobf.us-east-2.rds.amazonaws.com
 
 ## snowflake
-curl -X GET "https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/ddl/results?dialect=snowflake&schema=results&vocabSchema=VOCABULARY&tempSchema=temp&initConceptHierarchy=true" -o OMOPCDM_GENERATE.sql
+&vocabSchema=VOCABULARY&tempSchema=temp&initConceptHierarchy=true
+curl -X GET "https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/ddl/achilles?dialect=snowflake&schema=results" -o ACHILLES_SNOWFLAKE.sql
+
+curl -X GET "https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/ddl/results?dialect=snowflake&schema=results&vocabSchema=VOCABULARY&tempSchema=temp&initConceptHierarchy=true" -o RESULTS_SNOWFLAKE.sql
 
 
 WEBAPI_URL https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/
