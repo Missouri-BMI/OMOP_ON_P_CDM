@@ -67,8 +67,7 @@ docker push 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-webapi
 ohdsi-atlas.ctsvcfrduobf.us-east-2.rds.amazonaws.com
 
 ## snowflake
-&vocabSchema=VOCABULARY&tempSchema=temp&initConceptHierarchy=true
-curl -X GET "https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/ddl/achilles?dialect=snowflake&schema=results" -o ACHILLES_SNOWFLAKE.sql
+curl -X GET "https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/ddl/achilles?dialect=snowflake&schema=results&vocabSchema=VOCABULARY&tempSchema=temp&initConceptHierarchy=true" -o ACHILLES_SNOWFLAKE.sql
 
 curl -X GET "https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/ddl/results?dialect=snowflake&schema=results&vocabSchema=VOCABULARY&tempSchema=temp&initConceptHierarchy=true" -o RESULTS_SNOWFLAKE.sql
 
@@ -78,7 +77,7 @@ WEBAPI_URL https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/
 ## Health Checks
 curl -X GET "https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/info"
 
-https://atlas-dev.nextgenbmi.umsystem.edu/atlas
-https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/info
-https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/source/refresh
-https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/source/sources
+curl -X GET https://atlas-dev.nextgenbmi.umsystem.edu/atlas
+curl -X GET https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/info
+curl -X GET https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/source/refresh
+curl -X GET https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/source/sources

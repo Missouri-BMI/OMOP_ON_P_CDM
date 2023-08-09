@@ -15,9 +15,9 @@ CREATE TABLE results.achilles_result_concept_count
 /**********************************************/
 /***** Populate record/person count table *****/
 /**********************************************/
-DROP TABLE IF EXISTS d505fk7utmp_counts;
+DROP TABLE IF EXISTS ow3vpe0xtmp_counts;
 
-CREATE TEMP TABLE d505fk7utmp_counts
+CREATE TEMP TABLE ow3vpe0xtmp_counts
 AS
 WITH counts  AS (
   SELECT stratum_1 AS concept_id, MAX (count_value) AS agg_count_value
@@ -82,9 +82,9 @@ concept_id,
 FROM
 counts;
 
-DROP TABLE IF EXISTS d505fk7utmp_counts_person;
+DROP TABLE IF EXISTS ow3vpe0xtmp_counts_person;
 
-CREATE TEMP TABLE d505fk7utmp_counts_person
+CREATE TEMP TABLE ow3vpe0xtmp_counts_person
 AS
 WITH counts_person  AS (
   SELECT stratum_1 AS concept_id, MAX (count_value) AS agg_count_value
@@ -120,18 +120,18 @@ concept_id,
 FROM
 counts_person;
 
-DROP TABLE IF EXISTS d505fk7utmp_concepts;
+DROP TABLE IF EXISTS ow3vpe0xtmp_concepts;
 
-CREATE TEMP TABLE d505fk7utmp_concepts
+CREATE TEMP TABLE ow3vpe0xtmp_concepts
 AS
 WITH concepts  AS (
   select concept_id as ancestor_id, coalesce(cast(ca.descendant_concept_id as varchar(50)), concept_id) as descendant_id
   from (
-    select concept_id from d505fk7utmp_counts
+    select concept_id from ow3vpe0xtmp_counts
     UNION
     -- include any ancestor concept that has a descendant in counts
     select distinct cast(ancestor_concept_id as varchar(50)) concept_id
-    from d505fk7utmp_counts c
+    from ow3vpe0xtmp_counts c
     join VOCABULARY.concept_ancestor ca on cast(ca.descendant_concept_id as varchar(50)) = c.concept_id
   ) c
   left join VOCABULARY.concept_ancestor ca on c.concept_id = cast(ca.ancestor_concept_id as varchar(50))
@@ -149,16 +149,16 @@ SELECT DISTINCT
     coalesce(sum(c2.agg_count_value), 0) AS descendant_record_count,
     coalesce(max(c3.agg_count_value), 0) AS person_count,
     coalesce(sum(c4.agg_count_value), 0) AS descendant_person_count
-FROM d505fk7utmp_concepts concepts
-         LEFT JOIN d505fk7utmp_counts c1 ON concepts.ancestor_id = c1.concept_id
-         LEFT JOIN d505fk7utmp_counts c2 ON concepts.descendant_id = c2.concept_id
-         LEFT JOIN d505fk7utmp_counts_person c3 ON concepts.ancestor_id = c3.concept_id
-         LEFT JOIN d505fk7utmp_counts_person c4 ON concepts.descendant_id = c4.concept_id
+FROM ow3vpe0xtmp_concepts concepts
+         LEFT JOIN ow3vpe0xtmp_counts c1 ON concepts.ancestor_id = c1.concept_id
+         LEFT JOIN ow3vpe0xtmp_counts c2 ON concepts.descendant_id = c2.concept_id
+         LEFT JOIN ow3vpe0xtmp_counts_person c3 ON concepts.ancestor_id = c3.concept_id
+         LEFT JOIN ow3vpe0xtmp_counts_person c4 ON concepts.descendant_id = c4.concept_id
 GROUP BY concepts.ancestor_id;
 
-DROP TABLE IF EXISTS d505fk7utmp_counts;
+DROP TABLE IF EXISTS ow3vpe0xtmp_counts;
 
-DROP TABLE IF EXISTS d505fk7utmp_counts_person;
+DROP TABLE IF EXISTS ow3vpe0xtmp_counts_person;
 
-DROP TABLE IF EXISTS d505fk7utmp_concepts;
+DROP TABLE IF EXISTS ow3vpe0xtmp_concepts;
 

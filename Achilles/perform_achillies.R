@@ -2,10 +2,11 @@ if (!require("remotes")) install.packages("remotes")
 remotes::install_github("Missouri-BMI/Achilles")
 library(DatabaseConnector)
 library(Achilles)
+options(connectionObserver = NULL)
 
-readRenviron(".env")
+readRenviron("env/dev/.env")
 
-
+print(Sys.getenv("user"))
 # Running Achilles: Single-Threaded Mode
 # In single-threaded mode, there is no need to set a `scratchDatabaseSchema`, as temporary tables will be used.
 
@@ -31,6 +32,7 @@ achilles(connectionDetails = connectionDetails,
          resultsDatabaseSchema = "RESULTS", 
          cdmVersion = "5.4",
          numThreads = 1,
+         createIndices = FALSE,
          optimizeAtlasCache = true,
 		 outputFolder = "output")
 
@@ -44,3 +46,4 @@ createIndices(connectionDetails = connectionDetails,
               outputFolder = "output")
 
 citation("Achilles")              
+

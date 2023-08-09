@@ -18,4 +18,3 @@ values(1000, 5);
 insert into sec_user_role(user_id, role_id)
 values(1000, 6);
 
-mosaa@umsystem.edu
