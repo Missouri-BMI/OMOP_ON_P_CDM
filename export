@@ -1,0 +1,56 @@
+#!/bin/bash
+set -e
+
+LOCAL_STAGE="file:///home/stage"
+SNOWFLAKE_STAGE="omop_export"
+FILE_FORMAT="omop_export_format"
+COPY_PARAMETERS="SINGLE=TRUE max_file_size=2147483648 header=TRUE overwrite=TRUE"
+                                           
+-- CONNECT TO SNOWFLAKE
+snowsql -c etl_user <<- EOSQL
+
+--- CREATE FILE FORMAT
+CREATE OR REPLACE FILE FORMAT $FILE_FORMAT
+TYPE = CSV
+FIELD_DELIMITER = ','
+EMPTY_FIELD_AS_NULL = true 
+TIMESTAMP_FORMAT = 'YYYY-MM-DD HH24:MI:SS'
+NULL_IF = ('NULL')
+COMPRESSION=NONE
+FIELD_OPTIONALLY_ENCLOSED_BY='"';
+
+--- CREATE STAGE AREA
+CREATE OR REPLACE STAGE $SNOWFLAKE_STAGE FILE_FORMAT = $FILE_FORMAT;
+
+--- COPY  TABLES IN THE STAGE
+COPY INTO @$SNOWFLAKE_STAGE/care_site.csv from (select * from care_site ) $COPY_PARAMETERS;
+COPY INTO @$SNOWFLAKE_STAGE/cdm_source.csv from (select cdm_source_name, cdm_source_abbreviation, cdm_holder, source_description, source_documentation_reference, cdm_etl_reference, source_release_date, cdm_release_date, cdm_version, vocabulary_version from cdm_source ) $COPY_PARAMETERS;
+
+COPY INTO @$SNOWFLAKE_STAGE/condition_occurrence.csv from (select * from condition_occurrence ) $COPY_PARAMETERS;
+COPY INTO @$SNOWFLAKE_STAGE/death.csv from (select * from death ) $COPY_PARAMETERS;
+COPY INTO @$SNOWFLAKE_STAGE/drug_exposure.csv from (select * from drug_exposure ) $COPY_PARAMETERS;
+
+COPY INTO @$SNOWFLAKE_STAGE/location.csv from (select location_id, address_1, address_2, city, state, zip, county, location_source_value from location ) $COPY_PARAMETERS;
+COPY INTO @$SNOWFLAKE_STAGE/measurement.csv from (select measurement_id, person_id, measurement_concept_id, measurement_date, measurement_datetime, measurement_time, measurement_type_concept_id, operator_concept_id, value_as_number, value_as_concept_id, unit_concept_id, range_low, range_high, provider_id, visit_occurrence_id, visit_detail_id, measurement_source_value, measurement_source_concept_id, unit_source_value, value_source_value from measurement ) $COPY_PARAMETERS;
+COPY INTO @$SNOWFLAKE_STAGE/observation_period.csv from (select * from observation_period ) $COPY_PARAMETERS;
+
+COPY INTO @$SNOWFLAKE_STAGE/person.csv from (select person_id, gender_concept_id, year_of_birth, month_of_birth, day_of_birth, birth_datetime, race_concept_id, ethnicity_concept_id, location_id, provider_id, care_site_id, person_source_value, gender_source_value, gender_source_concept_id, race_source_value, race_source_concept_id, ethnicity_source_value, ethnicity_source_concept_id from person ) $COPY_PARAMETERS;
+COPY INTO @$SNOWFLAKE_STAGE/procedure_occurrence.csv from (select procedure_occurrence_id, person_id, procedure_concept_id, procedure_date, procedure_datetime, procedure_type_concept_id, modifier_concept_id, quantity, provider_id, visit_occurrence_id, visit_detail_id, procedure_source_value, procedure_source_concept_id, modifier_source_value from procedure_occurrence ) $COPY_PARAMETERS;
+COPY INTO @$SNOWFLAKE_STAGE/visit_occurrence.csv from (select visit_occurrence_id, person_id, visit_concept_id, visit_start_date, visit_start_datetime, visit_end_date, visit_end_datetime, visit_type_concept_id, provider_id, care_site_id, visit_source_value, visit_source_concept_id, ADMITTED_FROM_CONCEPT_ID as admitting_source_concept_id, ADMITTED_FROM_SOURCE_VALUE as admitting_source_value, DISCHARGED_TO_CONCEPT_ID as discharge_to_concept_id, DISCHARGED_TO_SOURCE_VALUE as discharge_to_source_value, preceding_visit_occurrence_id from visit_occurrence ) $COPY_PARAMETERS;
+
+
+--- DOWNLOAD TABLES FROM THE STAGE
+GET @$SNOWFLAKE_STAGE/care_site.csv $LOCAL_STAGE;
+GET @$SNOWFLAKE_STAGE/cdm_source.csv $LOCAL_STAGE;
+GET @$SNOWFLAKE_STAGE/condition_occurrence.csv $LOCAL_STAGE;
+GET @$SNOWFLAKE_STAGE/death.csv $LOCAL_STAGE;
+GET @$SNOWFLAKE_STAGE/drug_exposure.csv $LOCAL_STAGE;
+GET @$SNOWFLAKE_STAGE/location.csv $LOCAL_STAGE;
+GET @$SNOWFLAKE_STAGE/measurement.csv $LOCAL_STAGE;
+GET @$SNOWFLAKE_STAGE/observation_period.csv $LOCAL_STAGE;
+GET @$SNOWFLAKE_STAGE/person.csv $LOCAL_STAGE;
+GET @$SNOWFLAKE_STAGE/procedure_occurrence.csv $LOCAL_STAGE;
+GET @$SNOWFLAKE_STAGE/visit_occurrence.csv $LOCAL_STAGE;
+
+
+EOSQL

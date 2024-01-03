@@ -49,11 +49,11 @@ psql -a -U "$POSTGRES_USER" -d ohdsi_webapi -c 'set search_path to webapi;' -f /
 aws sso login --profile <profile_name>
 aws ecr get-login-password --profile <profile_name> | docker login --username AWS --password-stdin 500206249851.dkr.ecr.us-east-2.amazonaws.com
 
-docker build --no-cache -t 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-atlas .
+docker build --platform=linux/amd64 --no-cache -t 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-atlas .
 docker push 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-atlas
 
 
-docker build --no-cache -t 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-webapi .
+docker build --platform=linux/amd64 --no-cache -t 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-webapi .
 docker push 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-webapi
 
 
@@ -81,3 +81,11 @@ curl -X GET https://atlas-dev.nextgenbmi.umsystem.edu/atlas
 curl -X GET https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/info
 curl -X GET https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/source/refresh
 curl -X GET https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/source/sources
+
+
+curl -i https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/source/refresh \
+-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtaG1jYkB1bXN5c3RlbS5lZHUiLCJTZXNzaW9uLUlEIjoiZGYwOTJjMzQtMDM4My00Yjk0LTkzMDUtNWQ5NTMyOTRlZDc4IiwiZXhwIjoxNzAyNDU5MjEzfQ.0I7oufzAw1d4baWVtfJWntDjlc_l9sRDwAPwZf9vhkMNPFDGQgKx5EJmrFD71m95k9zBdNoMbBlWOg_U8sDfaQ"
+  
+
+curl -i https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/source/sources \
+-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtaG1jYkB1bXN5c3RlbS5lZHUiLCJTZXNzaW9uLUlEIjoiZGYwOTJjMzQtMDM4My00Yjk0LTkzMDUtNWQ5NTMyOTRlZDc4IiwiZXhwIjoxNzAyNDU5MjEzfQ.0I7oufzAw1d4baWVtfJWntDjlc_l9sRDwAPwZf9vhkMNPFDGQgKx5EJmrFD71m95k9zBdNoMbBlWOg_U8sDfaQ"

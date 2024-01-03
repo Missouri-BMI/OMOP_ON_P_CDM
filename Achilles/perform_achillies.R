@@ -1,5 +1,6 @@
 if (!require("remotes")) install.packages("remotes")
 remotes::install_github("Missouri-BMI/Achilles")
+remotes::install_github("OHDSI/DataQualityDashboard")
 library(DatabaseConnector)
 library(Achilles)
 options(connectionObserver = NULL)

@@ -9,20 +9,21 @@ services:
       args:
         - WEBAPI_URL=${WEBAPI_URL}
     container_name: ohdsi-atlas
+    env_file: ./docker-env/dev/.env
     environment: 
       - WEBAPI_URL=${WEBAPI_URL}
     ports:
       - "80:8080"
-    depends_on:
-      - ohdsi-webapi
+  #   depends_on:
+  #     - ohdsi-webapi
 
-  ohdsi-webapi:
-    image: 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-webapi:latest
-    build: 
-      context: ./WebAPI
-    container_name: ohdsi-webapi
-    ports:
-      - "8080:8080"
+  # ohdsi-webapi:
+  #   image: 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-webapi:latest
+  #   build: 
+  #     context: ./WebAPI
+  #   container_name: ohdsi-webapi
+  #   ports:
+  #     - "8080:8080"
     # depends_on:
     #   - postgres-webapi
 
