@@ -1,32 +1,34 @@
-FROM python:3.9
+FROM centos
 
-ARG USER_UID=1000
-ARG USERNAME=appUser
-ARG USERGROUP=appGroup
-ARG USER_GID=$USER_UID
+RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
 
-# Create the user
-RUN groupadd --gid $USER_GID $USERGROUP \
-    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
+# install python
+RUN yum install -y python39 python39-pip
 
-USER $USERNAME
+# install snowsql
+COPY /conf/snowflake-snowsql-1.2.31-1.x86_64.rpm /opt/
+RUN rpm -i /opt/snowflake-snowsql-1.2.31-1.x86_64.rpm ;\
+    rm /opt/snowflake-snowsql-1.2.31-1.x86_64.rpm
 
-COPY --chown=$USERNAME:$USERGROUP /aou-ehr-file-check/ /home/$USERNAME/aou-ehr-file-check/
+# set workdir to project path
+WORKDIR /home/aou-ehr-file-check/
 
-# SET Home directory
-WORKDIR /home/$USERNAME/aou-ehr-file-check/
-
-COPY --chown=$USERNAME:$USERGROUP /csv/ ./data/
-
-RUN chmod -R 755 ./
-
+# aou-ehr-file-chech
+COPY /aou-ehr-file-check/ ./
 RUN mv ./_settings.py ./settings.py
-
-RUN python -m pip install -U pip ;\
+RUN python3.9 -m pip install -U pip ;\
     pip install -r ./requirements.txt
 
 # RUN sed -i "s|csv_dir = .*|csv_dir = './tests/resources/examples_erroneous' |g" ./settings.py
+RUN sed -i "s|csv_dir = .*|csv_dir = '/home/data' |g" ./settings.py
 
-RUN sed -i "s|csv_dir = .*|csv_dir = './data' |g" ./settings.py
+# copy scripts
+COPY /scripts/ /opt/scripts/
+COPY /conf/snowsql.cnf /etc/
 
-CMD [ "python", "./omop_file_validator.py"]
+RUN chmod -R 755 ./
+RUN chmod -R 755 /opt/scripts/
+
+
+CMD [ "/opt/scripts/aou-dq"]

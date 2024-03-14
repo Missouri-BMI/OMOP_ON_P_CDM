@@ -10,4 +10,4 @@
 	url = https://github.com/all-of-us/aou-ehr-file-check.git
 [submodule "All-of-US/aou-ehr-file-check"]
 	path = All-of-US/aou-ehr-file-check
-	url = https://github.com/all-of-us/aou-ehr-file-check.git
+	url = https://github.com/Missouri-BMI/aou-ehr-file-check
