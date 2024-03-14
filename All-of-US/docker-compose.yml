@@ -1,0 +1,11 @@
+services:
+  aou-dq1-service:
+    image: aou-dq1:latest
+    build: 
+      context: .
+      args:
+        USER_UID: ${USER_UID}
+        USERNAME: ${USERNAME}
+        USERGROUP: ${USERGROUP}
+    container_name: aou-dq1
+    user: aou_user

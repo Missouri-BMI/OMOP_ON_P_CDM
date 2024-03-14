@@ -1,24 +1,49 @@
-insert into atlas_security.demo_security (username,password) 
-values ('mhmcb@umsystem.edu', '$2a$10$kSTwBygJuGzVqlk.VepJBecbclDTk0v5uxB2RV6Y6qvb74uMQL7HK');
+-- Add user
+insert into atlas_security.demo_security(username,password) values
+('user_id1', 'hashed_password'),
+('user_id2', 'hashed_password');
 
---NOTE
---do login, 
---extract user_id
+-- Add user to security user
+insert into webapi.sec_user(login) values
+('user_id1'),
+('user_id2');
 
-insert into sec_user_role(user_id, role_id)
-values(1000, 2);--admin
+-- create user role
+insert into webapi.sec_role(name,system_role) values
+('user_id1', false),
+('user_id2', false);
 
-insert into sec_user_role(user_id, role_id)
-values(1000, 10);--atlas_user
-
-insert into sec_user_role(user_id, role_id)
-values(1000, 3);
-
-insert into sec_user_role(user_id, role_id)
-values(1000, 5);
-
-insert into sec_user_role(user_id, role_id)
-values(1000, 6);
-
---NOTE
--- role to access source cdm
+-- assign user roles to users
+with new_users as (
+	select id as user_id, login from webapi.sec_user
+	where login in (
+		'user_id1',
+		'user_id2'
+	)
+),
+user_role as (
+	select su.id as user_id, sr.id as role_id from webapi.sec_user  as su
+	join webapi.sec_role as sr
+	on su.login = sr.name
+	where login in (
+		'user_id1',
+		'user_id2'
+	)
+)
+insert into webapi.sec_user_role (user_id, role_id)
+select user_id, 1 from new_users --public
+union
+select user_id, 3 from new_users
+union
+select user_id, 5 from new_users
+union 
+select user_id, 6 from new_users
+union
+select user_id, 10 from new_users -- ATLAS user
+union
+select user_id, 1009 from new_users;--MU SOURCE
+union 
+select user_id, role_id from user_role;
+-- admin
+--union
+--select user_id, 2 from new_users; -admin
