@@ -1,5 +1,5 @@
 
-Create or replace secure view OMOP_CDM.CDM.LOCATION AS
+Create or replace view OMOP_CDM.CDM.LOCATION AS
 (
 SELECT
 distinct
@@ -33,5 +33,5 @@ ADDRESS_STATE::VARCHAR(2) AS state,
  -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
     NULL::NUMERIC AS longitude
 
-FROM pcornet_CDM.CDM_2023_APRIL.lds_address_history
+FROM pcornet_CDM.CDM.lds_address_history
 );

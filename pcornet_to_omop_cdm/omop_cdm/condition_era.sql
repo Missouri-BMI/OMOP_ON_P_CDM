@@ -1,4 +1,4 @@
-Create or replace secure view OMOP_CDM.CDM.condition_era
+Create or replace view OMOP_CDM.CDM.condition_era
 AS
 SELECT
  -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
@@ -19,5 +19,5 @@ SELECT
  -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
     NULL::INTEGER AS condition_occurrence_count
 
-FROM pcornet_cdm.cdm_2023_april.deid_condition
+FROM pcornet_cdm.cdm.deid_condition
 ;

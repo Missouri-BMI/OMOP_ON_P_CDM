@@ -1,6 +1,7 @@
-create or replace secure view OMOP_CDM.CDM.condition_occurrence as
+create or replace view OMOP_CDM.CDM.deid_condition_occurrence as
 
 SELECT
+    distinct
     diagnosis.diagnosisid::INTEGER AS condition_occurrence_id,
 
     diagnosis.patid::INTEGER AS person_id,
@@ -60,7 +61,7 @@ coalesce(case
 
     else  
 
-        44814650 
+        32817 --EHR
 
     end::INTEGER  as condition_type_concept_id,
     4230359::INTEGER AS condition_status_concept_id,   
@@ -91,7 +92,7 @@ coalesce(case
     end,44814650)::INTEGER as condition_source_concept_id,
    diagnosis.dx_source::varchar(50) AS condition_status_source_value
 
-FROM pcornet_cdm.CDM_2023_APRIL.diagnosis diagnosis
+FROM pcornet_cdm.CDM.deid_diagnosis diagnosis
 left join OMOP_CDM.vocabulary.concept c_icd9 on diagnosis.dx=c_icd9.concept_code
     and c_icd9.vocabulary_id='ICD9CM' and diagnosis.dx_type='09'
 left join OMOP_CDM.vocabulary.concept c_icd10 on diagnosis.dx=c_icd10.concept_code
@@ -119,4 +120,3 @@ where vocabulary_ID like 'ICD10CM' and DOMAIN_ID = 'Condition' order by DX
 
 select * from omop_cdm.OMOP_CDM.vocabulary.concept where concept_code like '%N99.3%'
 */
-select * from OMOP_CDM.CDM.CONDITION_OCCURRENCE limit 500;

@@ -19,7 +19,8 @@ INSERT INTO procedure_occurrence
     modifier_source_value
 )
 */
-Create or replace secure view OMOP_CDM.CDM.procedure_occurrence AS
+
+Create or replace view OMOP_CDM.CDM.deid_procedure_occurrence AS
 SELECT
     procedures.proceduresid::INTEGER AS procedure_occurrence_id,
 
@@ -28,9 +29,9 @@ SELECT
     case
             when c_hcpcs.concept_id is not null then c_hcpcs.concept_id
             when procedures.px_type='CH' then c_cpt.concept_id
-            when procedures.px_type='10' then c_icd9.concept_id
-            when procedures.px_type='09' then c_icd10.concept_id
-            else 0 
+            when procedures.px_type='10' then c_icd10.concept_id
+            when procedures.px_type='09' then c_icd9.concept_id
+      else 0
       end::INTEGER as procedure_concept_id,
     --procedures.px_type::INTEGER AS procedure_concept_id,
 
@@ -58,24 +59,24 @@ SELECT
 
     NULL::INTEGER AS visit_detail_id,
 
-    procedures.raw_px_type::VARCHAR(50) AS procedure_source_value,
+    procedures.PX::VARCHAR(50) AS procedure_source_value,
     case
             when c_hcpcs.concept_id is not null then c_hcpcs.concept_id
             when procedures.px_type='CH' then c_cpt.concept_id
-            when procedures.px_type='10' then c_icd9.concept_id
-            when procedures.px_type='09' then c_icd10.concept_id
+            when procedures.px_type='10' then c_icd10.concept_id
+            when procedures.px_type='09' then c_icd9.concept_id
       else 0 
       end::INTEGER as procedure_source_concept_id,
     --procedures.px_type::INTEGER AS procedure_source_concept_id,
 
     NULL::VARCHAR(50) AS modifier_source_value
 
-FROM pcornet_cdm.CDM_2023_APRIL.deid_procedures procedures
+FROM pcornet_cdm.CDM.deid_procedures procedures
 left join OMOP_CDM.VOCABULARY.CONCEPT c_hcpcs
-      on procedures.px=c_hcpcs.concept_code and procedures.px_type='CH' and c_hcpcs.vocabulary_id='HCPCS' and procedures.px RLIKE '[A-Z]'
+      on procedures.px=c_hcpcs.concept_code and procedures.px_type='CH' and c_hcpcs.vocabulary_id='HCPCS' -- and procedures.px RLIKE '[A-Z]'
 left join OMOP_CDM.VOCABULARY.CONCEPT c_cpt
       on procedures.px=c_cpt.concept_code and procedures.px_type='CH' and c_cpt.vocabulary_id='CPT4'
 left join OMOP_CDM.VOCABULARY.CONCEPT c_icd10
-      on procedures.px=c_icd10.concept_code and procedures.px_type='10' and c_cpt.vocabulary_id='ICD10CM'
+      on procedures.px=c_icd10.concept_code and procedures.px_type='10' and c_icd10.vocabulary_id='ICD10PCS'
  left join OMOP_CDM.VOCABULARY.CONCEPT c_icd9
-      on procedures.px=c_icd9.concept_code and procedures.px_type='09' and c_cpt.vocabulary_id='ICD9CM';
+      on procedures.px=c_icd9.concept_code and procedures.px_type='09' and (c_icd9.vocabulary_id='ICD9Proc' or c_icd9.vocabulary_id='ICD9ProcCN');

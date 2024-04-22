@@ -1,6 +1,5 @@
 
-
-create or replace secure view omop_cdm.cdm.observation
+create or replace view omop_cdm.cdm.deid_observation
 AS
 select
  -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
@@ -66,4 +65,4 @@ select
  -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
     NULL::INTEGER AS obs_event_field_concept_id
 
-FROM pcornet_cdm.cdm_2023_april.deid_immunization;
+FROM pcornet_cdm.cdm.deid_immunization;
