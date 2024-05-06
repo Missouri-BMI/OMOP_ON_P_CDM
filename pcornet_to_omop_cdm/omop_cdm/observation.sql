@@ -1,5 +1,5 @@
 
-
+--change test from pycharm
 create or replace secure view omop_cdm.cdm.observation
 AS
 select
