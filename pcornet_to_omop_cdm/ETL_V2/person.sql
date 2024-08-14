@@ -1,6 +1,6 @@
 --Person View
-use role CDM_ELT;
-Create or replace secure view OMOP_CDM.DEID_CDM.person AS
+
+Create or replace view CDM.person AS
 (
 SELECT demographic.patid::INTEGER                                                   AS PERSON_ID,
        coalesce(gender_map.source_concept_id, 44814650)::INTEGER                    AS gender_concept_id,
@@ -27,20 +27,20 @@ SELECT demographic.patid::INTEGER                                               
        demographic.raw_hispanic::VARCHAR(50)                                        AS ethnicity_source_value,
        44814650::INTEGER                                                            AS ethnicity_source_concept_id
 
-FROM PCORNET_CDM.CDM.DEID_DEMOGRAPHIC demographic
+FROM DEIDENTIFIED_PCORNET_CDM.CDM.DEID_DEMOGRAPHIC demographic
          left join
-     OMOP_CDM.CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING gender_map
+     CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING gender_map
      on demographic.sex = gender_map.PCORNET_VALUESET_ITEM
          and gender_map.source_concept_class = 'Gender'
          left join
-     OMOP_CDM.CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING ethnicity_map
+     CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING ethnicity_map
      on demographic.hispanic = ethnicity_map.PCORNET_VALUESET_ITEM
          and ethnicity_map.source_concept_class = 'Hispanic'
          left join
-     OMOP_CDM.CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING race_map
+     CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING race_map
      on demographic.race = race_map.PCORNET_VALUESET_ITEM
          and race_map.source_concept_class = 'Race'
-         left join PCORNET_CDM.CDM.DEID_DEATH death
+         left join DEIDENTIFIED_PCORNET_CDM.CDM.DEID_DEATH death
                    on death.patid = demographic.patid
 where year_of_birth is not null
     );

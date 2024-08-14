@@ -1,5 +1,5 @@
 
-create or replace secure view omop_cdm.cdm.measurement
+create or replace view cdm.measurement
 AS
 SELECT
     lab.lab_result_cm_id::INTEGER AS measurement_id,
@@ -68,5 +68,5 @@ SELECT
  -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
     NULL::INTEGER AS meas_event_field_concept_id
 
-FROM pcornet_cdm.cdm_2023_april.deid_lab_result_cm lab
+FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_lab_result_cm lab
 ;

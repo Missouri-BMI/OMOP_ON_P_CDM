@@ -1,4 +1,9 @@
-create or replace table OMOP_CDM.DCQ.CONCEPT_COMPARISON_PATIENT_WISE_May_23("CONCEPT_ID" bigint not null,
+/*
+created by Vasanthi in July. This query pulls only selected concepts and concepts from selected vocabularies
+from omop concept table(athena) and all concept ids from omop cdm tables
+ */
+
+create or replace table OMOP_CDM.DCQ.CONCEPT_COMPARISON_PATIENT_WISE_July_23("CONCEPT_ID" bigint not null,
                                                                      "CONCEPT_NAME" string(255) not null,
                                                                      "DOMAIN_ID" string(20) not null,
                                                                      "VOCABULARY_ID" string(20) not null,
@@ -43,6 +48,8 @@ from (
                                                        , "CONCEPT_CLASS_ID" as "CONCEPT_CLASS_ID"
                                                        , "CONCEPT_CODE"     as "CONCEPT_CODE"
                                                    from OMOP_CDM.CDM.CONCEPT
+                                                   where VOCABULARY_ID in ('ICD9CM', 'ICD10CM', 'SNOMED', 'NDC', 'RxNorm', 'HCPCS', 'CPT4') or
+                                                   CONCEPT_ID in (select distinct source_concept_id from OMOP_CDM.CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING)
                                                 ) as SNOWPARK_LEFT left outer join (
                                                                                       select "CONCEPT" as "CONCEPT", "N_PAT" as "N_PAT"
                                                                                       from (
@@ -152,6 +159,8 @@ from (
                                                                                      , "CONCEPT_CLASS_ID" as "CONCEPT_CLASS_ID"
                                                                                      , "CONCEPT_CODE"     as "CONCEPT_CODE"
                                                                                  from OMOP_CDM.CDM.CONCEPT
+                                                                                 where VOCABULARY_ID in ('ICD9CM', 'ICD10CM', 'SNOMED', 'NDC', 'RxNorm', 'HCPCS', 'CPT4') or
+                                                                                        CONCEPT_ID in (select distinct source_concept_id from OMOP_CDM.CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING)
                                                                               ) as SNOWPARK_LEFT left outer join (
                                                                                                                     select "CONCEPT" as "CONCEPT", "N_PAT" as "N_PAT"
                                                                                                                     from (

@@ -1,4 +1,4 @@
-Create or replace secure view OMOP_CDM.CDM.observation_period AS
+Create or replace view CDM.observation_period AS
 (
 SELECT
  -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
@@ -16,5 +16,5 @@ SELECT
  -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
     NULL::INTEGER AS period_type_concept_id
 
-FROM pcornet_cdm.CDM_2023_APRIL.deid_enrollment
+FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_enrollment
 );

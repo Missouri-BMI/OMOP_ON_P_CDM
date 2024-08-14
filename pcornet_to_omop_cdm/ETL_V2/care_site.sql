@@ -1,5 +1,5 @@
 
-create or replace secure view OMOP_CDM.DEID_CDM.CARE_SITE
+create or replace view CDM.CARE_SITE
 AS
 SELECT distinct
     ROW_NUMBER() OVER (ORDER BY enc.facilityid) ::INTEGER AS care_site_id,
@@ -11,7 +11,7 @@ SELECT distinct
     left(enc.facility_type, 50)::VARCHAR(50) AS care_site_source_value,
     left(enc.facility_type,50)::VARCHAR(50) AS place_of_service_source_value
 
-FROM pcornet_cdm.CDM.deid_encounter enc
+FROM DEIDENTIFIED_PCORNET_CDM.CDM.DEID_ENCOUNTER enc
 left join
     OMOP_CDM.CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING place
     on place.PCORNET_VALUESET_ITEM = enc.facility_type

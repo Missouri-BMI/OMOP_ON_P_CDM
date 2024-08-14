@@ -1,5 +1,5 @@
 
-create or replace secure view OMOP_CDM.DEID_CDM.condition_occurrence as
+create or replace view CDM.condition_occurrence as
 
 SELECT
     diagnosis.diagnosisid::INTEGER AS condition_occurrence_id,
@@ -59,7 +59,7 @@ coalesce(case
     end,44814650)::INTEGER as condition_source_concept_id,
    diagnosis.dx_source::varchar(50) AS condition_status_source_value
 
-FROM pcornet_cdm.CDM.deid_diagnosis diagnosis
+FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_diagnosis diagnosis
 left join OMOP_CDM.vocabulary.concept c_icd9 on diagnosis.dx=c_icd9.concept_code
     and c_icd9.vocabulary_id='ICD9CM' and diagnosis.dx_type='09'
 left join OMOP_CDM.vocabulary.concept c_icd10 on diagnosis.dx=c_icd10.concept_code

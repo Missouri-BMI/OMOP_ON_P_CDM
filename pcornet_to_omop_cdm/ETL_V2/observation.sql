@@ -1,6 +1,6 @@
 
 --change test from pycharm test 2
-create or replace secure view omop_cdm.cdm.observation
+create or replace secure view cdm.observation
 AS
 select
  -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
@@ -76,7 +76,7 @@ use warehouse cdm_elt_wh;
 CREATE OR REPLACE SEQUENCE obs_seq;
 
 -- Create or replace the Snowflake view for DRG observations
-CREATE OR REPLACE VIEW omop_cdm.cdm.DEID_observation AS
+CREATE OR REPLACE VIEW cdm.DEID_observation AS
 SELECT DISTINCT
     3040464 AS observation_concept_id,
     CASE
@@ -113,16 +113,16 @@ SELECT DISTINCT
     END AS value_source_value,
     enc.encounterid AS visit_occurrence_id
 FROM
-    pcornet_cdm.cdm.deid_encounter enc
+    DEIDENTIFIED_PCORNET_CDM.CDM.deid_encounter enc
 LEFT JOIN
-    omop_cdm.vocabulary.concept drg
+    vocabulary.concept drg
 ON
     enc.drg = drg.concept_code
     AND drg.concept_class_id = 'DRG'
     AND drg.valid_end_date = '2007-09-30'
     AND drg.invalid_reason = 'D'
 LEFT JOIN
-    omop_cdm.vocabulary.concept msdrg
+    vocabulary.concept msdrg
 ON
     enc.drg = msdrg.concept_code
     AND msdrg.concept_class_id = 'MS-DRG'

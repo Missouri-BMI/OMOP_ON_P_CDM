@@ -1,5 +1,5 @@
-use role cdm_elt;
-Create or replace secure view OMOP_CDM.DEID_CDM.procedure_occurrence AS
+
+Create or replace view CDM.procedure_occurrence AS
 SELECT
     procedures.proceduresid::INTEGER AS procedure_occurrence_id,
     procedures.patid::INTEGER AS person_id,
@@ -34,15 +34,12 @@ SELECT
       end::INTEGER as procedure_source_concept_id,
     NULL::VARCHAR(50) AS modifier_source_value
 
-FROM pcornet_cdm.CDM.deid_procedures procedures
-left join OMOP_CDM.VOCABULARY.CONCEPT c_hcpcs
+FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_procedures procedures
+left join VOCABULARY.CONCEPT c_hcpcs
       on procedures.px=c_hcpcs.concept_code and procedures.px_type='CH' and c_hcpcs.vocabulary_id='HCPCS' and procedures.px RLIKE '[A-Z]'
-left join OMOP_CDM.VOCABULARY.CONCEPT c_cpt
+left join VOCABULARY.CONCEPT c_cpt
       on procedures.px=c_cpt.concept_code and procedures.px_type='CH' and c_cpt.vocabulary_id='CPT4'
-left join OMOP_CDM.VOCABULARY.CONCEPT c_icd10
+left join VOCABULARY.CONCEPT c_icd10
       on procedures.px=c_icd10.concept_code and procedures.px_type='10' and c_cpt.vocabulary_id='ICD10CM'
- left join OMOP_CDM.VOCABULARY.CONCEPT c_icd9
+ left join VOCABULARY.CONCEPT c_icd9
       on procedures.px=c_icd9.concept_code and procedures.px_type='09' and c_cpt.vocabulary_id='ICD9CM';
-
-use warehouse cdm_elt_wh;
-select * from OMOP_CDM.DEID_CDM.procedure_occurrence limit 100;

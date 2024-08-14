@@ -1,7 +1,6 @@
-use role CDM_ELT;
-use warehouse cdm_elt_wh;
 
-create or replace secure view omop_cdm.DEID_CDM.drug_exposure
+
+create or replace view CDM.drug_exposure
 AS
 --dispensing
 SELECT disp.dispensingid::INTEGER                 AS drug_exposure_id,
@@ -58,12 +57,12 @@ SELECT disp.dispensingid::INTEGER                 AS drug_exposure_id,
 
        disp.dispense_dose_disp_unit::VARCHAR(50)  AS dose_unit_source_value
 
-FROM pcornet_cdm.cdm.deid_dispensing disp
-         left join omop_cdm.vocabulary.concept ndc
+FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_dispensing disp
+         left join vocabulary.concept ndc
                    on disp.ndc = ndc.concept_code and ndc.vocabulary_id = 'NDC' and ndc.invalid_reason is null
-         left join omop_cdm.vocabulary.concept_relationship ndc_map
+         left join vocabulary.concept_relationship ndc_map
                    on ndc.concept_id = ndc_map.concept_id_1 and ndc_map.relationship_id = 'Maps to'
-         left join OMOP_CDM.CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING route
+         left join CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING route
                    on pcornet_field_name = 'DISPENSE ROUTE' and disp.dispense_route = route.PCORNET_VALUESET_ITEM
 
 union
@@ -119,10 +118,10 @@ SELECT presc.prescribingid::INTEGER                                             
 
        presc.rx_dose_ordered_unit::VARCHAR(50)                                                    AS dose_unit_source_value
 
-FROM pcornet_cdm.cdm.deid_prescribing presc
-         left join omop_cdm.vocabulary.concept rxnorm
+FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_prescribing presc
+         left join vocabulary.concept rxnorm
                    on presc.rxnorm_cui = rxnorm.concept_code and vocabulary_id = 'RxNorm' and standard_concept = 'S'
-         left join OMOP_CDM.CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING route
+         left join CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING route
                    on pcornet_field_name = 'RX ROUTE' and presc.rx_route = route.PCORNET_VALUESET_ITEM
 
 union
@@ -189,16 +188,16 @@ SELECT medadmin.medadminid::INTEGER                                             
 
        medadmin_dose_admin_unit::VARCHAR(50)                                                           AS dose_unit_source_value
 
-FROM pcornet_cdm.cdm.deid_med_admin medadmin
-         left join omop_cdm.vocabulary.concept ndc
+FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_med_admin medadmin
+         left join vocabulary.concept ndc
                    on medadmin.medadmin_code = ndc.concept_code and medadmin_type = 'ND' and
                       ndc.vocabulary_id = 'NDC' and ndc.invalid_reason is null
-         left join omop_cdm.vocabulary.concept_relationship ndc_map
+         left join vocabulary.concept_relationship ndc_map
                    on ndc.concept_id = ndc_map.concept_id_1 and ndc_map.relationship_id = 'Maps to'
-         left join omop_cdm.vocabulary.concept rxnorm
+         left join vocabulary.concept rxnorm
                    on medadmin.medadmin_code = rxnorm.concept_code and medadmin_type = 'RX' and
                       rxnorm.vocabulary_id = 'RxNorm' and rxnorm.standard_concept = 'S'
-         left join OMOP_CDM.CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING route
+         left join CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING route
                    on pcornet_field_name = 'MEDADMIN ROUTE' and medadmin.medadmin_route = route.PCORNET_VALUESET_ITEM;
 
     

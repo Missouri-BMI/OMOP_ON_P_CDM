@@ -1,5 +1,5 @@
-use role CDM_ELT;
-Create or replace secure view OMOP_CDM.DEID_CDM.visit_occurrence AS
+
+Create or replace view CDM.visit_occurrence AS
 (
 SELECT enc.encounterid::INTEGER                                        AS visit_occurrence_id,
        enc.patid::INTEGER                                              AS person_id,
@@ -24,20 +24,20 @@ SELECT enc.encounterid::INTEGER                                        AS visit_
        enc.raw_discharge_status::VARCHAR(50)                           AS discharged_to_source_value,
        NULL::INTEGER                                                   AS preceding_visit_occurrence_id
 
-FROM PCORNET_CDM.CDM.deid_encounter enc
+FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_encounter enc
       /*   left join
      OMOP_CDM.DEID_CDM.care_site cs
      on enc.facilityid = cs.care_site_id */
          LEFT JOIN
-     OMOP_CDM.CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING as_map
+     CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING as_map
      ON as_map.PCORNET_FIELD_NAME = 'ADMITTING SOURCE'
          AND as_map.PCORNET_VALUESET_ITEM = enc.admitting_source
          LEFT JOIN
-     OMOP_CDM.CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING ds_map
+     CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING ds_map
      ON ds_map.PCORNET_FIELD_NAME = 'DISCHARGE STATUS'
          AND ds_map.PCORNET_VALUESET_ITEM = enc.discharge_status
          left join
-     OMOP_CDM.CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING enctyp
+     CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING enctyp
      on enctyp.PCORNET_VALUESET_ITEM = enc.enc_type
          and enctyp.source_concept_class = 'Encounter type'
      --and source_concept_id not in ('2000000469','42898160')
