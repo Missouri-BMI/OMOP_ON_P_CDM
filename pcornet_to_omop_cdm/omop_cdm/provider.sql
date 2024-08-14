@@ -1,5 +1,5 @@
 
-create or replace secure view omop_cdm.cdm.provider
+create or replace view omop_cdm.cdm.provider
 AS
 SELECT
  -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
@@ -41,5 +41,5 @@ SELECT
  -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
     NULL::INTEGER AS gender_source_concept_id
 
-FROM pcornet_cdm.cdm_2023_april.deid_provider
+FROM pcornet_cdm.cdm.deid_provider
 ;

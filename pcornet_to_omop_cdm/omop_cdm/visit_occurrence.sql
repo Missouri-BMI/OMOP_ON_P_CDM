@@ -1,11 +1,11 @@
 
-Create or replace secure view OMOP_CDM.CDM.visit_occurrence AS
+Create or replace view OMOP_CDM.CDM.deid_visit_occurrence AS
 (SELECT
     enc.encounterid::INTEGER AS visit_occurrence_id,
 
     enc.patid::INTEGER AS person_id,
 
-    typ.target_concept_id::INTEGER AS visit_concept_id,
+    COALESCE(typ.target_concept_id, 0)::INTEGER AS visit_concept_id,
 
     date(enc.admit_date)::DATE AS visit_start_date,
 
@@ -30,7 +30,7 @@ Create or replace secure view OMOP_CDM.CDM.visit_occurrence AS
     enc.raw_discharge_status::VARCHAR(50) AS discharged_to_source_value,
     NULL::INTEGER AS preceding_visit_occurrence_id
 
-FROM pcornet_cdm.CDM_2023_APRIL.deid_encounter enc
+FROM pcornet_cdm.CDM.deid_encounter enc
 LEFT JOIN OMOP_CDM.CROSSWALK.p2o_admitting_source_xwalk vsrc ON vsrc.cdm_tbl = 'ENCOUNTER'
                                                        AND vsrc.cdm_source = 'PCORnet'
                                                         AND vsrc.src_admitting_source_type = enc.admitting_source
@@ -42,9 +42,3 @@ left join OMOP_CDM.VOCABULARY.VISIT_XWALK typ
 													
 
 );
-
-select * from OMOP_CDM.CDM.VISIT_OCCURRENCE where ADMITTED_FROM_CONCEPT_ID != 0 or DISCHARGED_TO_CONCEPT_ID  != 0 limit 1000;
-
-select * from OMOP_CDM.VOCABULARY.VISIT_XWALK
-OMOP_CDM.VOCABULARY.CONCEPT where DOMAIN_ID = 'Visit' 
---in ('2000000469','42898160')

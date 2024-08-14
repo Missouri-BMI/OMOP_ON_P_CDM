@@ -1,5 +1,4 @@
-use role CDM_ELT;
-use warehouse cdm_elt_wh;
+
 CREATE or replace view omop_cdm.cdm.deid_death
 AS
 SELECT d.PATID::INTEGER                           AS person_id,
@@ -28,6 +27,7 @@ SELECT d.PATID::INTEGER                           AS person_id,
 
 FROM pcornet_cdm.cdm.deid_death d
          left join pcornet_cdm.cdm.deid_death_cause dc on dc.patid = d.patid
+
 /*left join pcornet_maps.pedsnet_pcornet_valueset_map impu 
 	on impu.source_concept_class = 'death date impute' 
 	and impu.target_concept = d.death_date_impute */

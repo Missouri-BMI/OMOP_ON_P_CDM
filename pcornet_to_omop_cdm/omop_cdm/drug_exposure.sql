@@ -1,5 +1,5 @@
 
-create or replace secure view omop_cdm.cdm.drug_exposure
+create or replace view omop_cdm.cdm.deid_drug_exposure
 AS
 --dispensing
 SELECT
@@ -57,7 +57,7 @@ SELECT
 
     disp.dispense_dose_disp_unit::VARCHAR(50) AS dose_unit_source_value
 
-FROM pcornet_cdm.cdm_2023_april.deid_dispensing disp
+FROM pcornet_cdm.cdm.deid_dispensing disp
 left join omop_cdm.vocabulary.concept ndc 
 	on disp.ndc=ndc.concept_code and ndc.vocabulary_id='NDC' and ndc.invalid_reason is null
 left join omop_cdm.vocabulary.concept_relationship ndc_map 
@@ -102,7 +102,7 @@ SELECT
 
     NULL::VARCHAR(50) AS stop_reason,
 
-    NULL::INTEGER AS refills,
+    rx_refills::INTEGER as refills,
 
     presc.rx_quantity::NUMERIC AS quantity,
 
@@ -132,7 +132,7 @@ SELECT
 
     presc.rx_dose_ordered_unit::VARCHAR(50) AS dose_unit_source_value
 
-FROM pcornet_cdm.cdm_2023_april.deid_prescribing presc
+FROM pcornet_cdm.cdm.deid_prescribing presc
 left join omop_cdm.vocabulary.concept rxnorm 
 	on presc.rxnorm_cui = rxnorm.concept_code and vocabulary_id='RxNorm' and standard_concept='S'
 left join 
@@ -213,7 +213,7 @@ SELECT
 
     medadmin_dose_admin_unit::VARCHAR(50) AS dose_unit_source_value
 
-FROM pcornet_cdm.cdm_2023_april.deid_med_admin medadmin
+FROM pcornet_cdm.cdm.deid_med_admin medadmin
 left join omop_cdm.vocabulary.concept ndc 
     on medadmin.medadmin_code=ndc.concept_code and medadmin_type='ND' and ndc.vocabulary_id='NDC' and ndc.invalid_reason is null
 left join omop_cdm.vocabulary.concept_relationship ndc_map 

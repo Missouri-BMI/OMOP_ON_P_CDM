@@ -1,0 +1,58 @@
+-- !!! CDM V6.0 TABLE !!! --
+----------------------------
+use TRACS_CDM;
+declare @DOMAIN_PERSON int = 1147314;
+
+truncate table TRACS_CDM.OMOP.XSTG_LOCATION_HISTORY;
+
+with pcdm_to_omop as
+(
+	select distinct person_id, patid from xomop.cohort_omop
+)
+insert into TRACS_CDM.OMOP.XSTG_LOCATION_HISTORY
+(
+	LOCATION_ID,
+	RELATIONSHIP_TYPE_CONCEPT_ID,
+	DOMAIN_ID,
+	ENTITY_ID,
+	START_DATE,
+	END_DATE
+)
+select
+	XSTG_LOCATION.LOCATION_ID as LOCATION_ID,
+	0 as RELATIONSHIP_TYPE_CONCEPT_ID,
+	@DOMAIN_PERSON as DOMAIN_ID,
+	pcdm_to_omop.person_id as ENTITY_ID,
+	ADDRESS_PERIOD_START as START_DATE,
+	ADDRESS_PERIOD_END as END_DATE
+from
+	pcdm.lds_address_history
+	join pcdm_to_omop on LDS_ADDRESS_HISTORY.patid = pcdm_to_omop.patid
+	join omop.xstg_location on
+		(
+			LDS_ADDRESS_HISTORY.ADDRESS_CITY = XSTG_LOCATION.CITY 
+			or
+			(LDS_ADDRESS_HISTORY.ADDRESS_CITY is NULL and XSTG_LOCATION.CITY is NULL)
+		)
+		and
+		(
+			LDS_ADDRESS_HISTORY.ADDRESS_STATE = XSTG_LOCATION.STATE
+			or
+			(LDS_ADDRESS_HISTORY.ADDRESS_STATE is null and XSTG_LOCATION.STATE is null)
+		)
+		and
+		(
+			LDS_ADDRESS_HISTORY.ADDRESS_ZIP5 = XSTG_LOCATION.ZIP
+			or
+			(LDS_ADDRESS_HISTORY.ADDRESS_ZIP5 is null and XSTG_LOCATION.ZIP is null)
+		)
+		and
+		(
+			LDS_ADDRESS_HISTORY.ADDRESS_COUNTY = XSTG_LOCATION.COUNTY
+			or
+			(LDS_ADDRESS_HISTORY.ADDRESS_COUNTY is null and XSTG_LOCATION.COUNTY is null)
+		)
+
+where
+	ADDRESS_PERIOD_START is not null
+--	
