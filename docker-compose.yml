@@ -7,6 +7,7 @@ services:
     build:
       context: ./Atlas
     container_name: ohdsi-atlas
+    read_only: true
     ports:
       - "80:8080"
     depends_on:
@@ -17,6 +18,7 @@ services:
     build: 
       context: ./WebAPI
     container_name: ohdsi-webapi
+    read_only: true
     ports:
       - "8080:8080"
     depends_on:

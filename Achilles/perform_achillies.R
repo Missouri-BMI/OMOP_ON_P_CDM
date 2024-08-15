@@ -1,5 +1,5 @@
 if (!require("remotes")) install.packages("remotes")
-remotes::install_github("Missouri-BMI/Achilles")
+remotes::install_github("OHDSI/Achilles")
 remotes::install_github("OHDSI/DataQualityDashboard")
 library(DatabaseConnector)
 library(Achilles)
@@ -14,7 +14,7 @@ print(Sys.getenv("user"))
 
 connectionDetails <- DatabaseConnector::createConnectionDetails(
   dbms     = "snowflake", 
-  connectionString = "jdbc:snowflake://xp02744.us-east-2.aws.snowflakecomputing.com/?db=OMOP_CDM&schema=RESULTS&warehouse=ATLAS_WH&role=OMOP_ATLAS&CLIENT_RESULT_COLUMN_CASE_INSENSITIVE=true",
+  connectionString = "jdbc:snowflake://fp20843.us-east-2.aws.snowflakecomputing.com/?db=ATLAS_MU_DEV&warehouse=OMOP_ETL_WH&role=OMOP_ELT&CLIENT_RESULT_COLUMN_CASE_INSENSITIVE=true",
   port = "443",
   user   = Sys.getenv("user"),
   password = Sys.getenv("password"),
@@ -32,9 +32,9 @@ achilles(connectionDetails = connectionDetails,
          vocabDatabaseSchema = "VOCABULARY",
          resultsDatabaseSchema = "RESULTS", 
          cdmVersion = "5.4",
-         numThreads = 1,
+         numThreads = 6,
          createIndices = FALSE,
-         optimizeAtlasCache = true,
+         optimizeAtlasCache = TRUE,
 		 outputFolder = "output")
 
 

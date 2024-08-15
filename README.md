@@ -10,23 +10,6 @@ steps:
 - docker-compose down 
 --Note: Clear volume if you want to populate database again "docker volume rm <volume-name>"
 
-## 
-```
-http://<server:port>/WebAPI/ddl/results?dialect=<your_cdm_database_dialect>&schema=<your_results_schema>&vocabSchema=<your_vocab_schema>&tempSchema=<your_temp_schema>&initConceptHierarchy=true
-
-
-#Step:1
-curl -X GET "http://localhost:8080/WebAPI/ddl/results?dialect=postgresql&schema=results&vocabSchema=cdm&tempSchema=temp&initConceptHierarchy=true" -o OMOPCDM_GENERATE.sql
-
-#Step:2
-curl -X GET "http://localhost:8080/WebAPI/source/refresh"
-
-#Step:3
-curl -X GET "http://localhost:8080/WebAPI/source/sources"
-```
-
-# ETL_OMPO
-
 ## Generate synthetic data
 https://github.com/OHDSI/ETL-Synthea
 ```
@@ -57,15 +40,6 @@ docker build --platform=linux/amd64 --no-cache -t 500206249851.dkr.ecr.us-east-2
 docker push 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-webapi
 
 
-## Atlas 
-18.118.112.247:8080/atlas
-
-## Webapi
-3.15.30.26:8080/WebAPI
-
-## atlas db
-ohdsi-atlas.ctsvcfrduobf.us-east-2.rds.amazonaws.com
-
 ## snowflake
 curl -X GET "https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/ddl/achilles?dialect=snowflake&schema=results&vocabSchema=VOCABULARY&tempSchema=temp&initConceptHierarchy=true" -o ACHILLES_SNOWFLAKE.sql
 
@@ -81,11 +55,3 @@ curl -X GET https://atlas-dev.nextgenbmi.umsystem.edu/atlas
 curl -X GET https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/info
 curl -X GET https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/source/refresh
 curl -X GET https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/source/sources
-
-
-curl -i https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/source/refresh \
--H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtaG1jYkB1bXN5c3RlbS5lZHUiLCJTZXNzaW9uLUlEIjoiZGYwOTJjMzQtMDM4My00Yjk0LTkzMDUtNWQ5NTMyOTRlZDc4IiwiZXhwIjoxNzAyNDU5MjEzfQ.0I7oufzAw1d4baWVtfJWntDjlc_l9sRDwAPwZf9vhkMNPFDGQgKx5EJmrFD71m95k9zBdNoMbBlWOg_U8sDfaQ"
-  
-
-curl -i https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/source/sources \
--H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtaG1jYkB1bXN5c3RlbS5lZHUiLCJTZXNzaW9uLUlEIjoiZGYwOTJjMzQtMDM4My00Yjk0LTkzMDUtNWQ5NTMyOTRlZDc4IiwiZXhwIjoxNzAyNDU5MjEzfQ.0I7oufzAw1d4baWVtfJWntDjlc_l9sRDwAPwZf9vhkMNPFDGQgKx5EJmrFD71m95k9zBdNoMbBlWOg_U8sDfaQ"
