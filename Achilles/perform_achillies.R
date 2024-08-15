@@ -32,9 +32,9 @@ achilles(connectionDetails = connectionDetails,
          vocabDatabaseSchema = "VOCABULARY",
          resultsDatabaseSchema = "RESULTS", 
          cdmVersion = "5.4",
-         numThreads = 1,
+         numThreads = 6,
          createIndices = FALSE,
-         optimizeAtlasCache = true,
+         optimizeAtlasCache = TRUE,
 		 outputFolder = "output")
 
 

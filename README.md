@@ -55,7 +55,7 @@ docker push 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-atlas
 
 docker build --platform=linux/amd64 --no-cache -t 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-webapi .
 docker push 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-webapi
-
+a
 
 ## Atlas 
 18.118.112.247:8080/atlas
