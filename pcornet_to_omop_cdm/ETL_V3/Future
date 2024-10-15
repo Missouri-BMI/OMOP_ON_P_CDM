@@ -1,0 +1,23 @@
+
+
+Person
+-location id is null
+-Provider id is null - can be person primary provider
+-Caresiteid will be clinic of pcp
+
+
+Visit Occurence
+-care_site_id
+Caresite:
+-change care_site_id to facilityid
+-locationid not populated
+
+Condition Occurence
+-add condition table from cdm
+
+procedure occurance
+-px type OD, BI
+
+
+Death
+--if death date is not null, shift should be - in past nor + infuture
