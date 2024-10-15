@@ -1,8 +1,8 @@
---Person View
-
+--multiple entry per patid
+--multiple entry in death per patid
 Create or replace view CDM.person AS
 (
-SELECT demographic.patid::INTEGER                                                   AS PERSON_ID,
+SELECT distinct demographic.patid::INTEGER                                                   AS PERSON_ID,
        coalesce(gender_map.source_concept_id, 44814650)::INTEGER                    AS gender_concept_id,
        year(demographic.birth_date)::INTEGER                                        AS year_of_birth,
        month(demographic.birth_date)::INTEGER                                       AS month_of_birth,
@@ -28,20 +28,26 @@ SELECT demographic.patid::INTEGER                                               
        44814650::INTEGER                                                            AS ethnicity_source_concept_id
 
 FROM DEIDENTIFIED_PCORNET_CDM.CDM.DEID_DEMOGRAPHIC demographic
-         left join
-     CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING gender_map
-     on demographic.sex = gender_map.PCORNET_VALUESET_ITEM
-         and gender_map.source_concept_class = 'Gender'
-         left join
-     CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING ethnicity_map
-     on demographic.hispanic = ethnicity_map.PCORNET_VALUESET_ITEM
-         and ethnicity_map.source_concept_class = 'Hispanic'
-         left join
-     CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING race_map
-     on demographic.race = race_map.PCORNET_VALUESET_ITEM
-         and race_map.source_concept_class = 'Race'
-         left join DEIDENTIFIED_PCORNET_CDM.CDM.DEID_DEATH death
-                   on death.patid = demographic.patid
+    left join
+        CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING gender_map
+        on demographic.sex = gender_map.PCORNET_VALUESET_ITEM
+            and gender_map.source_concept_class = 'Gender'
+            and gender_map.pcornet_table_name = 'DEMOGRAPHIC' 
+            and gender_map.pcornet_field_name = 'SEX'
+    left join
+        CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING ethnicity_map
+        on demographic.hispanic = ethnicity_map.PCORNET_VALUESET_ITEM
+        and ethnicity_map.source_concept_class = 'Hispanic'
+        and ethnicity_map.pcornet_table_name = 'DEMOGRAPHIC' 
+        and ethnicity_map.pcornet_field_name = 'HISPANIC'
+    left join
+        CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING race_map
+        on demographic.race = race_map.PCORNET_VALUESET_ITEM
+        and race_map.source_concept_class = 'Race'
+        and race_map.pcornet_table_name = 'DEMOGRAPHIC' 
+        and race_map.pcornet_field_name = 'RACE'
+    left join DEIDENTIFIED_PCORNET_CDM.CDM.DEID_DEATH death
+        on death.patid = demographic.patid
 where year_of_birth is not null
     );
 

@@ -1,4 +1,6 @@
 
+--TODO: lab.patid::INTEGER AS visit_occurrence_id,
+
 create or replace view cdm.measurement
 AS
 SELECT

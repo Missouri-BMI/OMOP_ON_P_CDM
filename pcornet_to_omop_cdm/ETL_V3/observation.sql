@@ -1,82 +1,9 @@
 
---change test from pycharm test 2
-create or replace secure view cdm.observation
-AS
-select
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::INTEGER AS observation_id,
+--  DRG observations
+--TODO:  observation_id,
+--TODO: add more observations
 
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::INTEGER AS person_id,
-
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::INTEGER AS observation_concept_id,
-
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::DATE AS observation_date,
-
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::TIMESTAMP AS observation_datetime,
-
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::INTEGER AS observation_type_concept_id,
-
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::NUMERIC AS value_as_number,
-
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::VARCHAR(60) AS value_as_string,
-
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::INTEGER AS value_as_concept_id,
-
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::INTEGER AS qualifier_concept_id,
-
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::INTEGER AS unit_concept_id,
-
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::INTEGER AS provider_id,
-
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::INTEGER AS visit_occurrence_id,
-
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::INTEGER AS visit_detail_id,
-
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::VARCHAR(50) AS observation_source_value,
-
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::INTEGER AS observation_source_concept_id,
-
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::VARCHAR(50) AS unit_source_value,
-
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::VARCHAR(50) AS qualifier_source_value,
-
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::VARCHAR(50) AS value_source_value,
-
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::INTEGER AS observation_event_id,
-
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::INTEGER AS obs_event_field_concept_id
-
-FROM pcornet_cdm.cdm_2023_april.deid_immunization;
-
----
-use role CDM_ELT;
-use database omop_cdm;
-use schema cdm;
-use warehouse cdm_elt_wh;
-CREATE OR REPLACE SEQUENCE obs_seq;
-
--- Create or replace the Snowflake view for DRG observations
-CREATE OR REPLACE VIEW cdm.DEID_observation AS
+CREATE OR REPLACE view cdm.observation AS
 SELECT DISTINCT
     3040464 AS observation_concept_id,
     CASE
@@ -89,7 +16,8 @@ SELECT DISTINCT
         WHEN enc.admit_date IS NOT NULL AND TRY_TO_TIMESTAMP(enc.admit_date::varchar, 'YYYY-MM-DD HH24:MI:SS') IS NOT NULL THEN TRY_TO_TIMESTAMP(enc.admit_date::varchar, 'YYYY-MM-DD HH24:MI:SS')
         ELSE '0001-01-01'::timestamp
     END AS observation_datetime,
-    obs_seq.NEXTVAL AS observation_id,
+   --  obs_seq.NEXTVAL AS observation_id,
+   ROW_NUMBER() OVER (ORDER BY enc.encounterid) ::INTEGER AS observation_id,
     0 AS observation_source_concept_id,
     'DRG|'||enc.DRG AS observation_source_value,
     38000280 AS observation_type_concept_id,
