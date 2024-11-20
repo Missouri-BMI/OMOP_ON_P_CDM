@@ -45,5 +45,6 @@ FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_encounter enc
         on enctyp.PCORNET_VALUESET_ITEM = enc.enc_type
         and enctyp.PCORNET_FIELD_NAME = 'ENC TYPE' 
         and enctyp.pcornet_table_name = 'ENCOUNTER'
+
      --and source_concept_id not in ('2000000469','42898160')
     );

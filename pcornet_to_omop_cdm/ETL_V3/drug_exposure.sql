@@ -1,5 +1,6 @@
 
 --TODO: dispensingid, prescribingid, medadminid id can have same id, cannot be used in drug_exposure_id
+
 create or replace view CDM.drug_exposure
 AS
 --dispensing
@@ -190,7 +191,7 @@ FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_med_admin medadmin
          left join vocabulary.concept ndc
                    on medadmin.medadmin_code = ndc.concept_code and medadmin_type = 'ND' and
                       ndc.vocabulary_id = 'NDC' and ndc.invalid_reason is null
-         left join vocabulary.concept rxnorm
+        left join vocabulary.concept rxnorm
                    on medadmin.medadmin_code = rxnorm.concept_code and medadmin_type = 'RX' and
                       rxnorm.vocabulary_id = 'RxNorm' and rxnorm.standard_concept = 'S'
          left join CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING route

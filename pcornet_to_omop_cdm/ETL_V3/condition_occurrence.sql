@@ -67,3 +67,4 @@ left join vocabulary.concept c_icd10 on diagnosis.dx=c_icd10.concept_code
 left join vocabulary.concept c_snomed on diagnosis.dx=c_snomed.concept_code
     and c_snomed.vocabulary_id='SNOMED' and diagnosis.dx_type='SM'
 ;
+

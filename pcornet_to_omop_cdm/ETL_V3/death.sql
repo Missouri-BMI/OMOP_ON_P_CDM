@@ -42,6 +42,5 @@ left join vocabulary.concept c_icd10 on dc.death_cause=c_icd10.concept_code
 	and c_icd10.vocabulary_id='ICD10CM' and dc.death_cause_code='10'
 left join vocabulary.concept c_snomed on dc.death_cause=c_snomed.concept_code
 	and c_snomed.vocabulary_id='SNOMED' and dc.death_cause_code='SM'
-
-
+;
 

@@ -1,5 +1,6 @@
 --TODO: all columns are null
 
+
 create or replace view cdm.provider
 AS
 SELECT
