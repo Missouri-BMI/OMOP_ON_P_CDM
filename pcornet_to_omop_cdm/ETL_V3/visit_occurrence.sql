@@ -1,4 +1,6 @@
 
+--TODO: duplicate encounter in cdm 
+
 Create or replace view CDM.visit_occurrence AS
 (
 SELECT enc.encounterid::INTEGER                                        AS visit_occurrence_id,
@@ -28,17 +30,21 @@ FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_encounter enc
       /*   left join
      OMOP_CDM.DEID_CDM.care_site cs
      on enc.facilityid = cs.care_site_id */
-         LEFT JOIN
-     CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING as_map
-     ON as_map.PCORNET_FIELD_NAME = 'ADMITTING SOURCE'
-         AND as_map.PCORNET_VALUESET_ITEM = enc.admitting_source
-         LEFT JOIN
-     CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING ds_map
-     ON ds_map.PCORNET_FIELD_NAME = 'DISCHARGE STATUS'
-         AND ds_map.PCORNET_VALUESET_ITEM = enc.discharge_status
-         left join
-     CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING enctyp
-     on enctyp.PCORNET_VALUESET_ITEM = enc.enc_type
-         and enctyp.source_concept_class = 'Encounter type'
+    LEFT JOIN
+        CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING as_map
+        ON as_map.PCORNET_FIELD_NAME = 'ADMITTING SOURCE'
+        AND as_map.pcornet_table_name = 'ENCOUNTER'
+        AND as_map.PCORNET_VALUESET_ITEM = enc.admitting_source
+    LEFT JOIN
+        CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING ds_map
+        ON ds_map.PCORNET_FIELD_NAME = 'DISCHARGE STATUS'
+        and ds_map.pcornet_table_name = 'ENCOUNTER'
+        AND ds_map.PCORNET_VALUESET_ITEM = enc.discharge_status
+    left join
+        CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING enctyp
+        on enctyp.PCORNET_VALUESET_ITEM = enc.enc_type
+        and enctyp.PCORNET_FIELD_NAME = 'ENC TYPE' 
+        and enctyp.pcornet_table_name = 'ENCOUNTER'
+
      --and source_concept_id not in ('2000000469','42898160')
     );

@@ -1,16 +1,18 @@
+--TODO: multiple death cause
+
 CREATE or replace view cdm.death
 AS
-SELECT
+SELECT distinct
 d.PATID::INTEGER AS person_id,
 d.death_date::DATE as death_date,
 (d.death_date)::DATETIME as death_datetime,
 coalesce(dt.source_concept_id,0)::INTEGER as death_type_concept_id,
 coalesce(case
-	when dc.death_cause_code='09' then cr_icd9.concept_id_2
-	when dc.death_cause_code='10' then cr_icd10.concept_id_2
+	when dc.death_cause_code='09' then c_icd9.concept_id
+	when dc.death_cause_code='10' then c_icd10.concept_id
 	when dc.death_cause_code='SM' then c_snomed.concept_id
-	when dc.death_cause is not null and (cr_icd9.concept_id_2 is null
-											and cr_icd10.concept_id_2 is null
+	when dc.death_cause is not null and (c_icd9.concept_id is null
+											and c_icd10.concept_id is null
 											and c_snomed.concept_id is null) then 0 end,
 	44814650)::INTEGER as cause_concept_id,
     dc.death_cause::VARCHAR(50) as cause_source_value,
@@ -40,11 +42,5 @@ left join vocabulary.concept c_icd10 on dc.death_cause=c_icd10.concept_code
 	and c_icd10.vocabulary_id='ICD10CM' and dc.death_cause_code='10'
 left join vocabulary.concept c_snomed on dc.death_cause=c_snomed.concept_code
 	and c_snomed.vocabulary_id='SNOMED' and dc.death_cause_code='SM'
-left join vocabulary.concept_relationship cr_icd9
-	on c_icd9.concept_id = cr_icd9.concept_id_1
-	and cr_icd9.relationship_id='Maps to'
-left join vocabulary.concept_relationship cr_icd10
-	on c_icd10.concept_id = cr_icd10.concept_id_1
-	and cr_icd10.relationship_id='Maps to';
-
+;
 

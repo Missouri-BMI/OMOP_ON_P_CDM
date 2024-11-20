@@ -1,20 +1,22 @@
-Create or replace view CDM.observation_period AS
+--TODO: all columns are null
+create or replace view CDM.OBSERVATION_PERIOD(
+	OBSERVATION_PERIOD_ID,
+	PERSON_ID,
+	OBSERVATION_PERIOD_START_DATE,
+	OBSERVATION_PERIOD_END_DATE,
+	PERIOD_TYPE_CONCEPT_ID
+) as
 (
 SELECT
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::INTEGER AS observation_period_id,
+   --  ATLAS_MU_DEV.CDM.observation_period_id_seq.nextval::INTEGER AS observation_period_id,
+   ROW_NUMBER() OVER (ORDER BY enrl.patid) ::INTEGER AS observation_period_id,
+ patid::INTEGER AS person_id,
 
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::INTEGER AS person_id,
+ ENR_START_DATE::date AS observation_period_start_date,
 
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::date AS observation_period_start_date,
+ENR_END_DATE::date AS observation_period_end_date,
 
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::date AS observation_period_end_date,
+ 44814722::INTEGER AS period_type_concept_id
 
- -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
-    NULL::INTEGER AS period_type_concept_id
-
-FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_enrollment
+FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_enrollment enr
 );

@@ -1,4 +1,5 @@
 
+--TODO: dispensingid, prescribingid, medadminid id can have same id, cannot be used in drug_exposure_id
 
 create or replace view CDM.drug_exposure
 AS
@@ -7,7 +8,7 @@ SELECT disp.dispensingid::INTEGER                 AS drug_exposure_id,
 
        disp.patid::INTEGER                        AS person_id,
 
-       coalesce(ndc_map.concept_id_2, 0)::INTEGER AS drug_concept_id,
+       coalesce(ndc.concept_id, 0)::INTEGER AS drug_concept_id,
 
        disp.dispense_date::DATE                   AS drug_exposure_start_date,
 
@@ -60,8 +61,6 @@ SELECT disp.dispensingid::INTEGER                 AS drug_exposure_id,
 FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_dispensing disp
          left join vocabulary.concept ndc
                    on disp.ndc = ndc.concept_code and ndc.vocabulary_id = 'NDC' and ndc.invalid_reason is null
-         left join vocabulary.concept_relationship ndc_map
-                   on ndc.concept_id = ndc_map.concept_id_1 and ndc_map.relationship_id = 'Maps to'
          left join CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING route
                    on pcornet_field_name = 'DISPENSE ROUTE' and disp.dispense_route = route.PCORNET_VALUESET_ITEM
 
@@ -133,7 +132,7 @@ SELECT medadmin.medadminid::INTEGER                                             
 
        coalesce(
                case
-                   when medadmin_type = 'ND' then ndc_map.concept_id_2
+                   when medadmin_type = 'ND' then ndc.concept_id
                    when medadmin_type = 'RX' then rxnorm.concept_id
                    else 0
                    end,
@@ -192,9 +191,7 @@ FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_med_admin medadmin
          left join vocabulary.concept ndc
                    on medadmin.medadmin_code = ndc.concept_code and medadmin_type = 'ND' and
                       ndc.vocabulary_id = 'NDC' and ndc.invalid_reason is null
-         left join vocabulary.concept_relationship ndc_map
-                   on ndc.concept_id = ndc_map.concept_id_1 and ndc_map.relationship_id = 'Maps to'
-         left join vocabulary.concept rxnorm
+        left join vocabulary.concept rxnorm
                    on medadmin.medadmin_code = rxnorm.concept_code and medadmin_type = 'RX' and
                       rxnorm.vocabulary_id = 'RxNorm' and rxnorm.standard_concept = 'S'
          left join CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING route

@@ -5,8 +5,8 @@ SELECT
     diagnosis.diagnosisid::INTEGER AS condition_occurrence_id,
     diagnosis.patid::INTEGER AS person_id,
 coalesce(case
-        when diagnosis.dx_type='09' then cr_icd9.concept_id_2
-        when diagnosis.dx_type='10' then cr_icd10.concept_id_2
+        when diagnosis.dx_type='09' then c_icd9.concept_id
+        when diagnosis.dx_type='10' then c_icd10.concept_id
         when diagnosis.dx_type='SM' then c_snomed.concept_id
     else
      0
@@ -60,31 +60,11 @@ coalesce(case
    diagnosis.dx_source::varchar(50) AS condition_status_source_value
 
 FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_diagnosis diagnosis
-left join OMOP_CDM.vocabulary.concept c_icd9 on diagnosis.dx=c_icd9.concept_code
+left join vocabulary.concept c_icd9 on diagnosis.dx=c_icd9.concept_code
     and c_icd9.vocabulary_id='ICD9CM' and diagnosis.dx_type='09'
-left join OMOP_CDM.vocabulary.concept c_icd10 on diagnosis.dx=c_icd10.concept_code
+left join vocabulary.concept c_icd10 on diagnosis.dx=c_icd10.concept_code
     and c_icd10.vocabulary_id='ICD10CM' and diagnosis.dx_type='10'
-left join OMOP_CDM.vocabulary.concept c_snomed on diagnosis.dx=c_snomed.concept_code
+left join vocabulary.concept c_snomed on diagnosis.dx=c_snomed.concept_code
     and c_snomed.vocabulary_id='SNOMED' and diagnosis.dx_type='SM'
-left join OMOP_CDM.vocabulary.concept_relationship cr_icd9
-    on c_icd9.concept_id = cr_icd9.concept_id_1
-    and cr_icd9.relationship_id='Maps to'
-left join OMOP_CDM.vocabulary.concept_relationship cr_icd10
-    on c_icd10.concept_id = cr_icd10.concept_id_1
-    and cr_icd10.relationship_id='Maps to'
 ;
---left join OMOP_CDM.OMOP_CDM.vocabulary.CONCEPT on DX = CONCEPT_CODE and vocabulary_ID in ('ICD10CM', 'ICD9CM')
---left join pcornet_cdm.CDM_2023_APRIL.encounter
 
-
-/*
-select distinct domain_id, vocabulary_id from OMOP_CDM.VOCABULARIES.CONCEPT
-select distinct DX, DX_TYPE, CONCEPT.* from OMOP_CDM.VOCABULARIES.CONCEPT
-join pcornet_cdm.CDM_2023_APRIL.diagnosis
-on concept_code = DX 
-where vocabulary_ID like 'ICD10CM' and DOMAIN_ID = 'Condition' order by DX
-
-
-select * from omop_cdm.OMOP_CDM.vocabulary.concept where concept_code like '%N99.3%'
-*/
-select * from OMOP_CDM.CDM.CONDITION_OCCURRENCE limit 500;

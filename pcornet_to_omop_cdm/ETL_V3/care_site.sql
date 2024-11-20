@@ -13,7 +13,7 @@ SELECT distinct
 
 FROM DEIDENTIFIED_PCORNET_CDM.CDM.DEID_ENCOUNTER enc
 left join
-    OMOP_CDM.CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING place
+    CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING place
     on place.PCORNET_VALUESET_ITEM = enc.facility_type
     and place.source_concept_id is not null
     and place.source_concept_class='Facility type'

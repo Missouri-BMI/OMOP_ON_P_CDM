@@ -1,3 +1,4 @@
+--TODO: all columns are null
 
 Create or replace view CDM.procedure_occurrence AS
 SELECT
