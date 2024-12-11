@@ -18,5 +18,5 @@ ENR_END_DATE::date AS observation_period_end_date,
 
  44814722::INTEGER AS period_type_concept_id
 
-FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_enrollment enr
+FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_enrollment enrl
 );
