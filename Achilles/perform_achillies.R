@@ -29,7 +29,7 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(
 ## https://github.com/OHDSI/Achilles/blob/main/R/Achilles.R
 achilles(connectionDetails = connectionDetails, 
          cdmDatabaseSchema = "CDM", 
-         vocabDatabaseSchema = "VOCABULARY",
+         vocabDatabaseSchema = "CDM",
          resultsDatabaseSchema = "RESULTS", 
          cdmVersion = "5.4",
          numThreads = 6,

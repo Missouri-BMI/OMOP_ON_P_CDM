@@ -139,3 +139,4 @@ ETL_OMOP/output/*
 ETL_OMOP/vocabulary_v5/*
 Achilles/output/*
 Achilles/errorReportSql.txt
+estimation/drivers/*
