@@ -1,17 +1,9 @@
 ### 
 ```
-renv::init()
-renv::restore()
-renv::snapshot()
-
-remotes::install_github("OHDSI/CohortMethod", ref = "v4.2.3")
-remotes::install_github("OHDSI/OhdsiSharing")
-remotes::install_github("OHDSI/ROhdsiWebApi")
-remotes::install_github("OHDSI/MethodEvaluation")
-remotes::install_github("OHDSI/OhdsiRTools")
-
-pkgbuild::build(path = "C:/Users/Administrator/Desktop/estimation_study_8_export", dest_path = "C:/Users/Administrator/Desktop/ESTIMATIONPACKAGE.tar.gz")
-install.packages("C:/Users/Administrator/Desktop/ESTIMATIONPACKAGE.tar.gz", repos = NULL, type = "source")
+# open Rstudio with R 4.4.1
+renv::restore() 
+pkgbuild::build()
+install.packages("C:/Users/Administrator/Desktop/final/HSV_0.0.1.tar.gz", repos = NULL, type = "source")
 ```
 
 ### shinyapp.r

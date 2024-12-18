@@ -11,10 +11,15 @@ print(Sys.getenv("user"))
 # Running Achilles: Single-Threaded Mode
 # In single-threaded mode, there is no need to set a `scratchDatabaseSchema`, as temporary tables will be used.
 
+# MU
+# connection <- "jdbc:snowflake://fp20843.us-east-2.aws.snowflakecomputing.com/?db=ATLAS_MU_DEV&warehouse=OMOP_ETL_WH&role=OMOP_ELT&CLIENT_RESULT_COLUMN_CASE_INSENSITIVE=true"
+
+# GPC
+
 
 connectionDetails <- DatabaseConnector::createConnectionDetails(
   dbms     = "snowflake", 
-  connectionString = "jdbc:snowflake://fp20843.us-east-2.aws.snowflakecomputing.com/?db=ATLAS_MU_DEV&warehouse=OMOP_ETL_WH&role=OMOP_ELT&CLIENT_RESULT_COLUMN_CASE_INSENSITIVE=true",
+  connectionString = "jdbc:snowflake://fp20843.us-east-2.aws.snowflakecomputing.com/?db=ATLAS_GPC_DEV&warehouse=OMOP_ETL_WH&role=OMOP_ELT&CLIENT_RESULT_COLUMN_CASE_INSENSITIVE=true",
   port = "443",
   user   = Sys.getenv("user"),
   password = Sys.getenv("password"),
@@ -22,7 +27,7 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(
 )
 
 # conn <- connect(connectionDetails)
-# disconnect(conn)
+# disconnect(connectionDetails)
 
 
 ## Explore more parameter from: https://github.com/OHDSI/Achilles/blob/main/vignettes/RunningAchilles.Rmd
