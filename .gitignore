@@ -127,3 +127,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+pcornet_to_omop_cdm/airflow-env/
+pcornet_to_omop_cdm/airflow/config/
+pcornet_to_omop_cdm/airflow/logs/
+pcornet_to_omop_cdm/airflow/plugins/
+pcornet_to_omop_cdm/env/*
+pcornet_to_omop_cdm/**/.env
