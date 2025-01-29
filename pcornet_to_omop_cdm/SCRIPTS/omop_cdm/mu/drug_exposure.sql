@@ -1,81 +1,81 @@
 
 --TODO: dispensingid, prescribingid, medadminid id can have same id, cannot be used in drug_exposure_id
 
-create or replace view CDM.drug_exposure
+create or replace view {cdm_db}.{cdm_schema}.drug_exposure
 AS
 --dispensing
 SELECT disp.dispensingid::INTEGER                 AS drug_exposure_id,
 
-       disp.patid::INTEGER                        AS person_id,
+    disp.patid::INTEGER                        AS person_id,
 
-       coalesce(ndc.concept_id, 0)::INTEGER AS drug_concept_id,
+    coalesce(ndc.concept_id, 0)::INTEGER AS drug_concept_id,
 
-       disp.dispense_date::DATE                   AS drug_exposure_start_date,
+    disp.dispense_date::DATE                   AS drug_exposure_start_date,
 
-       disp.dispense_date::DATETIME               AS drug_exposure_start_datetime,
+    disp.dispense_date::DATETIME               AS drug_exposure_start_datetime,
 
-       NULL::DATE                                 AS drug_exposure_end_date,
+    NULL::DATE                                 AS drug_exposure_end_date,
 
-       NULL::TIMESTAMP                            AS drug_exposure_end_datetime,
+    NULL::TIMESTAMP                            AS drug_exposure_end_datetime,
 
-       NULL::DATE                                 AS verbatim_end_date,
+    NULL::DATE                                 AS verbatim_end_date,
 
-       38000175::INTEGER                          AS drug_type_concept_id,
+    38000175::INTEGER                          AS drug_type_concept_id,
 
-       NULL::VARCHAR(50)                          AS stop_reason,
+    NULL::VARCHAR(50)                          AS stop_reason,
 
-       NULL::INTEGER                              AS refills,
+    NULL::INTEGER                              AS refills,
 
-       disp.dispense_amt::NUMERIC                 AS quantity,
+    disp.dispense_amt::NUMERIC                 AS quantity,
 
-       disp.dispense_sup::INTEGER                 AS days_supply,
+    disp.dispense_sup::INTEGER                 AS days_supply,
 
-       NULL::TEXT                                 AS sig,
+    NULL::TEXT                                 AS sig,
 
-       coalesce(
-               case
-                   when disp.dispense_route = 'OT' then 44814649
-                   else route.source_concept_id
-                   end, 0)::INTEGER               AS route_concept_id,
+    coalesce(
+         case
+             when disp.dispense_route = 'OT' then 44814649
+             else route.source_concept_id
+             end, 0)::INTEGER               AS route_concept_id,
 
-       NULL::VARCHAR(50)                          AS lot_number,
+    NULL::VARCHAR(50)                          AS lot_number,
 
-       NULL::INTEGER                              AS provider_id,
+    NULL::INTEGER                              AS provider_id,
 
-       NULL::INTEGER                              AS visit_occurrence_id,
+    NULL::INTEGER                              AS visit_occurrence_id,
 
-       NULL::INTEGER                              AS visit_detail_id,
+    NULL::INTEGER                              AS visit_detail_id,
 
-       ndc::VARCHAR(50)                           AS drug_source_value,
+    ndc::VARCHAR(50)                           AS drug_source_value,
 
-       (case
-            when dispense_source = 'OD' then 38000275
-            when dispense_source = 'BI' then 44786630
-            else 44814653
-           end)::INTEGER                          AS drug_source_concept_id,
+    (case
+         when dispense_source = 'OD' then 38000275
+         when dispense_source = 'BI' then 44786630
+         else 44814653
+        end)::INTEGER                          AS drug_source_concept_id,
 
-       disp.dispense_route::VARCHAR(50)           AS route_source_value,
+    disp.dispense_route::VARCHAR(50)           AS route_source_value,
 
-       disp.dispense_dose_disp_unit::VARCHAR(50)  AS dose_unit_source_value
+    disp.dispense_dose_disp_unit::VARCHAR(50)  AS dose_unit_source_value
 
-FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_dispensing disp
-         left join vocabulary.concept ndc
-                   on disp.ndc = ndc.concept_code and ndc.vocabulary_id = 'NDC' and ndc.invalid_reason is null
-         left join CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING route
-                   on pcornet_field_name = 'DISPENSE ROUTE' and disp.dispense_route = route.PCORNET_VALUESET_ITEM
+FROM {pcornet_db}.{pcornet_schema}.deid_dispensing disp
+      left join {cdm_db}.{vocabulary}.concept ndc
+             on disp.ndc = ndc.concept_code and ndc.vocabulary_id = 'NDC' and ndc.invalid_reason is null
+      left join {cdm_db}.{crosswalk}.OMOP_PCORNET_VALUESET_MAPPING route
+             on pcornet_field_name = 'DISPENSE ROUTE' and disp.dispense_route = route.PCORNET_VALUESET_ITEM
 
 union
 
 --prescribing
 SELECT presc.prescribingid::INTEGER                                                               AS drug_exposure_id,
 
-       presc.patid::INTEGER                                                                       AS person_id,
+    presc.patid::INTEGER                                                                       AS person_id,
 
-       coalesce(rxnorm.concept_id, 0)::INTEGER                                                    AS drug_concept_id,
+    coalesce(rxnorm.concept_id, 0)::INTEGER                                                    AS drug_concept_id,
 
-       presc.rx_start_date::DATE                                                                  AS drug_exposure_start_date,
+    presc.rx_start_date::DATE                                                                  AS drug_exposure_start_date,
 
-       presc.rx_start_date::DATETIME                                                              AS drug_exposure_start_datetime,
+    presc.rx_start_date::DATETIME                                                              AS drug_exposure_start_datetime,
 
        NULL::DATE                                                                                 AS drug_exposure_end_date,
 
@@ -117,10 +117,10 @@ SELECT presc.prescribingid::INTEGER                                             
 
        presc.rx_dose_ordered_unit::VARCHAR(50)                                                    AS dose_unit_source_value
 
-FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_prescribing presc
-         left join vocabulary.concept rxnorm
+FROM {pcornet_db}.{pcornet_schema}.deid_prescribing presc
+         left join {cdm_db}.{vocabulary}.concept rxnorm
                    on presc.rxnorm_cui = rxnorm.concept_code and vocabulary_id = 'RxNorm' and standard_concept = 'S'
-         left join CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING route
+         left join {cdm_db}.{crosswalk}.OMOP_PCORNET_VALUESET_MAPPING route
                    on pcornet_field_name = 'RX ROUTE' and presc.rx_route = route.PCORNET_VALUESET_ITEM
 
 union
@@ -187,15 +187,13 @@ SELECT medadmin.medadminid::INTEGER                                             
 
        medadmin_dose_admin_unit::VARCHAR(50)                                                           AS dose_unit_source_value
 
-FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_med_admin medadmin
-         left join vocabulary.concept ndc
+FROM {pcornet_db}.{pcornet_schema}.deid_med_admin medadmin
+         left join {cdm_db}.{vocabulary}.concept ndc
                    on medadmin.medadmin_code = ndc.concept_code and medadmin_type = 'ND' and
                       ndc.vocabulary_id = 'NDC' and ndc.invalid_reason is null
-        left join vocabulary.concept rxnorm
+        left
                    on medadmin.medadmin_code = rxnorm.concept_code and medadmin_type = 'RX' and
                       rxnorm.vocabulary_id = 'RxNorm' and rxnorm.standard_concept = 'S'
-         left join CROSSWALK.OMOP_PCORNET_VALUESET_MAPPING route
+         left join {cdm_db}.{crosswalk}.OMOP_PCORNET_VALUESET_MAPPING route
                    on pcornet_field_name = 'MEDADMIN ROUTE' and medadmin.medadmin_route = route.PCORNET_VALUESET_ITEM;
-
-    
 

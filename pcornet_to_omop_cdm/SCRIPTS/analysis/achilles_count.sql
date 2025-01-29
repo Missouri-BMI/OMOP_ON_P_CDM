@@ -1,9 +1,9 @@
 /************************************************/
 /***** Create record and person count table *****/
 /************************************************/
-DROP TABLE IF EXISTS results_v3.achilles_result_concept_count;
+DROP TABLE IF EXISTS results.achilles_result_concept_count;
 
-CREATE TABLE results_v3.achilles_result_concept_count
+CREATE TABLE results.achilles_result_concept_count
 (
   concept_id                int,
   record_count              bigint,
@@ -21,7 +21,7 @@ CREATE TEMP TABLE t4gnl28stmp_counts
 AS
 WITH counts  AS (
   SELECT stratum_1 AS concept_id, MAX (count_value) AS agg_count_value
-  FROM results_v3.achilles_results
+  FROM results.achilles_results
   WHERE analysis_id IN (2, 4, 5, 201, 225, 301, 325, 401, 425, 501, 505, 525, 601, 625, 701, 725, 801, 825,
     826, 827, 901, 1001, 1201, 1203, 1425, 1801, 1825, 1826, 1827, 2101, 2125, 2301)
     /* analyses:
@@ -61,7 +61,7 @@ WITH counts  AS (
   GROUP BY stratum_1
   UNION ALL
   SELECT stratum_2 AS concept_id, SUM (count_value) AS agg_count_value
-  FROM results_v3.achilles_results
+  FROM results.achilles_results
   WHERE analysis_id IN (405, 605, 705, 805, 807, 1805, 1807, 2105)
     /* analyses:
          Number of condition occurrence records, by condition_concept_id by condition_type_concept_id
@@ -88,7 +88,7 @@ CREATE TEMP TABLE t4gnl28stmp_counts_person
 AS
 WITH counts_person  AS (
   SELECT stratum_1 AS concept_id, MAX (count_value) AS agg_count_value
-  FROM results_v3.achilles_results
+  FROM results.achilles_results
   WHERE analysis_id IN (200, 240, 400, 440, 540, 600, 640, 700, 740, 800, 840, 900, 1000, 1300, 1340, 1800, 1840, 2100, 2140, 2200)
     /* analyses:
         Number of persons with at least one visit occurrence, by visit_concept_id
@@ -142,7 +142,7 @@ ancestor_id,
 FROM
 concepts;
 
-INSERT INTO results_v3.achilles_result_concept_count (concept_id, record_count, descendant_record_count, person_count, descendant_person_count)
+INSERT INTO results.achilles_result_concept_count (concept_id, record_count, descendant_record_count, person_count, descendant_person_count)
 SELECT DISTINCT
     TRY_CAST(CAST(concepts.ancestor_id  AS TEXT) AS int) AS concept_id,
     coalesce(max(c1.agg_count_value), 0) AS record_count,

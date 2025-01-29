@@ -1,5 +1,4 @@
-
-Create or replace view CDM.LOCATION AS
+Create or replace view {cdm_db}.{cdm_schema}.LOCATION AS
 (
 SELECT
 distinct
@@ -33,5 +32,5 @@ ADDRESS_STATE::VARCHAR(2) AS state,
  -- [!WARNING!] no source column found. See possible comment at the INSERT INTO
     NULL::NUMERIC AS longitude
 
-FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_lds_address_history
+FROM {pcornet_db}.{pcornet_schema}.deid_lds_address_history
 );

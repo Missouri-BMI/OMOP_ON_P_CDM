@@ -3,7 +3,7 @@
 --TODO:  observation_id,
 --TODO: add more observations
 
-CREATE OR REPLACE view cdm.observation AS
+CREATE OR REPLACE view {cdm_db}.{cdm_schema}.observation AS
 SELECT DISTINCT
     3040464 AS observation_concept_id,
     CASE
@@ -41,19 +41,20 @@ SELECT DISTINCT
     END AS value_source_value,
     enc.encounterid AS visit_occurrence_id
 FROM
-    DEIDENTIFIED_PCORNET_CDM.CDM.deid_encounter enc
+    {pcornet_db}.{pcornet_schema}.deid_encounter enc
 LEFT JOIN
-    vocabulary.concept drg
+    {cdm_db}.{vocabulary}.concept drg
 ON
     enc.drg = drg.concept_code
     AND drg.concept_class_id = 'DRG'
     AND drg.valid_end_date = '2007-09-30'
     AND drg.invalid_reason = 'D'
 LEFT JOIN
-    vocabulary.concept msdrg
+    {cdm_db}.{vocabulary}.concept msdrg
 ON
     enc.drg = msdrg.concept_code
     AND msdrg.concept_class_id = 'MS-DRG'
     AND msdrg.invalid_reason IS NULL
 WHERE
     enc.DRG IS NOT NULL;
+

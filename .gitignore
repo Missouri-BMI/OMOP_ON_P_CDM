@@ -129,7 +129,7 @@ dmypy.json
 .pyre/
 
 
-pcornet_to_omop_cdm/airflow-env/
+airflow-env/
 pcornet_to_omop_cdm/airflow/config/
 pcornet_to_omop_cdm/airflow/logs/
 pcornet_to_omop_cdm/airflow/plugins/

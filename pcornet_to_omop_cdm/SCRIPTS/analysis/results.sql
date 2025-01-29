@@ -1,28 +1,28 @@
-CREATE TABLE IF NOT EXISTS results_v3.cohort
+CREATE TABLE IF NOT EXISTS results.cohort
  (COHORT_DEFINITION_ID int NOT NULL,
 	SUBJECT_ID bigint NOT NULL,
 	cohort_start_date date NOT NULL,
 	cohort_end_date date NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.cohort_censor_stats (cohort_definition_id int NOT NULL,
+CREATE TABLE IF NOT EXISTS results.cohort_censor_stats (cohort_definition_id int NOT NULL,
   lost_count BIGINT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.cohort_inclusion (cohort_definition_id int NOT NULL,
+CREATE TABLE IF NOT EXISTS results.cohort_inclusion (cohort_definition_id int NOT NULL,
   design_hash int NULL,
   rule_sequence int NOT NULL,
   name varchar(255) NULL,
   description varchar(1000) NULL
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.cohort_inclusion_result (cohort_definition_id int NOT NULL,
+CREATE TABLE IF NOT EXISTS results.cohort_inclusion_result (cohort_definition_id int NOT NULL,
   mode_id int NOT NULL,
   inclusion_rule_mask bigint NOT NULL,
   person_count bigint NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.cohort_inclusion_stats (cohort_definition_id int NOT NULL,
+CREATE TABLE IF NOT EXISTS results.cohort_inclusion_stats (cohort_definition_id int NOT NULL,
   rule_sequence int NOT NULL,
   mode_id int NOT NULL,
   person_count bigint NOT NULL,
@@ -30,29 +30,29 @@ CREATE TABLE IF NOT EXISTS results_v3.cohort_inclusion_stats (cohort_definition_
   person_total bigint NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.cohort_summary_stats (cohort_definition_id int NOT NULL,
+CREATE TABLE IF NOT EXISTS results.cohort_summary_stats (cohort_definition_id int NOT NULL,
   mode_id int NOT NULL,
   base_count bigint NOT NULL,
   final_count bigint NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.cohort_cache  (design_hash int NOT NULL,
+CREATE TABLE IF NOT EXISTS results.cohort_cache  (design_hash int NOT NULL,
 	SUBJECT_ID bigint NOT NULL,
 	cohort_start_date date NOT NULL,
 	cohort_end_date date NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.cohort_censor_stats_cache  (design_hash int NOT NULL,
+CREATE TABLE IF NOT EXISTS results.cohort_censor_stats_cache  (design_hash int NOT NULL,
   lost_count BIGINT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.cohort_inclusion_result_cache  (design_hash int NOT NULL,
+CREATE TABLE IF NOT EXISTS results.cohort_inclusion_result_cache  (design_hash int NOT NULL,
   mode_id int NOT NULL,
   inclusion_rule_mask bigint NOT NULL,
   person_count bigint NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.cohort_inclusion_stats_cache  (design_hash int NOT NULL,
+CREATE TABLE IF NOT EXISTS results.cohort_inclusion_stats_cache  (design_hash int NOT NULL,
   rule_sequence int NOT NULL,
   mode_id int NOT NULL,
   person_count bigint NOT NULL,
@@ -60,13 +60,13 @@ CREATE TABLE IF NOT EXISTS results_v3.cohort_inclusion_stats_cache  (design_hash
   person_total bigint NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.cohort_summary_stats_cache  (design_hash int NOT NULL,
+CREATE TABLE IF NOT EXISTS results.cohort_summary_stats_cache  (design_hash int NOT NULL,
   mode_id int NOT NULL,
   base_count bigint NOT NULL,
   final_count bigint NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.feas_study_inclusion_stats (study_id int NOT NULL,
+CREATE TABLE IF NOT EXISTS results.feas_study_inclusion_stats (study_id int NOT NULL,
   rule_sequence int NOT NULL,
   name varchar(255) NOT NULL,
   person_count bigint NOT NULL,
@@ -74,17 +74,17 @@ CREATE TABLE IF NOT EXISTS results_v3.feas_study_inclusion_stats (study_id int N
   person_total bigint NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.feas_study_index_stats (study_id int NOT NULL,
+CREATE TABLE IF NOT EXISTS results.feas_study_index_stats (study_id int NOT NULL,
   person_count bigint NOT NULL,
   match_count bigint NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.feas_study_result (study_id int NOT NULL,
+CREATE TABLE IF NOT EXISTS results.feas_study_result (study_id int NOT NULL,
   inclusion_rule_mask bigint NOT NULL,
   person_count bigint NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.heracles_analysis
+CREATE TABLE IF NOT EXISTS results.heracles_analysis
  (analysis_id int,
 	analysis_name varchar(255),
 	stratum_1_name varchar(255),
@@ -95,14 +95,14 @@ CREATE TABLE IF NOT EXISTS results_v3.heracles_analysis
 	analysis_type varchar(255)
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.HERACLES_HEEL_results 
+CREATE TABLE IF NOT EXISTS results.HERACLES_HEEL_results 
  (cohort_definition_id int, 
   analysis_id INT, 
   HERACLES_HEEL_warning VARCHAR(255) 
 );
 
 --HINT PARTITION(cohort_definition_id int)
-CREATE TABLE IF NOT EXISTS results_v3.heracles_results
+CREATE TABLE IF NOT EXISTS results.heracles_results
  (cohort_definition_id int,
 	analysis_id int,
 	stratum_1 varchar(255),
@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS results_v3.heracles_results
 );
 
 --HINT PARTITION(cohort_definition_id int)
-CREATE TABLE IF NOT EXISTS results_v3.heracles_results_dist
+CREATE TABLE IF NOT EXISTS results.heracles_results_dist
  (cohort_definition_id int,
 	analysis_id int,
 	stratum_1 varchar(255),
@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS results_v3.heracles_results_dist
 	last_update_time TIMESTAMP DEFAULT CURRENT_DATE
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.heracles_periods
+CREATE TABLE IF NOT EXISTS results.heracles_periods
  (period_id int,
   period_order int,
 	period_name varchar(255),
@@ -145,14 +145,14 @@ CREATE TABLE IF NOT EXISTS results_v3.heracles_periods
 	period_end_date date
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.cohort_sample_element (cohort_sample_id int NOT NULL,
+CREATE TABLE IF NOT EXISTS results.cohort_sample_element (cohort_sample_id int NOT NULL,
     rank_value int NOT NULL,
     person_id bigint NOT NULL,
     age int,
     gender_concept_id int
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.ir_analysis_dist  (analysis_id int NOT NULL,
+CREATE TABLE IF NOT EXISTS results.ir_analysis_dist  (analysis_id int NOT NULL,
   target_id int NOT NULL,
   outcome_id int NOT NULL,
   strata_sequence int NULL,
@@ -169,7 +169,7 @@ CREATE TABLE IF NOT EXISTS results_v3.ir_analysis_dist  (analysis_id int NOT NUL
   max_value int NULL
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.ir_analysis_result (analysis_id int NOT NULL,
+CREATE TABLE IF NOT EXISTS results.ir_analysis_result (analysis_id int NOT NULL,
   target_id int NOT NULL,
   outcome_id int NOT NULL,
   strata_mask bigint NOT NULL,
@@ -178,7 +178,7 @@ CREATE TABLE IF NOT EXISTS results_v3.ir_analysis_result (analysis_id int NOT NU
   cases bigint NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.ir_analysis_strata_stats (analysis_id int NOT NULL,
+CREATE TABLE IF NOT EXISTS results.ir_analysis_strata_stats (analysis_id int NOT NULL,
   target_id int NOT NULL,
   outcome_id int NOT NULL,
   strata_sequence int NOT NULL,
@@ -187,13 +187,13 @@ CREATE TABLE IF NOT EXISTS results_v3.ir_analysis_strata_stats (analysis_id int 
   cases bigint NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.ir_strata (analysis_id int NOT NULL,
+CREATE TABLE IF NOT EXISTS results.ir_strata (analysis_id int NOT NULL,
   strata_sequence int NOT NULL,
   name varchar(255) NULL,
   description varchar(1000) NULL
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.cc_results
+CREATE TABLE IF NOT EXISTS results.cc_results
  (type VARCHAR(255) NOT NULL,
   fa_type VARCHAR(255) NOT NULL,
   cc_generation_id BIGINT NOT NULL,
@@ -221,14 +221,14 @@ CREATE TABLE IF NOT EXISTS results_v3.cc_results
   missing_means_zero INTEGER
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.pathway_analysis_codes
+CREATE TABLE IF NOT EXISTS results.pathway_analysis_codes
  (pathway_analysis_generation_id BIGINT NOT NULL,
 	code BIGINT NOT NULL,
 	name VARCHAR(2000) NOT NULL,
 	is_combo int NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.pathway_analysis_events
+CREATE TABLE IF NOT EXISTS results.pathway_analysis_events
  (pathway_analysis_generation_id BIGINT NOT NULL,
 	target_cohort_id INTEGER NOT NULL,
 	combo_id BIGINT NOT NULL,
@@ -238,7 +238,7 @@ CREATE TABLE IF NOT EXISTS results_v3.pathway_analysis_events
 	cohort_end_date TIMESTAMP NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.pathway_analysis_paths
+CREATE TABLE IF NOT EXISTS results.pathway_analysis_paths
  (pathway_analysis_generation_id BIGINT NOT NULL,
   target_cohort_id INTEGER NOT NULL,
   step_1 BIGINT,
@@ -254,7 +254,7 @@ CREATE TABLE IF NOT EXISTS results_v3.pathway_analysis_paths
   count_value BIGINT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS results_v3.pathway_analysis_stats
+CREATE TABLE IF NOT EXISTS results.pathway_analysis_stats
  (pathway_analysis_generation_id BIGINT NOT NULL,
   target_cohort_id INTEGER NOT NULL,
   target_cohort_count BIGINT NOT NULL,
@@ -264,7 +264,7 @@ CREATE TABLE IF NOT EXISTS results_v3.pathway_analysis_stats
 /*********************************************************************/
 /***** Create hierarchy lookup table for the treemap hierarchies *****/
 /*********************************************************************/
-CREATE TABLE IF NOT EXISTS results_v3.concept_hierarchy
+CREATE TABLE IF NOT EXISTS results.concept_hierarchy
  (concept_id             INT,
   concept_name           VARCHAR(400),
   treemap                VARCHAR(20),
@@ -278,10 +278,10 @@ CREATE TABLE IF NOT EXISTS results_v3.concept_hierarchy
 /***********************************************************/
 /***** Populate the hierarchy lookup table per treemap *****/
 /***********************************************************/
-TRUNCATE TABLE results_v3.concept_hierarchy;
+TRUNCATE TABLE results.concept_hierarchy;
 
 /********** CONDITION/CONDITION_ERA **********/
-INSERT INTO results_v3.concept_hierarchy
+INSERT INTO results.concept_hierarchy
 	(concept_id, concept_name, treemap, concept_hierarchy_type, level1_concept_name, level2_concept_name, level3_concept_name, level4_concept_name)
 SELECT
 	snomed.concept_id,
@@ -353,7 +353,7 @@ LEFT JOIN (
 LEFT JOIN vocabulary.concept soc ON hlgt_to_soc.soc_concept_id = soc.concept_id;
 
 /********** DRUG **********/
-INSERT INTO results_v3.concept_hierarchy
+INSERT INTO results.concept_hierarchy
 	(concept_id, concept_name, treemap, concept_hierarchy_type, level1_concept_name, level2_concept_name, level3_concept_name, level4_concept_name)
 SELECT
 	rxnorm.concept_id,
@@ -421,7 +421,7 @@ LEFT JOIN (
 LEFT JOIN vocabulary.concept atc1 ON atc3_to_atc1.atc1_concept_id = atc1.concept_id;
 
 /********** DRUG_ERA **********/
-INSERT INTO results_v3.concept_hierarchy
+INSERT INTO results.concept_hierarchy
 	(concept_id, concept_name, treemap, concept_hierarchy_type, level1_concept_name, level2_concept_name, level3_concept_name, level4_concept_name)
 SELECT
 	rxnorm.rxnorm_ingredient_concept_id as concept_id,
@@ -484,7 +484,7 @@ LEFT JOIN (
 LEFT JOIN vocabulary.concept atc1 ON atc3_to_atc1.atc1_concept_id = atc1.concept_id;
 
 /********** MEASUREMENT **********/
-INSERT INTO results_v3.concept_hierarchy
+INSERT INTO results.concept_hierarchy
 	(concept_id, concept_name, treemap, concept_hierarchy_type, level1_concept_name, level2_concept_name, level3_concept_name, level4_concept_name)
 SELECT
 	m.concept_id,
@@ -511,7 +511,7 @@ LEFT JOIN vocabulary.concept c3 ON ca3.ANCESTOR_CONCEPT_ID = c3.concept_id
 GROUP BY M.concept_id, M.concept_name;
 
 /********** OBSERVATION **********/
-INSERT INTO results_v3.concept_hierarchy
+INSERT INTO results.concept_hierarchy
 	(concept_id, concept_name, treemap, concept_hierarchy_type, level1_concept_name, level2_concept_name, level3_concept_name, level4_concept_name)
 SELECT
 	obs.concept_id,
@@ -538,7 +538,7 @@ LEFT JOIN vocabulary.concept c3 ON ca3.ANCESTOR_CONCEPT_ID = c3.concept_id
 GROUP BY obs.concept_id, obs.concept_name;
 
 /********** PROCEDURE **********/
-INSERT INTO results_v3.concept_hierarchy
+INSERT INTO results.concept_hierarchy
 	(concept_id, concept_name, treemap, concept_hierarchy_type, level1_concept_name, level2_concept_name, level3_concept_name, level4_concept_name)
 SELECT
 	procs.concept_id,
@@ -622,9 +622,9 @@ LEFT JOIN (
 GROUP BY procs.concept_id, procs.proc_concept_name;
 
 -- init heracles_analysis
-TRUNCATE TABLE results_v3.heracles_analysis;
+TRUNCATE TABLE results.heracles_analysis;
 
-insert into results_v3.heracles_analysis
+insert into results.heracles_analysis
 (analysis_id,analysis_name,stratum_1_name,stratum_2_name,stratum_3_name,stratum_4_name,stratum_5_name,analysis_type)
 select    0 as analysis_id,
 CAST('Source name' as VARCHAR(255)) as analysis_name,
@@ -2614,9 +2614,9 @@ from temp.wbe3cmh7yearly_dates yd
 -- ADD UNION ALLs for additional period definitions
 ) monthlyDates;
 
-TRUNCATE TABLE results_v3.heracles_periods;
+TRUNCATE TABLE results.heracles_periods;
 
-INSERT INTO results_v3.heracles_periods (period_id, period_name, period_order, period_type, period_start_date, period_end_date)
+INSERT INTO results.heracles_periods (period_id, period_name, period_order, period_type, period_start_date, period_end_date)
 select TRY_CAST(CAST(row_number() over (order by period_order, period_start_date)  AS TEXT) AS int) as period_id
 			, period_name, period_order, period_type, period_start_date, period_end_date
 from temp.wbe3cmh7temp_period;

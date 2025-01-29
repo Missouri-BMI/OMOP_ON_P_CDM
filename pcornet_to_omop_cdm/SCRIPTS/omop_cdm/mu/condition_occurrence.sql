@@ -1,10 +1,9 @@
-
-create or replace view CDM.condition_occurrence as
+create or replace view {cdm_db}.{cdm_schema}.condition_occurrence as
 
 SELECT
     diagnosis.diagnosisid::INTEGER AS condition_occurrence_id,
     diagnosis.patid::INTEGER AS person_id,
-coalesce(case
+    coalesce(case
         when diagnosis.dx_type='09' then c_icd9.concept_id
         when diagnosis.dx_type='10' then c_icd10.concept_id
         when diagnosis.dx_type='SM' then c_snomed.concept_id
@@ -49,22 +48,21 @@ coalesce(case
     diagnosis.providerid::INTEGER AS provider_id,
     diagnosis.encounterid::INTEGER AS visit_occurrence_id,
     NULL::INTEGER AS visit_detail_id,
-   diagnosis.dx::varchar(50) AS condition_source_value,
-   coalesce(case
+    diagnosis.dx::varchar(50) AS condition_source_value,
+    coalesce(case
         when diagnosis.dx_type='09' then c_icd9.concept_id
         when diagnosis.dx_type='10' then c_icd10.concept_id
         when diagnosis.dx_type='SM' then c_snomed.concept_id
     else
         0
     end,44814650)::INTEGER as condition_source_concept_id,
-   diagnosis.dx_source::varchar(50) AS condition_status_source_value
+    diagnosis.dx_source::varchar(50) AS condition_status_source_value
 
-FROM DEIDENTIFIED_PCORNET_CDM.CDM.deid_diagnosis diagnosis
-left join vocabulary.concept c_icd9 on diagnosis.dx=c_icd9.concept_code
+FROM {pcornet_db}.{pcornet_schema}.deid_diagnosis diagnosis
+left join {cdm_db}.{vocabulary}.concept c_icd9 on diagnosis.dx=c_icd9.concept_code
     and c_icd9.vocabulary_id='ICD9CM' and diagnosis.dx_type='09'
-left join vocabulary.concept c_icd10 on diagnosis.dx=c_icd10.concept_code
+left join {cdm_db}.{vocabulary}.concept c_icd10 on diagnosis.dx=c_icd10.concept_code
     and c_icd10.vocabulary_id='ICD10CM' and diagnosis.dx_type='10'
-left join vocabulary.concept c_snomed on diagnosis.dx=c_snomed.concept_code
+left join {cdm_db}.{vocabulary}.concept c_snomed on diagnosis.dx=c_snomed.concept_code
     and c_snomed.vocabulary_id='SNOMED' and diagnosis.dx_type='SM'
 ;
-
