@@ -29,7 +29,7 @@ SELECT
 
    NULL::INTEGER AS provider_id,
 
-   lab.patid::INTEGER AS visit_occurrence_id,
+   lab.encounter_num::INTEGER AS visit_occurrence_id,
 
    NULL::INTEGER AS visit_detail_id,
 

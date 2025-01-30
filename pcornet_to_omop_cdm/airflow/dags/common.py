@@ -9,7 +9,7 @@ import sqlparse
 from airflow.decorators import task
 from airflow.utils.trigger_rule import TriggerRule
 from airflow.utils.task_group import TaskGroup
-
+from typing import List
 
 @provide_session
 def create_snowflake_connection(conn_id, conn_params, session: Session =None):
@@ -36,7 +36,7 @@ def create_snowflake_connection(conn_id, conn_params, session: Session =None):
         print(f"Connection '{conn_id}' created successfully.")
 
 @task(retries=0)
-def read_sql_from_file(file_path: str, **kwargs) -> str:
+def read_sql_from_file(file_path: str, **kwargs) -> List[str]:
     # Read SQL file from the specified directory
     sql_path = Path(file_path)
     if not sql_path.is_file():
@@ -48,13 +48,10 @@ def read_sql_from_file(file_path: str, **kwargs) -> str:
 
     if not sql_content.strip():
         raise ValueError(f"SQL file {file_path} is empty")
-        
+    sql_statements = sqlparse.split(sql_content)
     # Format the SQL query and handle any dynamic content if necessary
-    formatted_sql = sqlparse.format(
-        sql_content, 
-        reindent=False
-    )
-    return formatted_sql.format(**kwargs)
+    formatted_sql = [statement.format(**kwargs) for statement in sql_statements]
+    return formatted_sql
 
 @task(retries=0)  
 def add_schema_sql(schema, sql_text) -> str:
@@ -71,8 +68,6 @@ def execute_sql(conn_id, task_id, sql_query: str, trigger_rule=TriggerRule.ALL_S
         retries=retries
     )
 
-
-
 def get_task_id(file_path):
     filename = Path(file_path).stem
     return f'execute_{filename.split(".")[0]}'   
@@ -80,15 +75,13 @@ def get_task_id(file_path):
 def execute_sql_directory(conn_id, sql_directory: str, sequentially: bool, **kwargs) -> str:
     tasks = []
     for filename in sorted(os.listdir(sql_directory)):
-        ##TODO: revert it back
-        if filename.endswith('.sql') and not filename.startswith('12_acs_fact'):
-            with TaskGroup(Path(filename).stem) as sub_group:
-                sql_file_path = os.path.join(sql_directory, filename)
-                read_sql = read_sql_from_file(sql_file_path, **kwargs)
-                sql_task = execute_sql(conn_id, get_task_id(sql_file_path), read_sql)
-                read_sql >> sql_task
-            
-            tasks.append(sub_group)
+        with TaskGroup(Path(filename).stem) as sub_group:
+            sql_file_path = os.path.join(sql_directory, filename)
+            read_sql = read_sql_from_file(sql_file_path, **kwargs)
+            sql_task = execute_sql(conn_id, get_task_id(sql_file_path), read_sql)
+            read_sql >> sql_task
+        
+        tasks.append(sub_group)
 
     if sequentially:
         for i in range(len(tasks) - 1):
