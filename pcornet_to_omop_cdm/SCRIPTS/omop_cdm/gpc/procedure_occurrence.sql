@@ -1,6 +1,6 @@
 Create or replace view {cdm_db}.{cdm_schema}.procedure_occurrence AS
 SELECT
-        procedures.proceduresid::INTEGER AS procedure_occurrence_id,
+        ROW_NUMBER() OVER (ORDER BY procedures.proceduresid) ::INTEGER AS procedure_occurrence_id,
         procedures.patient_num::INTEGER AS person_id,
         case
                         when c_hcpcs.concept_id is not null then c_hcpcs.concept_id

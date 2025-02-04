@@ -3,7 +3,7 @@ AS
 SELECT
    lab.lab_result_cm_id::INTEGER AS measurement_id,
 
-   lab.patid::INTEGER AS person_id,
+   lab.patient_num::INTEGER AS person_id,
 
    NULL::INTEGER AS measurement_concept_id,
 
@@ -29,7 +29,7 @@ SELECT
 
    NULL::INTEGER AS provider_id,
 
-   lab.patid::INTEGER AS visit_occurrence_id,
+   lab.encounter_num::INTEGER AS visit_occurrence_id,
 
    NULL::INTEGER AS visit_detail_id,
 

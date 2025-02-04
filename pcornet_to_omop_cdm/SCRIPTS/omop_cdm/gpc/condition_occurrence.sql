@@ -1,7 +1,7 @@
 create or replace view {cdm_db}.{cdm_schema}.condition_occurrence as
 
 SELECT
-    diagnosis.diagnosisid::INTEGER AS condition_occurrence_id,
+    ROW_NUMBER() OVER (ORDER BY diagnosis.diagnosisid) ::INTEGER AS condition_occurrence_id,
     diagnosis.patient_num::INTEGER AS person_id,
     coalesce(case
         when diagnosis.dx_type='09' then c_icd9.concept_id
@@ -46,6 +46,7 @@ SELECT
 */
     NULL::varchar(20) AS stop_reason,
     diagnosis.providerid::INTEGER AS provider_id,
+    //TODO:check null value
     diagnosis.encounter_num::INTEGER AS visit_occurrence_id,
     NULL::INTEGER AS visit_detail_id,
     diagnosis.dx::varchar(50) AS condition_source_value,

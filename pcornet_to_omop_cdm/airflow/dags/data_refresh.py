@@ -67,25 +67,26 @@ with DAG(
         'vocabulary': vocabulary,
     }
     
-    # create_conn_task = PythonOperator(
-    #     task_id='connect',
-    #     python_callable=create_snowflake_connection,
-    #     op_args=[snowflake_conn_id, args]
-    # )
-
-    # with TaskGroup('omop_views') as omop_views:
-    #     execute_sql_directory(
-    #         snowflake_conn_id, 
-    #         SQL_PATH, 
-    #         False, 
-    #         **kwargs
-    #     )
-
-    run_achilles = BashOperator(
-        task_id='run_achilles',
-        bash_command=f'Rscript {ACHILLES_PATH}',
-        retries=0
+    create_conn_task = PythonOperator(
+        task_id='connect',
+        python_callable=create_snowflake_connection,
+        op_args=[snowflake_conn_id, args]
     )
+
+    with TaskGroup('omop_views') as omop_views:
+        execute_sql_directory(
+            snowflake_conn_id, 
+            SQL_PATH, 
+            False, 
+            **kwargs
+        )
+    
+    ##TODo: AOU-OMOP-CDM
+    # run_achilles = BashOperator(
+    #     task_id='run_achilles',
+    #     bash_command=f'Rscript {ACHILLES_PATH}',
+    #     retries=0
+    # )
 
     # achilles_cache = read_sql_from_file(
     #     CACHE_ACHILLES_PATH, 
@@ -105,5 +106,5 @@ with DAG(
     #     retries=0
     # )
   
-     
+    create_conn_task >> omop_views
     # create_conn_task >> omop_views >> run_achilles >> achilles_cache >> run_dq_dashboard >> run_aoh_dq

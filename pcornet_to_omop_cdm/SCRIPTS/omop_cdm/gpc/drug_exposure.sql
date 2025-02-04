@@ -1,6 +1,7 @@
 create or replace view {cdm_db}.{cdm_schema}.drug_exposure
 AS
-SELECT presc.prescribingid::INTEGER                                                               AS drug_exposure_id,
+SELECT
+    ROW_NUMBER() OVER (ORDER BY presc.prescribingid) ::INTEGER AS drug_exposure_id,
 
     presc.patient_num::INTEGER                                                                       AS person_id,
 

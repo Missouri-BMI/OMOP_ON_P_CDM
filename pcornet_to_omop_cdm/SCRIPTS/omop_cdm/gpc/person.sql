@@ -3,7 +3,7 @@ Create or replace view {cdm_db}.{cdm_schema}.person AS (
         SELECT 
             *
             , ROW_NUMBER() OVER (
-                PARTITION BY patid 
+                PARTITION BY patient_num 
                 ORDER BY 
                 CASE DEATH_SOURCE
                     WHEN 'D' THEN 1
@@ -21,7 +21,7 @@ Create or replace view {cdm_db}.{cdm_schema}.person AS (
         FROM {pcornet_db}.{pcornet_schema}.GPC_DEID_DEATH
     )
     SELECT  
-        demographic.patid::INTEGER                                                      AS PERSON_ID,
+        demographic.patient_num::INTEGER                                                AS PERSON_ID,
         coalesce(gender_map.source_concept_id, 44814650)::INTEGER                       AS gender_concept_id,
         year(demographic.birth_date)::INTEGER                                           AS year_of_birth,
         month(demographic.birth_date)::INTEGER                                          AS month_of_birth,
@@ -30,20 +30,16 @@ Create or replace view {cdm_db}.{cdm_schema}.person AS (
         death.death_date                                                                as death_datetime,
         coalesce(race_map.source_concept_id, 44814650)::INTEGER                         AS race_concept_id,
         coalesce(ethnicity_map.source_concept_id, 44814650)::INTEGER                    AS ethnicity_concept_id,
-        NULL::INTEGER                                                                AS location_id,
-
-        NULL::INTEGER                                                                AS provider_id,
-
-        NULL::INTEGER                                                                AS care_site_id,
-
-        NULL::VARCHAR(50)                                                            AS person_source_value,
-
-        demographic.raw_sex::VARCHAR(50)                                             AS gender_source_value,
-        44814650::INTEGER                                                            AS gender_source_concept_id,
-        demographic.raw_race::VARCHAR(50)                                            AS race_source_value,
-        44814650::INTEGER                                                            AS race_source_concept_id,
-        demographic.raw_hispanic::VARCHAR(50)                                        AS ethnicity_source_value,
-        44814650::INTEGER                                                            AS ethnicity_source_concept_id
+        NULL::INTEGER                                                                   AS location_id,
+        NULL::INTEGER                                                                   AS provider_id,
+        NULL::INTEGER                                                                   AS care_site_id,
+        NULL::VARCHAR(50)                                                               AS person_source_value,
+        demographic.raw_sex::VARCHAR(50)                                                AS gender_source_value,
+        44814650::INTEGER                                                               AS gender_source_concept_id,
+        demographic.raw_race::VARCHAR(50)                                               AS race_source_value,
+        44814650::INTEGER                                                               AS race_source_concept_id,
+        demographic.raw_hispanic::VARCHAR(50)                                           AS ethnicity_source_value,
+        44814650::INTEGER                                                               AS ethnicity_source_concept_id
 
     FROM {pcornet_db}.{pcornet_schema}.GPC_DEID_DEMOGRAPHIC as demographic
     left join
@@ -68,6 +64,6 @@ Create or replace view {cdm_db}.{cdm_schema}.person AS (
        SELECT * FROM RankedDeath
         WHERE row_num = 1
     ) death
-    on death.patid = demographic.patid
+    on death.patient_num = demographic.patient_num
     where year_of_birth is not null
 );
