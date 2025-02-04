@@ -1,0 +1,8 @@
+2025-02-04 11:10:41	[Thread 3]	INFO	DatabaseConnector	executeSql	Executing SQL took 3.65 mins
+2025-02-04 11:10:41	[Thread 3]	INFO	Achilles	fun	[Main Analysis] [COMPLETE] 212 (3.654322 mins)
+2025-02-04 11:10:42	[Thread 3]	INFO	DatabaseConnector	connectSnowflake	Connecting using Snowflake driver
+2025-02-04 11:10:42	[Thread 3]	INFO	Achilles	fun	[Main Analysis] [START] 225 (Number of visit_occurrence records by visit_source_concept_id)
+2025-02-04 11:11:00	[Thread 2]	INFO	DatabaseConnector	executeSql	Executing SQL took 3.78 mins
+2025-02-04 11:11:00	[Thread 2]	INFO	Achilles	fun	[Main Analysis] [COMPLETE] 213 (3.778837 mins)
+2025-02-04 11:11:00	[Thread 2]	INFO	DatabaseConnector	connectSnowflake	Connecting using Snowflake driver
+2025-02-04 11:11:00	[Thread 2]	INFO	Achilles	fun	[Main Analysis] [START] 226 (Number of records by domain by visit_concept_id)

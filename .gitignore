@@ -149,3 +149,5 @@ ETL_OMOP/vocabulary_v5/*
 Achilles/output/*
 Achilles/errorReportSql.txt
 estimation/drivers/*
+*/snowsql.cnf
+*/Achilles/output/*
