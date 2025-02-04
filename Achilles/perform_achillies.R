@@ -1,6 +1,6 @@
 if (!require("remotes")) install.packages("remotes")
 remotes::install_github("OHDSI/Achilles")
-remotes::install_github("OHDSI/DataQualityDashboard")
+
 library(DatabaseConnector)
 library(Achilles)
 options(connectionObserver = NULL)
@@ -29,7 +29,7 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(
 # conn <- connect(connectionDetails)
 # disconnect(connectionDetails)
 
-
+ 
 ## Explore more parameter from: https://github.com/OHDSI/Achilles/blob/main/vignettes/RunningAchilles.Rmd
 ## https://github.com/OHDSI/Achilles/blob/main/R/Achilles.R
 achilles(connectionDetails = connectionDetails, 
