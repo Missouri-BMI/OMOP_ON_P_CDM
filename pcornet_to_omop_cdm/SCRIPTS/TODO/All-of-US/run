@@ -1,0 +1,5 @@
+#!/bin/bash
+
+rm -rf ${PWD}/data/
+mkdir ${PWD}/data 
+docker run --platform=linux/amd64 -v ${PWD}/data:/home/data aou-dq1

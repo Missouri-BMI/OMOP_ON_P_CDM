@@ -135,3 +135,13 @@ pcornet_to_omop_cdm/airflow/logs/
 pcornet_to_omop_cdm/airflow/plugins/
 pcornet_to_omop_cdm/env/*
 pcornet_to_omop_cdm/**/.env
+
+*.RData
+*.Rhistory
+
+#project specific
+ETL_OMOP/output/*
+ETL_OMOP/vocabulary_v5/*
+Achilles/output/*
+Achilles/errorReportSql.txt
+estimation/drivers/*

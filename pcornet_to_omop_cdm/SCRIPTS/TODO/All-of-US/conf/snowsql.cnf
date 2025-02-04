@@ -1,0 +1,22 @@
+[connections.atlas_user]
+
+accountname = xp02744.us-east-2.aws
+username = SERVICE_USER_ATLAS
+password = "XGU$4<uf}H#8}3N"
+warehousename = ATLAS_WH
+rolename = OMOP_ATLAS
+dbname = OMOP_CDM
+schemaname = CDM
+
+
+[connections.etl_user]
+
+accountname = xp02744.us-east-2.aws
+username = SERVICE_USER_OMOP_ETL
+password = "ak57b@)15gd2i"
+warehousename = ATLAS_WH
+rolename = OMOP_ETL
+dbname = OMOP_CDM
+schemaname = CDM
+
+
