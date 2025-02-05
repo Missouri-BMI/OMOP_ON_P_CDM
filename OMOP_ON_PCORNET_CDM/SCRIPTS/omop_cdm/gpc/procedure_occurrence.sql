@@ -20,7 +20,8 @@ SELECT
           end::INTEGER AS procedure_type_concept_id,
    0::INTEGER AS modifier_concept_id,
         NULL::INTEGER AS quantity,
-        procedures.providerid::INTEGER AS provider_id,
+        -- procedures.providerid::INTEGER AS provider_id,
+        -1::INTEGER AS provider_id,
         procedures.encounter_num::INTEGER AS visit_occurrence_id,
         NULL::INTEGER AS visit_detail_id,
         procedures.px::VARCHAR(50) AS procedure_source_value,
@@ -40,5 +41,5 @@ left join {cdm_db}.{vocabulary}.CONCEPT c_cpt
           on procedures.px=c_cpt.concept_code and procedures.px_type='CH' and c_cpt.vocabulary_id='CPT4'
 left join {cdm_db}.{vocabulary}.CONCEPT c_icd10
           on procedures.px=c_icd10.concept_code and procedures.px_type='10' and c_cpt.vocabulary_id='ICD10CM'
- left join {cdm_db}.{vocabulary}.CONCEPT c_icd9
+left join {cdm_db}.{vocabulary}.CONCEPT c_icd9
           on procedures.px=c_icd9.concept_code and procedures.px_type='09' and c_cpt.vocabulary_id='ICD9CM';

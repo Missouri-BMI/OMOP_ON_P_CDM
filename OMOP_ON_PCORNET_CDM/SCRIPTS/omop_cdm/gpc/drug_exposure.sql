@@ -37,7 +37,8 @@ SELECT
 
        NULL::VARCHAR(50)                                                                          AS lot_number,
 
-       presc.RX_PROVIDERID::INTEGER                                                               AS provider_id,
+    --    presc.RX_PROVIDERID::INTEGER                                                               AS provider_id,
+       -1::INTEGER                                                                                AS provider_id,
 
        presc.encounter_num::INTEGER                                                                 AS visit_occurrence_id,
 

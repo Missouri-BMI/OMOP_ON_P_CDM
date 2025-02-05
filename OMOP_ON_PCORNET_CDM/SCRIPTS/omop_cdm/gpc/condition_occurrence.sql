@@ -45,7 +45,8 @@ SELECT
      when pdx = 'S' and DX_SOURCE = 'DI' then 32909  AS condition_status_concept_id,
 */
     NULL::varchar(20) AS stop_reason,
-    diagnosis.providerid::INTEGER AS provider_id,
+    -- diagnosis.providerid::INTEGER AS provider_id,
+    -1::INTEGER AS provider_id,
     //TODO:check null value
     diagnosis.encounter_num::INTEGER AS visit_occurrence_id,
     NULL::INTEGER AS visit_detail_id,

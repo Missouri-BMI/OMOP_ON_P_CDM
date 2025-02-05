@@ -1,7 +1,7 @@
 create or replace table {cdm_db}.{cdm_schema}.measurement
 AS
 SELECT
-   lab.lab_result_cm_id::INTEGER AS measurement_id,
+   ROW_NUMBER() OVER (ORDER BY lab.lab_result_cm_id) ::INTEGER AS measurement_id,
 
    lab.patient_num::INTEGER AS person_id,
 
