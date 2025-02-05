@@ -1,4 +1,4 @@
-CREATE or replace view cdm.death AS (
+CREATE or replace table cdm.death AS (
 	WITH RankedDeath AS (
 		SELECT 
 			*

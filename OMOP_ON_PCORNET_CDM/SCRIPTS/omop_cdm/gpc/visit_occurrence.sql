@@ -1,4 +1,4 @@
-Create or replace view {cdm_db}.{cdm_schema}.visit_occurrence AS
+Create or replace table {cdm_db}.{cdm_schema}.visit_occurrence AS
 (
 SELECT enc.encounter_num::INTEGER                                        AS visit_occurrence_id,
     enc.patient_num::INTEGER                                              AS person_id,

@@ -1,4 +1,4 @@
-create or replace view {cdm_db}.{cdm_schema}.condition_occurrence as
+create or replace table {cdm_db}.{cdm_schema}.condition_occurrence as
 
 SELECT
     ROW_NUMBER() OVER (ORDER BY diagnosis.diagnosisid) ::INTEGER AS condition_occurrence_id,

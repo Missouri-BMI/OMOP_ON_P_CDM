@@ -1,4 +1,4 @@
-Create or replace view {cdm_db}.{cdm_schema}.condition_era
+Create or replace table {cdm_db}.{cdm_schema}.condition_era
 AS
 SELECT
    NULL::INTEGER AS condition_era_id,

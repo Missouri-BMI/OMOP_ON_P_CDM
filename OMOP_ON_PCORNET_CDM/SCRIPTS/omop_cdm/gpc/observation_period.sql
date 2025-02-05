@@ -1,4 +1,4 @@
-create or replace view {cdm_db}.{cdm_schema}.OBSERVATION_PERIOD(
+create or replace table {cdm_db}.{cdm_schema}.OBSERVATION_PERIOD(
 	OBSERVATION_PERIOD_ID,
 	PERSON_ID,
 	OBSERVATION_PERIOD_START_DATE,

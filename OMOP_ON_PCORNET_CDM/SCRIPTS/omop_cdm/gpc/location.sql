@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW {cdm_db}.{cdm_schema}.LOCATION AS
+CREATE OR REPLACE table {cdm_db}.{cdm_schema}.LOCATION AS
 (
    SELECT
       1::INTEGER AS location_id,

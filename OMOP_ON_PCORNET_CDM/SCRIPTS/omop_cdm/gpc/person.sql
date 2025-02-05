@@ -1,4 +1,4 @@
-Create or replace view {cdm_db}.{cdm_schema}.person AS (
+Create or replace table {cdm_db}.{cdm_schema}.person AS (
     WITH RankedDeath AS (
         SELECT 
             *

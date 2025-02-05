@@ -3,7 +3,7 @@
 --TODO:  observation_id,
 --TODO: add more observations
 
-CREATE OR REPLACE view {cdm_db}.{cdm_schema}.observation AS
+CREATE OR REPLACE table {cdm_db}.{cdm_schema}.observation AS
 SELECT DISTINCT
     3040464 AS observation_concept_id,
     CASE

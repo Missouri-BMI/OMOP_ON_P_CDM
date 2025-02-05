@@ -1,4 +1,4 @@
-create or replace view {cdm_db}.{cdm_schema}.provider
+create or replace table {cdm_db}.{cdm_schema}.provider
 AS
 SELECT
   NULL::INTEGER AS provider_id,

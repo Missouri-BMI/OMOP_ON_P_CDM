@@ -1,4 +1,4 @@
-create or replace view {cdm_db}.{cdm_schema}.CARE_SITE
+create or replace table {cdm_db}.{cdm_schema}.CARE_SITE
 AS
 SELECT distinct
     ROW_NUMBER() OVER (ORDER BY enc.facilityid) ::INTEGER AS care_site_id,

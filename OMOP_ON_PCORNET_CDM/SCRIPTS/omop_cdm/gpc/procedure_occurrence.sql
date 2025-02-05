@@ -1,4 +1,4 @@
-Create or replace view {cdm_db}.{cdm_schema}.procedure_occurrence AS
+Create or replace table {cdm_db}.{cdm_schema}.procedure_occurrence AS
 SELECT
         ROW_NUMBER() OVER (ORDER BY procedures.proceduresid) ::INTEGER AS procedure_occurrence_id,
         procedures.patient_num::INTEGER AS person_id,

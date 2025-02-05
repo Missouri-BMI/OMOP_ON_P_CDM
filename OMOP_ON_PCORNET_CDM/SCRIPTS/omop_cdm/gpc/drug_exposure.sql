@@ -1,4 +1,4 @@
-create or replace view {cdm_db}.{cdm_schema}.drug_exposure
+create or replace table {cdm_db}.{cdm_schema}.drug_exposure
 AS
 SELECT
     ROW_NUMBER() OVER (ORDER BY presc.prescribingid) ::INTEGER AS drug_exposure_id,
