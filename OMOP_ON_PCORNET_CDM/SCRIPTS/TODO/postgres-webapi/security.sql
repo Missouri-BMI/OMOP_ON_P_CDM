@@ -33,17 +33,23 @@ user_role as (
 insert into webapi.sec_user_role (user_id, role_id)
 select user_id, 1 from new_users --public
 union
-select user_id, 3 from new_users
+select user_id, 3 from new_users --concept_ set creator
 union
-select user_id, 5 from new_users
+select user_id, 5 from new_users -- cohort creator
 union 
-select user_id, 6 from new_users
+select user_id, 6 from new_users --- cohort reader
 union
 select user_id, 10 from new_users -- ATLAS user
 union
-select user_id, 1009 from new_users;--MU SOURCE
-union 
+select user_id, 1009 from new_users--MU SOURCE
+union
+select user_id, 1019 from new_users--GPC SOURCE
+union
+select user_id, 1021 from new_users--SANDBOX
+union
 select user_id, role_id from user_role;
 -- admin
 --union
 --select user_id, 2 from new_users; -admin
+--union
+--select user_id, 1000 from new_users; -moderator
