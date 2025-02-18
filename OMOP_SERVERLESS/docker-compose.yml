@@ -3,7 +3,7 @@ version: '3.5'
 services:
 
   ohdsi-atlas:
-    image: 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-atlas:latest
+    image: ohdsi-atlas:latest
     build:
       context: ./Atlas
     container_name: ohdsi-atlas
@@ -14,7 +14,7 @@ services:
       - ohdsi-webapi
 
   ohdsi-webapi:
-    image: 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-webapi:latest
+    image: ohdsi-webapi:latest
     build: 
       context: ./WebAPI
     container_name: ohdsi-webapi
