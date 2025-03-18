@@ -1,6 +1,4 @@
-install.packages("C:/Users/Administrator/Desktop/ESTIMATIONPACKAGE.tar.gz", repos = NULL, type = "source")
-
-library(HSV)
+library(HSVCOHORT)
 
 
 # Optional: specify where the temporary files (used by the Andromeda package) will be created:
@@ -32,12 +30,12 @@ cdmDatabaseSchema <- "CDM"
 
 # The name of the database schema and table where the study-specific cohorts will be instantiated:
 cohortDatabaseSchema <- "TEMP"
-cohortTable <- "HSVNEW"
+cohortTable <- "HSVFINAL"
 
 # Some meta-information that will be used by the export function:
-databaseId <- "HSVNEW-SABER"
-databaseName <- "HSVNEW SABER"
-databaseDescription <- "HSVNEW-SABER DESCRIPTION"
+databaseId <- "HSVFINAL_DB"
+databaseName <- "HSVFINAL_DB"
+databaseDescription <- "HSVFINAL_DB DESCRIPTION"
 
 # For some database platforms (e.g. Oracle): define a schema that can be used to emulate temp tables:
 options(sqlRenderTempEmulationSchema = NULL)

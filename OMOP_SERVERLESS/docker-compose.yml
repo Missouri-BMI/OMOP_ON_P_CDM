@@ -1,20 +1,19 @@
-version: '3.5'
-
 services:
-
   ohdsi-atlas:
-    image: ohdsi-atlas:latest
+    image: 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-atlas:latest
     build:
       context: ./Atlas
     container_name: ohdsi-atlas
+    environment:
+      # - WEBAPI_URL=https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/
+      - WEBAPI_URL=http://localhost:8080/WebAPI/
     read_only: true
     ports:
       - "80:8080"
     depends_on:
       - ohdsi-webapi
-
   ohdsi-webapi:
-    image: ohdsi-webapi:latest
+    image: 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-webapi
     build: 
       context: ./WebAPI
     container_name: ohdsi-webapi
@@ -23,7 +22,6 @@ services:
       - "8080:8080"
     depends_on:
       - postgres-webapi
-
   postgres-webapi:
     image: postgres-webapi:latest
     container_name: postgres-webapi
@@ -36,7 +34,6 @@ services:
       - postgres-webapi-vol:/var/lib/postgresql/data
     ports:
       - "5432:5432"
- 
   postgres-cdm:
     image: postgres-cdm:latest
     container_name: postgres-cdm
@@ -49,7 +46,6 @@ services:
       - postgres-cdm-vol:/var/lib/postgresql/data
     ports:
       - "5433:5432"
-
   pg-admin:
     image: dpage/pgadmin4
     container_name: pg-admin
@@ -60,7 +56,6 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=Password123
     logging:
       driver: none
-
 volumes:
   postgres-cdm-vol:
     name: postgres-cdm-vol

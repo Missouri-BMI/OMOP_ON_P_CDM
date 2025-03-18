@@ -1,10 +1,3 @@
-### 
-```
-# open Rstudio with R 4.4.1
-renv::restore() 
-pkgbuild::build()
-install.packages("C:/Users/Administrator/Desktop/final/HSV_0.0.1.tar.gz", repos = NULL, type = "source")
-```
 
 ### shinyapp.r
 ```

@@ -74,14 +74,14 @@
       "Package": "CohortMethod",
       "Version": "4.2.3",
       "Source": "GitHub",
-      "Remotes": "ohdsi/FeatureExtraction, ohdsi/Eunomia",
       "RemoteType": "github",
+      "Remotes": "ohdsi/FeatureExtraction, ohdsi/Eunomia",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "CohortMethod",
       "RemoteUsername": "OHDSI",
       "RemoteRef": "v4.2.3",
       "RemoteSha": "391b499c9e162f9cbc7c273baeb17c9eb2fdf4a4",
-      "Hash": "3ba389e9abf1ee7968705a9cce94e33e",
+      "Hash": "3d2446d7c322b66e17db10d37d55381b",
       "Requirements": [
         "Andromeda",
         "Cyclops",
@@ -143,7 +143,7 @@
     },
     "DT": {
       "Package": "DT",
-      "Version": "0.33",
+      "Version": "0.27",
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "64ff3427f559ce3f2597a4fe13255cb6",
@@ -160,10 +160,15 @@
     },
     "DatabaseConnector": {
       "Package": "DatabaseConnector",
-      "Version": "6.3.2",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "1ef65614602c6534a6c666e872c3b647",
+      "Version": "6.4.0",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "DatabaseConnector",
+      "RemoteUsername": "OHDSI",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "f0d479082b9f127d18eed65fa70adf6f17418e5c",
+      "Hash": "c702b1295960287693949efcc5c6ecb4",
       "Requirements": [
         "DBI",
         "SqlRender",
@@ -271,14 +276,14 @@
       "Package": "MethodEvaluation",
       "Version": "2.3.0",
       "Source": "GitHub",
-      "Remotes": "ohdsi/FeatureExtraction, ohdsi/Eunomia",
       "RemoteType": "github",
+      "Remotes": "ohdsi/FeatureExtraction, ohdsi/Eunomia",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "MethodEvaluation",
       "RemoteUsername": "OHDSI",
       "RemoteRef": "HEAD",
       "RemoteSha": "7898881137d5ea9b945c87e0fb5336e93a70ccc4",
-      "Hash": "e79687379506d7d7e8d00ab14eff0851",
+      "Hash": "5701677f3d44d22e4bb1cf3d07238c82",
       "Requirements": [
         "Cyclops",
         "DatabaseConnector",
@@ -387,10 +392,10 @@
     },
     "R6": {
       "Package": "R6",
-      "Version": "2.5.1",
+      "Version": "2.6.1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "470851b6d5d0ac559e9d01bb352b4021",
+      "Hash": "d4335fe7207f1c01ab8c41762f5840d4",
       "Requirements": []
     },
     "RColorBrewer": {
@@ -456,10 +461,10 @@
     },
     "Rcpp": {
       "Package": "Rcpp",
-      "Version": "1.0.13-1",
+      "Version": "1.0.14",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "6b868847b365672d6c1677b1608da9ed",
+      "Hash": "e7bdd9ee90e96921ca8a0f1972d66682",
       "Requirements": []
     },
     "RcppEigen": {
@@ -544,10 +549,10 @@
     },
     "bit64": {
       "Package": "bit64",
-      "Version": "4.5.2",
+      "Version": "4.6.0-1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "e84984bf5f12a18628d9a02322128dfd",
+      "Hash": "4f572fbc586294afff277db583b9060f",
       "Requirements": [
         "bit"
       ]
@@ -641,10 +646,10 @@
     },
     "cli": {
       "Package": "cli",
-      "Version": "3.6.3",
+      "Version": "3.6.4",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "b21916dd77a27642b447374a5d30ecf3",
+      "Hash": "491c34d3d9dd0d2fe13d9f278bb90795",
       "Requirements": []
     },
     "clipr": {
@@ -691,10 +696,10 @@
     },
     "cpp11": {
       "Package": "cpp11",
-      "Version": "0.5.1",
+      "Version": "0.5.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "9df43854f1c84685d095ed6270b52387",
+      "Hash": "2720e3fd3dad08f34b19b56b3d6f073d",
       "Requirements": []
     },
     "crayon": {
@@ -1479,13 +1484,12 @@
     },
     "pillar": {
       "Package": "pillar",
-      "Version": "1.9.0",
+      "Version": "1.10.1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "15da5a8412f317beeee6175fbc76f4bb",
+      "Hash": "8b16b6097daef84cd3c40a6a7c5c9d86",
       "Requirements": [
         "cli",
-        "fansi",
         "glue",
         "lifecycle",
         "rlang",
@@ -1671,10 +1675,10 @@
     },
     "purrr": {
       "Package": "purrr",
-      "Version": "1.0.2",
+      "Version": "1.0.4",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "1cba04a4e9414bdefc9dcaa99649a8dc",
+      "Hash": "cc8b5d43f90551fa6df0a6be5d640a4f",
       "Requirements": [
         "cli",
         "lifecycle",
@@ -1777,10 +1781,10 @@
     },
     "rlang": {
       "Package": "rlang",
-      "Version": "1.1.4",
+      "Version": "1.1.5",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "3eec01f8b1dee337674b2e34ab1f9bc1",
+      "Hash": "724dcc1490cd7071ee75ca2994a5446e",
       "Requirements": []
     },
     "rmarkdown": {
