@@ -27,8 +27,8 @@ with DAG(
     tags=["omop_data_refresh"],
 ) as dag:
     
-    snowflake_conn_id = 'gpc-dev'
-    args = dotenv_values("/opt/airflow/env/dev/gpc/.env")
+    snowflake_conn_id = 'mu-dev'
+    args = dotenv_values("/opt/airflow/env/dev/mu/.env")
     
     cdm_db = args['CDM_DB']
     cdm_schema = args['CDM_SCHEMA']
