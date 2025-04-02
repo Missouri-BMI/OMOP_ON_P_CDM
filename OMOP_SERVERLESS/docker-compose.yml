@@ -3,10 +3,7 @@ services:
     image: 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-atlas:latest
     build:
       context: ./Atlas
-    container_name: ohdsi-atlas
-    environment:
-      # - WEBAPI_URL=https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/
-      - WEBAPI_URL=http://localhost:8080/WebAPI/
+    container_name: ohdsi-atlas 
     read_only: true
     ports:
       - "80:8080"
@@ -17,7 +14,7 @@ services:
     build: 
       context: ./WebAPI
     container_name: ohdsi-webapi
-    read_only: true
+    read_only: false
     ports:
       - "8080:8080"
     depends_on:
