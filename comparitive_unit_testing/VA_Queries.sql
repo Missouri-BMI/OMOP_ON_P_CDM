@@ -4,13 +4,13 @@
             in period of time (last 5 years)
 
             *All queries completed using PCOREnet data
-
+PCORNET_CDM.CDM.
 *************************************************************************/
 -- 1.1 Identify Patients with Visit in the last 5 Years
 DROP TABLE IF EXISTS Visits;
 CREATE TEMPORARY TABLE Visits as
 SELECT PATID, DISCHARGE_DATE AS VISIT_DATE --This is just VINCI Services way to grab Visit_Date, could also use VISIT_START_DATE
-FROM ENCOUNTER
+FROM PCORNET_CDM.CDM.ENCOUNTER
 WHERE (DISCHARGE_DATE >= CAST(DATEADD(YEAR, -5, GETDATE()) AS date)
 OR DISCHARGE_DATE IS NULL) -- Start Date
 AND ADMIT_DATE < CAST(GETDATE() AS date) -- End Date
@@ -24,7 +24,7 @@ FROM Visits GROUP BY PATID),
 Demo AS (SELECT DISTINCT V.PATID,First_Vis,BIRTH_DATE AS BirthDateTime,
 SEX,RACE AS Race,Hispanic AS Ethnicity
 FROM Visit AS V
-INNER JOIN DEMOGRAPHIC ON V.PATID = DEMOGRAPHIC.PATID)
+INNER JOIN PCORNET_CDM.CDM.DEMOGRAPHIC ON V.PATID = PCORNET_CDM.CDM.DEMOGRAPHIC.PATID)
 SELECT DISTINCT PATID, First_Vis, BirthDateTime, SEX, Race, Ethnicity
 FROM Demo;
 -- 1.3 Save Row Cohort in FEAS and Get Distinct Patient Counts
@@ -46,7 +46,7 @@ SELECT Ethnicity, COUNT(DISTINCT PATID) FROM G7 GROUP BY Ethnicity ORDER BY Ethn
 -- 2.2 Create ICD Dim Table
 DROP TABLE IF EXISTS Dim_ICD;
 CREATE TEMPORARY TABLE Dim_ICD as
-SELECT DISTINCT PATID, DX, ADMIT_DATE FROM DIAGNOSIS WHERE DX LIKE 'E11.%';
+SELECT DISTINCT PATID, DX, ADMIT_DATE FROM PCORNET_CDM.CDM.DIAGNOSIS WHERE DX LIKE 'E11.%';
 
 DROP TABLE IF EXISTS TYPETWOPATIENTS;
 CREATE TEMPORARY TABLE TYPETWOPATIENTS as
@@ -102,7 +102,7 @@ SELECT Ethnicity, COUNT(DISTINCT PATID) FROM G8 GROUP BY Ethnicity ORDER BY Ethn
 -- 3.1 Look Up Drugs/-- 3.2 Create Drug Dim Table for users over past 5 years
 
 DROP TABLE if exists metformin;
-CREATE TEMPORARY TABLE metformin as SELECT PATID, RAW_RX_MED_NAME, RX_START_DATE, RX_END_DATE from prescribing
+CREATE TEMPORARY TABLE metformin as SELECT PATID, RAW_RX_MED_NAME, RX_START_DATE, RX_END_DATE from PCORNET_CDM.CDM.prescribing
 where RAW_RX_MED_NAME like '%metformin%' or RAW_RX_MED_NAME like '%Metformin%';
 
 DROP TABLE if exists metformin_users;
@@ -119,7 +119,6 @@ select * from metformin5years order by RX_END_DATE ASC;
 DROP TABLE IF EXISTS metformin_users5years;
 CREATE TEMPORARY TABLE metformin_users5years as
 select distinct PATID from metformin5years;
-select * from metformin_users5years;
 
 -- 3.3 Identify Patients with diabetes on metformin
 DROP TABLE IF EXISTS G9;
