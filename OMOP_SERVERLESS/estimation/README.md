@@ -1,29 +1,12 @@
-
 ### shinyapp.r
-```
-ensure_installed <- function(pkg) {
-  # Ensure the input is a character string
-  if (!is.character(pkg)) {
-    stop("'pkg' must be a character string.", call. = FALSE)
-  }
-  
-  # Check if the package is installed
-  if (!requireNamespace(pkg, quietly = TRUE)) {
-    msg <- paste0(sQuote(pkg), " must be installed for this functionality.")
-    
-    # If in an interactive session, prompt the user
-    if (interactive()) {
-      message(msg, "\nWould you like to install it?")
-      choice <- menu(c("Yes", "No"))
-      if (choice == 1) {
-        install.packages(pkg)
-      } else {
-        stop(msg, call. = FALSE)
-      }
-    } else {
-      # Stop execution in non-interactive environments
-      stop(msg, call. = FALSE)
-    }
-  }
-}
-```
+
+1. Modify the `R/shinyapp.r` file:
+    ```r
+    is_installed <- function(pkg, version = "0")
+    ```
+
+2. Run `install.R` to install dependencies and the project package.
+
+3. Execute `CodeToRun.R` to perform the analysis.
+
+4. Run `evidence.R` to preview the results in a lightweight environment with minimal package dependencies.

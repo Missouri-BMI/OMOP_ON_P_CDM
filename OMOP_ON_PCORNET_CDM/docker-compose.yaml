@@ -288,17 +288,6 @@ services:
       airflow-init:
         condition: service_completed_successfully
 
-  # docker-socket-proxy:
-  #   image: tecnativa/docker-socket-proxy:0.1.1
-  #   environment:
-  #     CONTAINERS: 1
-  #     IMAGES: 1
-  #     AUTH: 1
-  #     POST: 1
-  #   privileged: true
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock:ro
-  #   restart: always
 
 volumes:
   postgres-db-volume:

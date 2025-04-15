@@ -3,6 +3,7 @@
 
 create or replace view {cdm_db}.{cdm_schema}.drug_exposure
 AS
+/*
 --dispensing
 SELECT disp.dispensingid::INTEGER                 AS drug_exposure_id,
 
@@ -65,7 +66,7 @@ FROM {pcornet_db}.{pcornet_schema}.deid_dispensing disp
              on pcornet_field_name = 'DISPENSE ROUTE' and disp.dispense_route = route.PCORNET_VALUESET_ITEM
 
 union
-
+*/
 --prescribing
 SELECT presc.prescribingid::INTEGER                                                               AS drug_exposure_id,
 
@@ -122,7 +123,7 @@ FROM {pcornet_db}.{pcornet_schema}.deid_prescribing presc
                    on presc.rxnorm_cui = rxnorm.concept_code and vocabulary_id = 'RxNorm' and standard_concept = 'S'
          left join {cdm_db}.{crosswalk}.OMOP_PCORNET_VALUESET_MAPPING route
                    on pcornet_field_name = 'RX ROUTE' and presc.rx_route = route.PCORNET_VALUESET_ITEM
-
+/*
 union
 
 --med admin
@@ -195,5 +196,8 @@ FROM {pcornet_db}.{pcornet_schema}.deid_med_admin medadmin
                    on medadmin.medadmin_code = rxnorm.concept_code and medadmin_type = 'RX' and
                       rxnorm.vocabulary_id = 'RxNorm' and rxnorm.standard_concept = 'S'
          left join {cdm_db}.{crosswalk}.OMOP_PCORNET_VALUESET_MAPPING route
-                   on pcornet_field_name = 'MEDADMIN ROUTE' and medadmin.medadmin_route = route.PCORNET_VALUESET_ITEM;
+                   on pcornet_field_name = 'MEDADMIN ROUTE' and medadmin.medadmin_route = route.PCORNET_VALUESET_ITEM
 
+
+*/
+;

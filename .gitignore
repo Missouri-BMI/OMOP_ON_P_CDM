@@ -146,9 +146,14 @@ ETL_OMOP/synthea-with-dependencies.jar
 #project specific
 ETL_OMOP/output/*
 ETL_OMOP/vocabulary_v5/*
-Achilles/output/*
-Achilles/errorReportSql.txt
-estimation/drivers/*
+**/estimation/drivers/*
 */snowsql.cnf
 **/Achilles/output/*
 **/Achilles/oerrorReportSql.txt
+**/DQDashboard/drivers/*
+**/DQDashboard/output/*
+**/Achilles/drivers/*
+**/Achilles/errorReportSql.txt
+**/Achilles/output
+OMOP_ON_PCORNET_CDM/SCRIPTS/config/drivers/*
+OMOP_ON_PCORNET_CDM/SCRIPTS/config/output/*

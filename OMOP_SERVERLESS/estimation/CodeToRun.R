@@ -1,4 +1,4 @@
-library(HSVCOHORT)
+library(HSV41)
 
 
 # Optional: specify where the temporary files (used by the Andromeda package) will be created:
@@ -30,12 +30,12 @@ cdmDatabaseSchema <- "CDM"
 
 # The name of the database schema and table where the study-specific cohorts will be instantiated:
 cohortDatabaseSchema <- "TEMP"
-cohortTable <- "HSVFINAL"
+cohortTable <- "HSV41"
 
 # Some meta-information that will be used by the export function:
-databaseId <- "HSVFINAL_DB"
-databaseName <- "HSVFINAL_DB"
-databaseDescription <- "HSVFINAL_DB DESCRIPTION"
+databaseId <- "HSV41DBId"
+databaseName <- "HSV41DB"
+databaseDescription <- "HSV41DB DESCRIPTION"
 
 # For some database platforms (e.g. Oracle): define a schema that can be used to emulate temp tables:
 options(sqlRenderTempEmulationSchema = NULL)
@@ -60,9 +60,4 @@ dataFolder <- file.path(outputFolder, "shinyData")
 
 # You can inspect the results if you want:
 prepareForEvidenceExplorer(resultsZipFile = resultsZipFile, dataFolder = dataFolder)
-launchEvidenceExplorer(dataFolder = dataFolder, blind = TRUE, launch.browser = FALSE)
-
-# Upload the results to the OHDSI SFTP server:
-privateKeyFileName <- ""
-userName <- ""
-uploadResults(outputFolder, privateKeyFileName, userName)
+launchEvidenceExplorer(dataFolder = dataFolder, blind = FALSE, launch.browser = FALSE)
