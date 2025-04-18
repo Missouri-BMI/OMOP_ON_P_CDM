@@ -59,6 +59,7 @@ CREATE TEMPORARY TABLE G8 as
 SELECT DISTINCT G7.PATID, RACE, SEX, Ethnicity, BIRTHDATETIME, FIRST_VIS FROM G7
 INNER JOIN TYPETWOPATIENTS AS C ON C.PATID = G7.PATID;
 --TODO: SHOULD first diagnosis date be used as substitute for CONDITION START DATE?
+
 -- AND CONDITION_START_DATE >= CAST('10/01/1999' AS date) -- Start of EHR
 --Note that our date has no end or start date of a diagnosis, just an admit date. so we dont follow 1:1 the
 -- process used by VA
