@@ -8,13 +8,14 @@ PCORNET_CDM.CDM.
 *************************************************************************/
 -- 1.1 Identify Patients with Visit in the last 5 Years
 DROP TABLE IF EXISTS Visits;
-CREATE TEMPORARY TABLE Visits as
+CREATE TEMPORARY TABLE VISITS as
 SELECT PERSON_ID, VISIT_END_DATE AS VISIT_DATE --This is just VINCI Services way to grab Visit_Date, could also use VISIT_START_DATE
 FROM OMOP_CDM.CDM.VISIT_OCCURRENCE
 WHERE (VISIT_END_DATE >= CAST(DATEADD(YEAR, -5, GETDATE()) AS date)
 OR VISIT_END_DATE IS NULL) -- Start Date
 AND VISIT_START_DATE < CAST(GETDATE() AS date) -- End Date
 AND VISIT_START_DATE >= CAST('10/01/1999' AS date); -- Start of EHR TODO: is this needed?
+select count(*) from OMOP_CDM.CDM.VISIT_OCCURRENCE where VISIT_END_DATE is null;
 
 -- 1.2 Get Demographics
 DROP TABLE IF EXISTS G7;
@@ -49,6 +50,39 @@ SELECT Ethnicity, COUNT(DISTINCT PERSON_ID) FROM G7 GROUP BY Ethnicity ORDER BY 
 *************************************************************************/
 -- 2.2 Create ICD Dim Table
 
+DROP TABLE IF EXISTS Diabetes_Codes;
+CREATE TEMPORARY TABLE Diabetes_Codes as
+SELECT * from OMOP_CDM.CDM.CONCEPT
+WHERE VOCABULARY_ID = 'ICD10CM'
+and CONCEPT_CODE like 'E11.%';
+select * from diabetes_codes order by CONCEPT_ID;
+
+select * from OMOP_CDM.CDM.CONDITION_OCCURRENCE LIMIT 100;
+
+DROP TABLE IF EXISTS Dim_ICD;
+CREATE TEMPORARY TABLE Dim_ICD as
+SELECT DISTINCT
+PERSON_ID,
+CONDITION_START_DATE,
+CONDITION_END_DATE,
+CONDITION_CONCEPT_ID,
+CONDITION_SOURCE_VALUE
+FROM
+OMOP_CDM.CDM.CONDITION_OCCURRENCE
+INNER JOIN DIABETES_CODES
+ON OMOP_CDM.CDM.CONDITION_OCCURRENCE.CONDITION_Source_CONCEPT_ID = DIABETES_CODES.CONCEPT_ID
+AND (CONDITION_END_DATE >= CAST(DATEADD(YEAR, -5, GETDATE()) AS date) OR CONDITION_END_DATE IS NULL) -- Start Date
+AND CONDITION_START_DATE < CAST(GETDATE() AS date) -- End Date kind of pointless
+AND CONDITION_START_DATE >= CAST('10/01/1999' AS date);--TODO: icd type 9?
+--size: 1042177
+select count(*) from Dim_ICD order by CONDITION_CONCEPT_ID;
+
+--select * from OMOP_CDM.CDM.CONCEPT where CONCEPT_ID = '45605403';
+--select * from OMOP_CDM.CDM.CONCEPT where CONCEPT_ID = '45757363';
+
+--45757363 11.649
+--45605405
+/*
 DROP TABLE IF EXISTS Dim_ICD;
 CREATE TEMPORARY TABLE Dim_ICD as
 SELECT DISTINCT
@@ -64,7 +98,9 @@ WHERE
 AND (CONDITION_END_DATE >= CAST(DATEADD(YEAR, -5, GETDATE()) AS date) OR CONDITION_END_DATE IS NULL) -- Start Date
 AND CONDITION_START_DATE < CAST(GETDATE() AS date) -- End Date kind of pointless
 AND CONDITION_START_DATE >= CAST('10/01/1999' AS date);--TODO: icd type 9?
-
+*/
+--size: 1042177
+--select count(*) from Dim_icd order by CONDITION_CONCEPT_ID;
 
 -- 2.3 Identify Patients With Diagnosis
 DROP TABLE IF EXISTS G8;
@@ -114,6 +150,7 @@ SELECT Ethnicity, COUNT(DISTINCT PERSON_ID) FROM G8 GROUP BY Ethnicity ORDER BY 
 
 *************************************************************************/
 -- 3.1 Look Up Drugs/-- 3.2 Create Drug Dim Table for users over past 5 years
+--TODO: to optimize, filter table based on domain_id = "drug"
 DROP TABLE if exists metforminCodes;
 CREATE TEMPORARY TABLE metforminCodes as SELECT CONCEPT_ID, CONCEPT_NAME, DOMAIN_ID from OMOP_CDM.CDM.CONCEPT
 where CONCEPT_NAME like '%metformin%' or CONCEPT_NAME like '%Metformin%';

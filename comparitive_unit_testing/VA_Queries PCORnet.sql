@@ -7,14 +7,17 @@
 PCORNET_CDM.CDM.
 *************************************************************************/
 -- 1.1 Identify Patients with Visit in the last 5 Years
+-- leave out discharge_date is null. doesnt seem to work here
 DROP TABLE IF EXISTS Visits;
 CREATE TEMPORARY TABLE Visits as
 SELECT PATID, DISCHARGE_DATE AS VISIT_DATE --This is just VINCI Services way to grab Visit_Date, could also use VISIT_START_DATE
 FROM PCORNET_CDM.CDM.ENCOUNTER
-WHERE (DISCHARGE_DATE >= CAST(DATEADD(YEAR, -5, GETDATE()) AS date)
-OR DISCHARGE_DATE IS NULL) -- Start Date
+WHERE (admit_date>= CAST(DATEADD(YEAR, -5, GETDATE()) AS date)
+) -- Start Date
 AND ADMIT_DATE < CAST(GETDATE() AS date) -- End Date
-AND ADMIT_DATE >= CAST('10/01/1999' AS date); -- Start of EHR
+AND ADMIT_DATE >= CAST('10/01/1999' AS date); -- Start of EHR TODO: is this needed?
+
+--select count(*) from PCORNET_CDM.CDM.ENCOUNTER where discharge_status is null;
 
 -- 1.2 Get Demographics
 DROP TABLE IF EXISTS G7;
@@ -59,7 +62,6 @@ CREATE TEMPORARY TABLE G8 as
 SELECT DISTINCT G7.PATID, RACE, SEX, Ethnicity, BIRTHDATETIME, FIRST_VIS FROM G7
 INNER JOIN TYPETWOPATIENTS AS C ON C.PATID = G7.PATID;
 --TODO: SHOULD first diagnosis date be used as substitute for CONDITION START DATE?
-
 -- AND CONDITION_START_DATE >= CAST('10/01/1999' AS date) -- Start of EHR
 --Note that our date has no end or start date of a diagnosis, just an admit date. so we dont follow 1:1 the
 -- process used by VA
@@ -106,7 +108,7 @@ SELECT Ethnicity, COUNT(DISTINCT PATID) FROM G8 GROUP BY Ethnicity ORDER BY Ethn
 DROP TABLE if exists metformin;
 CREATE TEMPORARY TABLE metformin as
 SELECT PATID, RAW_RX_MED_NAME, RX_START_DATE, RX_END_DATE from PCORNET_CDM.CDM.prescribing
-where RAW_RX_MED_NAME like '%metformin%' or RAW_RX_MED_NAME like '%Metformin%';
+where lower(RAW_RX_MED_NAME) like '%metformin%';
 
 DROP TABLE if exists metformin_users;
 CREATE TEMPORARY TABLE metformin_users as
