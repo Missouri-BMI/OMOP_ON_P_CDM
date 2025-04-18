@@ -97,7 +97,7 @@ WHERE
 (CONDITION_SOURCE_VALUE LIKE 'dx_icd_type:10|E11.%')
 AND (CONDITION_END_DATE >= CAST(DATEADD(YEAR, -5, GETDATE()) AS date) OR CONDITION_END_DATE IS NULL) -- Start Date
 AND CONDITION_START_DATE < CAST(GETDATE() AS date) -- End Date kind of pointless
-AND CONDITION_START_DATE >= CAST('10/01/1999' AS date);--TODO: icd type 9?
+AND CONDITION_START_DATE >= CAST('10/01/1999' AS date);-
 */
 --size: 1042177
 --select count(*) from Dim_icd order by CONDITION_CONCEPT_ID;
