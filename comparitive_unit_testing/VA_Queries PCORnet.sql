@@ -15,7 +15,7 @@ FROM PCORNET_CDM.CDM.ENCOUNTER
 WHERE (admit_date>= CAST(DATEADD(YEAR, -5, GETDATE()) AS date)
 ) -- Start Date
 AND ADMIT_DATE < CAST(GETDATE() AS date) -- End Date
-AND ADMIT_DATE >= CAST('10/01/1999' AS date); -- Start of EHR TODO: is this needed?
+AND ADMIT_DATE >= CAST('10/01/1999' AS date); -- Start of EHR is this needed?
 
 --select count(*) from PCORNET_CDM.CDM.ENCOUNTER where discharge_status is null;
 

@@ -14,7 +14,7 @@ FROM OMOP_CDM.CDM.VISIT_OCCURRENCE
 WHERE (VISIT_END_DATE >= CAST(DATEADD(YEAR, -5, GETDATE()) AS date)
 OR VISIT_END_DATE IS NULL) -- Start Date
 AND VISIT_START_DATE < CAST(GETDATE() AS date) -- End Date
-AND VISIT_START_DATE >= CAST('10/01/1999' AS date); -- Start of EHR TODO: is this needed?
+AND VISIT_START_DATE >= CAST('10/01/1999' AS date); -- Start of EHR is this needed?
 select count(*) from OMOP_CDM.CDM.VISIT_OCCURRENCE where VISIT_END_DATE is null;
 
 -- 1.2 Get Demographics
@@ -150,7 +150,6 @@ SELECT Ethnicity, COUNT(DISTINCT PERSON_ID) FROM G8 GROUP BY Ethnicity ORDER BY 
 
 *************************************************************************/
 -- 3.1 Look Up Drugs/-- 3.2 Create Drug Dim Table for users over past 5 years
---TODO: to optimize, filter table based on domain_id = "drug"
 DROP TABLE if exists metforminCodes;
 CREATE TEMPORARY TABLE metforminCodes as SELECT CONCEPT_ID, CONCEPT_NAME, DOMAIN_ID from OMOP_CDM.CDM.CONCEPT
 where CONCEPT_NAME like '%metformin%' or CONCEPT_NAME like '%Metformin%';
