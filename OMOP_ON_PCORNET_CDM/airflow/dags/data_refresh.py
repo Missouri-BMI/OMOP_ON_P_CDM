@@ -7,6 +7,17 @@ from airflow.operators.bash import BashOperator
 from airflow.utils.trigger_rule import TriggerRule
 from dotenv import dotenv_values
 from common import *
+import json
+
+def extract_table_mapping_from_file(filename, project_key):
+    with open(filename, 'r') as f:
+        data = json.load(f)
+    
+    return {
+        table: values.get(project_key)
+        for table, values in data.get("tables", {}).items()
+        if project_key in values
+    }
 
 with DAG(
     "omop_data_refresh",
@@ -27,8 +38,8 @@ with DAG(
     tags=["omop_data_refresh"],
 ) as dag:
     
-    snowflake_conn_id = 'mu-dev'
-    args = dotenv_values("/opt/airflow/env/dev/mu/.env")
+    snowflake_conn_id = 'mu-sandbox'
+    args = dotenv_values("/opt/airflow/env/sandbox/mu/.env")
     
     cdm_db = args['CDM_DB']
     cdm_schema = args['CDM_SCHEMA']
@@ -40,23 +51,9 @@ with DAG(
     environment = args['ENVIRONMENT']
     
     BASE_PATH = '/opt/airflow/SCRIPTS'
-    SQL_PATH = os.path.join(BASE_PATH, 'omop_cdm', project)
+    SQL_PATH = os.path.join(BASE_PATH, 'omop_cdm')
     ACHILLES_PATH = os.path.join(BASE_PATH, 'analysis', 'Achilles','perform_achilles_analysis.R')
     CACHE_ACHILLES_PATH = os.path.join(BASE_PATH, 'analysis', 'Achilles','achilles_cache.sql')
-    # CRC_CONCEPT_PATH = f"{BASE_PATH}/i2b2-data/edu.harvard.i2b2.data/Release_1-8/NewInstall/Crcdata/act/scripts/snowflake"
-    # CONCEPT_EXPORT_PATH=f"file://{CRC_CONCEPT_PATH}"
-    
-    # TSV_FORMAT = 'TSV_FORMAT'
-    # TSV_STAGE = 'i2b2_ont_import_tsv'
-    # DSV_FORMAT = 'DSV_FORMAT'
-    # DSV_STAGE = 'i2b2_ont_import_dsv'
-
-    # ENACT_PATH = f"{BASE_PATH}/ACT_V4_LOADER"
-    # ENACT_DATA = f"{ENACT_PATH}/ENACT_V41_POSTGRES_I2B2_TSV"
- 
-    # LOCAL_STAGE=f"file://{ENACT_DATA}"
-    # PUT_PARAMETERS="PARALLEL=4 AUTO_COMPRESS=TRUE SOURCE_COMPRESSION=AUTO_DETECT OVERWRITE=TRUE"
-    
    
     kwargs = {
         'cdm_db': cdm_db,
@@ -66,7 +63,11 @@ with DAG(
         'crosswalk': crosswalk,
         'vocabulary': vocabulary,
     }
-    
+
+    file_path = os.path.join(SQL_PATH, 'table_mapping.json')
+    table_mapping = extract_table_mapping_from_file(file_path, project)
+    kwargs.update(table_mapping)
+
     create_conn_task = PythonOperator(
         task_id='connect',
         python_callable=create_snowflake_connection,
@@ -80,31 +81,5 @@ with DAG(
             False, 
             **kwargs
         )
-    
-    ##TODo: AOU-OMOP-CDM
-    # run_achilles = BashOperator(
-    #     task_id='run_achilles',
-    #     bash_command=f'Rscript {ACHILLES_PATH}',
-    #     retries=0
-    # )
-
-    # achilles_cache = read_sql_from_file(
-    #     CACHE_ACHILLES_PATH, 
-    #     retries=0,
-    #     **kwargs
-    # )
-        
-    # run_dq_dashboard = BashOperator(
-    #     task_id='run_dq_dashboard',
-    #     bash_command=f'echo "run_dq_dashboard"',
-    #     retries=0
-    # )
-
-    # run_aoh_dq = BashOperator(
-    #     task_id='run_aoh_dq',
-    #     bash_command=f'echo "run_aoh_dq"',
-    #     retries=0
-    # )
   
     create_conn_task >> omop_views
-    # create_conn_task >> omop_views >> run_achilles >> achilles_cache >> run_dq_dashboard >> run_aoh_dq

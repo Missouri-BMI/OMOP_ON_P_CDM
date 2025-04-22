@@ -1,5 +1,4 @@
-# code to run
-library(Demo1)
+library(PLPDEMO)
 #=======================
 # USER INPUTS
 #=======================
@@ -31,7 +30,7 @@ cohortDatabaseSchema <- 'temp'
 tempEmulationSchema <- NULL
 
 # table name where the cohorts will be generated
-cohortTable <- 'Demo1Cohort'
+cohortTable <- 'PLPDEMOCohort'
 
 # here we specify the databaseDetails using the 
 # variables specified above
@@ -50,7 +49,7 @@ databaseDetails <- PatientLevelPrediction::createDatabaseDetails(
 # specify the level of logging 
 logSettings <- PatientLevelPrediction::createLogSettings(
         verbosity = 'INFO', 
-        logName = 'Demo1'
+        logName = 'PLPDEMO'
 )
 
 
@@ -81,7 +80,7 @@ createShiny <- TRUE
 
 #=======================
 
-Demo1::execute(
+PLPDEMO::execute(
         databaseDetails = databaseDetails,
         outputFolder = outputFolder,
         createProtocol = createProtocol,

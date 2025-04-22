@@ -1,6 +1,6 @@
 ### shinyapp.r
 
-1. Modify the `R/shinyapp.r` file:
+1. Modify the `R/Helpers.R` file:
     ```r
     is_installed <- function(pkg, version = "0")
     ```

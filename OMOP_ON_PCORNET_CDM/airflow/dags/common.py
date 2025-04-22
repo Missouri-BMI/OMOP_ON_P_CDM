@@ -10,6 +10,7 @@ from airflow.decorators import task
 from airflow.utils.trigger_rule import TriggerRule
 from airflow.utils.task_group import TaskGroup
 from typing import List
+from jinja2 import Template
 
 @provide_session
 def create_snowflake_connection(conn_id, conn_params, session: Session =None):
@@ -37,6 +38,7 @@ def create_snowflake_connection(conn_id, conn_params, session: Session =None):
 
 @task(retries=0)
 def read_sql_from_file(file_path: str, **kwargs) -> List[str]:
+
     # Read SQL file from the specified directory
     sql_path = Path(file_path)
     if not sql_path.is_file():
@@ -48,9 +50,14 @@ def read_sql_from_file(file_path: str, **kwargs) -> List[str]:
 
     if not sql_content.strip():
         raise ValueError(f"SQL file {file_path} is empty")
-    sql_statements = sqlparse.split(sql_content)
-    # Format the SQL query and handle any dynamic content if necessary
-    formatted_sql = [statement.format(**kwargs) for statement in sql_statements]
+
+    # Apply Jinja2 templating
+    template = Template(sql_content)
+    rendered_sql = template.render(**kwargs)
+
+    # Split and format the SQL statements
+    sql_statements = sqlparse.split(rendered_sql)
+    formatted_sql = [statement.strip() for statement in sql_statements]
     return formatted_sql
 
 @task(retries=0)  
@@ -74,7 +81,12 @@ def get_task_id(file_path):
 
 def execute_sql_directory(conn_id, sql_directory: str, sequentially: bool, **kwargs) -> str:
     tasks = []
-    for filename in sorted(os.listdir(sql_directory)):
+    sql_files = [f for f in sorted(os.listdir(sql_directory)) if f.endswith('.sql')]
+    
+    if not sql_files:
+        raise FileNotFoundError(f"No SQL files found in directory: {sql_directory}")
+    
+    for filename in sql_files:
         with TaskGroup(Path(filename).stem) as sub_group:
             sql_file_path = os.path.join(sql_directory, filename)
             read_sql = read_sql_from_file(sql_file_path, **kwargs)
