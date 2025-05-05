@@ -1,0 +1,10 @@
+[submodule "OMOP_SERVERLESS/Atlas"]
+	path = OMOP_SERVERLESS/Atlas
+	url = https://github.com/Missouri-BMI/Atlas.git
+[submodule "OMOP_SERVERLESS/WebAPI"]
+	path = OMOP_SERVERLESS/WebAPI
+	url = https://github.com/Missouri-BMI/WebAPI.git
+
+[submodule "OMOP_SERVERLESS/DataQualityDashboard"]
+	path = OMOP_SERVERLESS/DataQualityDashboard
+	url = https://github.com/OHDSI/DataQualityDashboard.git

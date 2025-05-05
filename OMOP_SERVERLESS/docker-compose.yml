@@ -1,0 +1,61 @@
+services:
+  ohdsi-atlas:
+    image: 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-atlas:latest
+    build:
+      context: ./Atlas
+    container_name: ohdsi-atlas 
+    read_only: true
+    ports:
+      - "80:8080"
+    depends_on:
+      - ohdsi-webapi
+  ohdsi-webapi:
+    image: 500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-webapi
+    build: 
+      context: ./WebAPI
+    container_name: ohdsi-webapi
+    read_only: false
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres-webapi
+  postgres-webapi:
+    image: postgres-webapi:latest
+    container_name: postgres-webapi
+    build:
+      context: ./postgres-webapi
+    environment:
+      - POSTGRES_USER=mhmcb
+      - POSTGRES_PASSWORD=Password123
+    volumes:
+      - postgres-webapi-vol:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  postgres-cdm:
+    image: postgres-cdm:latest
+    container_name: postgres-cdm
+    build:
+      context: ./postgres-cdm
+    environment:
+      - POSTGRES_USER=mhmcb
+      - POSTGRES_PASSWORD=Password123
+    volumes:
+      - postgres-cdm-vol:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+  pg-admin:
+    image: dpage/pgadmin4
+    container_name: pg-admin
+    ports:
+      - "5050:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=mhmcb@missouri.edu
+      - PGADMIN_DEFAULT_PASSWORD=Password123
+    logging:
+      driver: none
+volumes:
+  postgres-cdm-vol:
+    name: postgres-cdm-vol
+  postgres-webapi-vol:
+    name: postgres-webapi-vol
+

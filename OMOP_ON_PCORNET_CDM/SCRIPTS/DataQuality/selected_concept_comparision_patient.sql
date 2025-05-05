@@ -1,0 +1,204 @@
+/*
+created by Vasanthi in July. This query pulls only selected concepts and concepts from selected vocabularies
+from omop concept table(athena) and all concept ids from omop cdm tables
+ */
+
+create or replace table {cdm_db}.DCQ.CONCEPT_COMPARISON_PATIENT_WISE_July_23("CONCEPT_ID" bigint not null,
+                                                    "CONCEPT_NAME" string(255) not null,
+                                                    "DOMAIN_ID" string(20) not null,
+                                                    "VOCABULARY_ID" string(20) not null,
+                                                    "CONCEPT_CLASS_ID" string(20) not null,
+                                                    "CONCEPT_CODE" string(50) not null,
+                                                    "OMOP_N_PAT" bigint, "PCORNET_N_PAT" bigint) as
+select *
+from (
+       select "CONCEPT_ID"
+          , "CONCEPT_NAME"
+          , "DOMAIN_ID"
+          , "VOCABULARY_ID"
+          , "CONCEPT_CLASS_ID"
+          , "CONCEPT_CODE"
+          , "OMOP_N_PAT"
+          , "PCORNET_N_PAT"
+       from (
+             select *
+             from ((
+                    select "CONCEPT_ID"       as "CONCEPT_ID"
+                       , "CONCEPT_NAME"     as "CONCEPT_NAME"
+                       , "DOMAIN_ID"        as "DOMAIN_ID"
+                       , "VOCABULARY_ID"    as "VOCABULARY_ID"
+                       , "CONCEPT_CLASS_ID" as "CONCEPT_CLASS_ID"
+                       , "CONCEPT_CODE"     as "CONCEPT_CODE"
+                       , "OMOP_N_PAT"       as "OMOP_N_PAT"
+                    from (
+                          select "CONCEPT_ID"
+                             , "CONCEPT_NAME"
+                             , "DOMAIN_ID"
+                             , "VOCABULARY_ID"
+                             , "CONCEPT_CLASS_ID"
+                             , "CONCEPT_CODE"
+                             , "N_PAT" as "OMOP_N_PAT"
+                          from (
+                                select *
+                                from ((
+                                       select "CONCEPT_ID"       as "CONCEPT_ID"
+                                          , "CONCEPT_NAME"     as "CONCEPT_NAME"
+                                          , "DOMAIN_ID"        as "DOMAIN_ID"
+                                          , "VOCABULARY_ID"    as "VOCABULARY_ID"
+                                          , "CONCEPT_CLASS_ID" as "CONCEPT_CLASS_ID"
+                                          , "CONCEPT_CODE"     as "CONCEPT_CODE"
+                                       from {cdm_db}.{vocabulary}.CONCEPT
+                                       where VOCABULARY_ID in ('ICD9CM', 'ICD10CM', 'SNOMED', 'NDC', 'RxNorm', 'HCPCS', 'CPT4') or
+                                       CONCEPT_ID in (select distinct source_concept_id from {cdm_db}.{crosswalk}.OMOP_PCORNET_VALUESET_MAPPING)
+                                    ) as SNOWPARK_LEFT left outer join (
+                                                                 select "CONCEPT" as "CONCEPT", "N_PAT" as "N_PAT"
+                                                                 from (
+                                                                       select "CONCEPT", count(distinct "PATID") as "N_PAT"
+                                                                       from (
+                                                                             (
+                                                                               select "PERSON_ID"                            as "PATID"
+                                                                                  , cast("PROCEDURE_CONCEPT_ID" as string) as "CONCEPT"
+                                                                               from {cdm_db}.{cdm_schema}.PROCEDURE_OCCURRENCE
+                                                                             )
+                                                                             union
+                                                                             (
+                                                                               select "PERSON_ID"                                 as "PATID"
+                                                                                  , cast("PROCEDURE_TYPE_CONCEPT_ID" as string) as "CONCEPT"
+                                                                               from {cdm_db}.{cdm_schema}.PROCEDURE_OCCURRENCE
+                                                                             )
+                                                                             union
+                                                                             (
+                                                                               select "PERSON_ID"                           as "PATID"
+                                                                                  , cast("MODIFIER_CONCEPT_ID" as string) as "CONCEPT"
+                                                                               from {cdm_db}.{cdm_schema}.PROCEDURE_OCCURRENCE
+                                                                             )
+                                                                             union
+                                                                             (
+                                                                               select "PERSON_ID"                                   as "PATID"
+                                                                                  , cast("PROCEDURE_SOURCE_CONCEPT_ID" as string) as "CONCEPT"
+                                                                               from {cdm_db}.{cdm_schema}.PROCEDURE_OCCURRENCE
+                                                                             )
+                                                                             union
+                                                                             (
+                                                                               select "PERSON_ID"                            as "PATID"
+                                                                                  , cast("CONDITION_CONCEPT_ID" as string) as "CONCEPT"
+                                                                               from {cdm_db}.{cdm_schema}.CONDITION_OCCURRENCE
+                                                                             )
+                                                                             union
+                                                                             (
+                                                                               select "PERSON_ID"                                 as "PATID"
+                                                                                  , cast("CONDITION_TYPE_CONCEPT_ID" as string) as "CONCEPT"
+                                                                               from {cdm_db}.{cdm_schema}.CONDITION_OCCURRENCE
+                                                                             )
+                                                                             union
+                                                                             (
+                                                                               select "PERSON_ID"                                   as "PATID"
+                                                                                  , cast("CONDITION_STATUS_CONCEPT_ID" as string) as "CONCEPT"
+                                                                               from {cdm_db}.{cdm_schema}.CONDITION_OCCURRENCE
+                                                                             )
+                                                                             union
+                                                                             (
+                                                                               select "PERSON_ID"                                   as "PATID"
+                                                                                  , cast("CONDITION_SOURCE_CONCEPT_ID" as string) as "CONCEPT"
+                                                                               from {cdm_db}.{cdm_schema}.CONDITION_OCCURRENCE
+                                                                             )
+                                                                             union
+                                                                             (
+                                                                               select "PERSON_ID"                       as "PATID"
+                                                                                  , cast("DRUG_CONCEPT_ID" as string) as "CONCEPT"
+                                                                               from {cdm_db}.{cdm_schema}.DRUG_EXPOSURE
+                                                                             )
+                                                                             union
+                                                                             (
+                                                                               select "PERSON_ID"                            as "PATID"
+                                                                                  , cast("DRUG_TYPE_CONCEPT_ID" as string) as "CONCEPT"
+                                                                               from {cdm_db}.{cdm_schema}.DRUG_EXPOSURE
+                                                                             )
+                                                                             union
+                                                                             (
+                                                                               select "PERSON_ID"                        as "PATID"
+                                                                                  , cast("ROUTE_CONCEPT_ID" as string) as "CONCEPT"
+                                                                               from {cdm_db}.{cdm_schema}.DRUG_EXPOSURE
+                                                                             )
+                                                                             union
+                                                                             (
+                                                                               select "PERSON_ID"                              as "PATID"
+                                                                                  , cast("DRUG_SOURCE_CONCEPT_ID" as string) as "CONCEPT"
+                                                                               from {cdm_db}.{cdm_schema}.DRUG_EXPOSURE
+                                                                             )
+                                                                           )
+                                                                       group by "CONCEPT"
+                                                                     )
+                                                               ) as SNOWPARK_RIGHT
+                                    on ("CONCEPT_ID" = "CONCEPT"))
+                              )
+                        )
+                  ) as SNOWPARK_LEFT inner join (
+                                          select "CONCEPT_ID"       as "CONCEPT_ID"
+                                             , "CONCEPT_NAME"     as "CONCEPT_NAME"
+                                             , "DOMAIN_ID"        as "DOMAIN_ID"
+                                             , "VOCABULARY_ID"    as "VOCABULARY_ID"
+                                             , "CONCEPT_CLASS_ID" as "CONCEPT_CLASS_ID"
+                                             , "CONCEPT_CODE"     as "CONCEPT_CODE"
+                                             , "PCORNET_N_PAT"    as "PCORNET_N_PAT"
+                                          from (
+                                                select "CONCEPT_ID"
+                                                   , "CONCEPT_NAME"
+                                                   , "DOMAIN_ID"
+                                                   , "VOCABULARY_ID"
+                                                   , "CONCEPT_CLASS_ID"
+                                                   , "CONCEPT_CODE"
+                                                   , "N_PAT" as "PCORNET_N_PAT"
+                                                from (
+                                                      select *
+                                                      from ((
+                                                             select "CONCEPT_ID"       as "CONCEPT_ID"
+                                                                , "CONCEPT_NAME"     as "CONCEPT_NAME"
+                                                                , "DOMAIN_ID"        as "DOMAIN_ID"
+                                                                , "VOCABULARY_ID"    as "VOCABULARY_ID"
+                                                                , "CONCEPT_CLASS_ID" as "CONCEPT_CLASS_ID"
+                                                                , "CONCEPT_CODE"     as "CONCEPT_CODE"
+                                                             from {cdm_db}.{vocabulary}.CONCEPT
+                                                             where VOCABULARY_ID in ('ICD9CM', 'ICD10CM', 'SNOMED', 'NDC', 'RxNorm', 'HCPCS', 'CPT4') or
+                                                                  CONCEPT_ID in (select distinct source_concept_id from {cdm_db}.{crosswalk}.OMOP_PCORNET_VALUESET_MAPPING)
+                                                           ) as SNOWPARK_LEFT left outer join (
+                                                                                       select "CONCEPT" as "CONCEPT", "N_PAT" as "N_PAT"
+                                                                                       from (
+                                                                                             select "CONCEPT", count(distinct "PATID") as "N_PAT"
+                                                                                             from (
+                                                                                                   (
+                                                                                                      select "PATID" as "PATID", cast("PX" as string) as "CONCEPT"
+                                                                                                      from {pcornet_db}.{pcornet_schema}.DEID_PROCEDURES
+                                                                                                   )
+                                                                                                   union
+                                                                                                   (
+                                                                                                      select "PATID" as "PATID", cast("DX" as string) as "CONCEPT"
+                                                                                                      from {pcornet_db}.{pcornet_schema}.DEID_DIAGNOSIS
+                                                                                                   )
+                                                                                                   union
+                                                                                                   (
+                                                                                                      select "PATID" as "PATID", cast("RXNORM_CUI" as string) as "CONCEPT"
+                                                                                                      from {pcornet_db}.{pcornet_schema}.DEID_PRESCRIBING
+                                                                                                   )
+                                                                                                   union
+                                                                                                   (
+                                                                                                      select "PATID" as "PATID", cast("MEDADMIN_CODE" as string) as "CONCEPT"
+                                                                                                      from {pcornet_db}.{pcornet_schema}.DEID_MED_ADMIN
+                                                                                                   )
+                                                                                                   union
+                                                                                                   (
+                                                                                                      select "PATID" as "PATID", cast("NDC" as string) as "CONCEPT"
+                                                                                                      from {pcornet_db}.{pcornet_schema}.DEID_DISPENSING
+                                                                                                   )
+                                                                                                 )
+                                                                                             group by "CONCEPT"
+                                                                                           )
+                                                                                     ) as SNOWPARK_RIGHT
+                                                           on ("CONCEPT_CODE" = "CONCEPT"))
+                                                    )
+                                              )
+                                        ) as SNOWPARK_RIGHT
+                  using (CONCEPT_ID, CONCEPT_NAME, DOMAIN_ID, VOCABULARY_ID, CONCEPT_CLASS_ID, CONCEPT_CODE))
+           )
+    )
+;

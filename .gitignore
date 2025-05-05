@@ -127,3 +127,33 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+*.vscode
+*.DS_Store
+ETL_OMOP/postgresql-42.2.18.jar
+ETL_OMOP/synthea-with-dependencies.jar
+
+
+**/airflow-env/
+**/airflow/config/
+**/airflow/logs/
+**/airflow/plugins/
+**/env/*
+**/.env
+
+*.RData
+*.Rhistory
+
+#project specific
+ETL_OMOP/output/*
+ETL_OMOP/vocabulary_v5/*
+**/estimation/drivers/*
+*/snowsql.cnf
+**/Achilles/output/*
+**/Achilles/oerrorReportSql.txt
+**/DQDashboard/drivers/*
+**/DQDashboard/output/*
+**/Achilles/drivers/*
+**/Achilles/errorReportSql.txt
+**/Achilles/output
+OMOP_ON_PCORNET_CDM/SCRIPTS/config/drivers/*
+OMOP_ON_PCORNET_CDM/SCRIPTS/config/output/*

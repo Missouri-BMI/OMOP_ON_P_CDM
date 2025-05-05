@@ -1,0 +1,69 @@
+{
+    "tables": {
+        "encounter_table": {
+            "mu-id": "ENCOUNTER",
+            "mu": "DEID_ENCOUNTER",
+            "gpc": "GPC_DEID_ENCOUNTER"
+        },
+        "condition_table": {
+            "mu-id": "CONDITION",
+            "mu": "DEID_CONDITION",
+            "gpc": "GPC_DEID_CONDITION"
+        },
+        "diagnosis_table": {
+            "mu-id": "DIAGNOSIS",
+            "mu": "DEID_DIAGNOSIS",
+            "gpc": "GPC_DEID_DIAGNOSIS"
+        },
+        "death_table": {
+            "mu-id": "DEATH",
+            "mu": "DEID_DEATH",
+            "gpc": "GPC_DEID_DEATH"
+        },
+        "death_cause_table": {
+            "mu-id": "DEATH_CAUSE",
+            "mu": "DEID_DEATH_CAUSE",
+            "gpc": "GPC_DEID_DEATH_CAUSE"
+        },
+        "prescribing_table": {
+            "mu-id": "PRESCRIBING",
+            "mu": "DEID_PRESCRIBING",
+            "gpc": "GPC_DEID_PRESCRIBING"
+        },
+        "address_history_table": {
+            "mu-id": "private_address_history",
+            "mu": "deid_lds_address_history",
+            "gpc": null
+        },
+        "lab_results_table": {
+            "mu-id": "lab_result_cm",
+            "mu": "deid_lab_result_cm",
+            "gpc": "gpc_deid_lab_result_cm"
+        },
+        "enrollment_table": {
+            "mu-id": "enrollment",
+            "mu": "deid_enrollment",
+            "gpc": "gpc_deid_enrollment"
+        },
+        "observation_table": {
+            "mu-id": "encounter",
+            "mu": "DEID_encounter",
+            "gpc": "GPC_DEID_encounter"
+        },
+        "demographic_table": {
+            "mu-id": "DEMOGRAPHIC",
+            "mu": "DEID_DEMOGRAPHIC",
+            "gpc": "GPC_DEID_DEMOGRAPHIC"
+        },
+        "procedure_table": {
+            "mu-id": "procedures",
+            "mu": "deid_procedures",
+            "gpc": "gpc_deid_procedures"
+        },
+        "provider_table": {
+            "mu-id": "provider",
+            "mu": "deid_provider",
+            "gpc": "gpc_deid_provider"
+        }
+    }
+}

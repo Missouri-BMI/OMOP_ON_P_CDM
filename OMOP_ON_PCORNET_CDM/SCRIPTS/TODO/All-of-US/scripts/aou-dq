@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+
+echo 'Local staging from snowflake has started.....'
+
+/opt/scripts/local_stage
+
+echo 'Local staging from snowflake has ended.....'
+echo 'omop_file_validator has started.....'
+
+python3.9 /home/aou-ehr-file-check/omop_columns.py
+python3.9 /home/aou-ehr-file-check/omop_file_validator.py
+
+echo 'omop_file_validator has ended.....'
+
