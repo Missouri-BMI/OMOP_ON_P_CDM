@@ -4,7 +4,7 @@
             in period of time (last 5 years)
 
             *All queries completed using PCOREnet data
-PCORNET_CDM.CDM.
+OMOP_CDM.CDM.
 *************************************************************************/
 -- 1.1 Identify Patients with Visit in the last 5 Years
 DROP TABLE IF EXISTS Visits;
