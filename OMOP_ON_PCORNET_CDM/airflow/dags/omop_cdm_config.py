@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta
 from airflow.models.dag import DAG
-from airflow.operators.python import PythonOperator
+from airflow.providers.standard.operators.python import PythonOperator
+from airflow.providers.standard.operators.empty import EmptyOperator
+from airflow.providers.standard.operators.bash import BashOperator
+
 from airflow.utils.task_group import TaskGroup
-from airflow.operators.empty import EmptyOperator
-from airflow.operators.bash import BashOperator
 from airflow.utils.trigger_rule import TriggerRule
 from dotenv import dotenv_values
 from common import *
