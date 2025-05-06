@@ -2,10 +2,10 @@
 AIRFLOW_UID := $(shell id -u)
 
 # Declare targets that are not actual files
-.PHONY: build-stack airflow-up jupyter
+.PHONY: build deploy jupyter
 
 # Download docker-compose.yaml if it doesn't exist
-build-stack:
+build:
 	@echo "Checking for docker-compose.yaml..."
 	@if [ ! -f docker-compose.yaml ]; then \
 		echo "Downloading docker-compose.yaml..."; \
@@ -17,9 +17,12 @@ build-stack:
 	docker compose up airflow-init --build
 
 # Start all Airflow services
-run-airflow:
-	docker compose up --build
+deploy:
+	docker compose up -d
+
+stop:
+	docker compose down
 
 # Launch Jupyter Lab
-run-jupyter:
-	jupyter lab --allow-root --no-browser
+jupyter:
+	jupyter lab --allow-root --no-browser --NotebookApp.token=''

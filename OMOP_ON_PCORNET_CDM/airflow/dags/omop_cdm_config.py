@@ -40,7 +40,7 @@ with DAG(
     project = args['PROJECT']
     environment = args['ENVIRONMENT']
     
-    BASE_PATH = '/opt/airflow/SCRIPTS'
+    BASE_PATH = '/opt/airflow/scripts'
     SQL_PATH = os.path.join(BASE_PATH, 'omop_cdm', project)
     ACHILLES_PATH = os.path.join(BASE_PATH, 'analysis', 'Achilles','perform_achilles_analysis.R')
     CACHE_ACHILLES_PATH = os.path.join(BASE_PATH, 'analysis', 'Achilles','achilles_cache.sql')
