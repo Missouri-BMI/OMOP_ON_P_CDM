@@ -13,7 +13,7 @@ CREATE WAREHOUSE IF NOT EXISTS omop_atlas_sandbox_wh
 -- 3. Create users
 
 CREATE USER IF NOT EXISTS ATLAS_ELT_USER
-  PASSWORD = 'XGU$4<uf}H#8}3N'  -- Replace with a real secret
+  PASSWORD = 'StrongTempPass#123'  -- Replace with a real secret
   DEFAULT_ROLE = omop_elt
   DEFAULT_WAREHOUSE = omop_etl_wh
   MUST_CHANGE_PASSWORD = TRUE;
