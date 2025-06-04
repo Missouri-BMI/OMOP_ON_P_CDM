@@ -81,3 +81,19 @@ health-check-webapi:
 
 health-check-atlas:
 	curl -X GET "https://atlas-dev.nextgenbmi.umsystem.edu/atlas"
+
+## ARES
+
+IMAGE_NAME       := ohdsi-ares
+CONTAINER_NAME   := ohdsi-ares
+HOST_DATA_DIR    := ./data
+CONTAINER_DATA_DIR := /usr/share/nginx/html/ares/data
+
+ares-build:
+	docker build -t $(IMAGE_NAME) Ares
+
+ares-run:
+	docker run --name $(CONTAINER_NAME) \
+		-p 8080:80 \
+		-v $(HOST_DATA_DIR):$(CONTAINER_DATA_DIR) \
+		-d $(IMAGE_NAME)

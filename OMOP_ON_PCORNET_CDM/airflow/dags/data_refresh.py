@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
 from airflow.models.dag import DAG
-from airflow.operators.python import PythonOperator
+from airflow.providers.standard.operators.python import PythonOperator
+from airflow.providers.standard.operators.empty import EmptyOperator
+from airflow.providers.standard.operators.bash import BashOperator
 from airflow.utils.task_group import TaskGroup
-from airflow.operators.empty import EmptyOperator
-from airflow.operators.bash import BashOperator
 from airflow.utils.trigger_rule import TriggerRule
 from dotenv import dotenv_values
 from common import *
@@ -25,15 +25,13 @@ with DAG(
     # You can override them on a per-task basis during operator initialization
     default_args={
         "depends_on_past": False,
-        "email": ["mhmcb@missouri.edu"],
         "email_on_failure": False,
         "email_on_retry": False,
-        "retries": 1,
-        "retry_delay": timedelta(minutes=5),
+        "retries": 0,
+        "retry_delay": None,
     },
     description="ohdsi atlas data refresh",
-    schedule=None,
-    start_date=datetime(2021, 1, 1),
+    start_date=None,
     catchup=False,
     tags=["omop_data_refresh"],
 ) as dag:
@@ -50,7 +48,7 @@ with DAG(
     project = args['PROJECT']
     environment = args['ENVIRONMENT']
     
-    BASE_PATH = '/opt/airflow/SCRIPTS'
+    BASE_PATH = '/opt/airflow/scripts'
     SQL_PATH = os.path.join(BASE_PATH, 'omop_cdm')
     ACHILLES_PATH = os.path.join(BASE_PATH, 'analysis', 'Achilles','perform_achilles_analysis.R')
     CACHE_ACHILLES_PATH = os.path.join(BASE_PATH, 'analysis', 'Achilles','achilles_cache.sql')

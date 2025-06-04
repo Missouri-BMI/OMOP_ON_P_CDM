@@ -3,7 +3,7 @@ from airflow.models import connection
 from sqlalchemy.orm import Session
 from airflow.models import Connection
 from pathlib import Path
-from airflow.providers.snowflake.operators.snowflake import SnowflakeOperator
+from airflow.providers.snowflake.operators.snowflake import SnowflakeSqlApiOperator
 import os
 import sqlparse
 from airflow.decorators import task
@@ -66,7 +66,7 @@ def add_schema_sql(schema, sql_text) -> str:
     
 # Task to execute SQL using SnowflakeOperator
 def execute_sql(conn_id, task_id, sql_query: str, trigger_rule=TriggerRule.ALL_SUCCESS, autocommit = True, retries = 0):
-    return SnowflakeOperator(
+    return SnowflakeSqlApiOperator(
         task_id=task_id,
         snowflake_conn_id=conn_id,
         sql=sql_query,

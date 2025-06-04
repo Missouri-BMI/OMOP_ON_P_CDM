@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta
 from airflow.models.dag import DAG
-from airflow.operators.python import PythonOperator
+from airflow.providers.standard.operators.python import PythonOperator
+from airflow.providers.standard.operators.empty import EmptyOperator
+from airflow.providers.standard.operators.bash import BashOperator
+
 from airflow.utils.task_group import TaskGroup
-from airflow.operators.empty import EmptyOperator
-from airflow.operators.bash import BashOperator
 from airflow.utils.trigger_rule import TriggerRule
 from dotenv import dotenv_values
 from common import *
@@ -39,7 +40,7 @@ with DAG(
     project = args['PROJECT']
     environment = args['ENVIRONMENT']
     
-    BASE_PATH = '/opt/airflow/SCRIPTS'
+    BASE_PATH = '/opt/airflow/scripts'
     SQL_PATH = os.path.join(BASE_PATH, 'omop_cdm', project)
     ACHILLES_PATH = os.path.join(BASE_PATH, 'analysis', 'Achilles','perform_achilles_analysis.R')
     CACHE_ACHILLES_PATH = os.path.join(BASE_PATH, 'analysis', 'Achilles','achilles_cache.sql')

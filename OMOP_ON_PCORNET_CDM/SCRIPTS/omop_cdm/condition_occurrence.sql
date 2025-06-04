@@ -48,17 +48,17 @@ SELECT
     COALESCE(source_concept.concept_id, 44814650)::INTEGER AS condition_source_concept_id,
     diagnosis.dx_source::varchar(50) AS condition_status_source_value
 FROM {{ pcornet_db }}.{{ pcornet_schema }}.{{ diagnosis_table }} diagnosis
-LEFT JOIN {{ cdm_db }}.{{ cdm_schema }}.concept source_concept 
+LEFT JOIN {{ cdm_db }}.{{ vocabulary }}.concept source_concept 
     ON diagnosis.dx = source_concept.concept_code
     AND (
         (diagnosis.dx_type = '09' AND source_concept.vocabulary_id = 'ICD9CM') OR
         (diagnosis.dx_type = '10' AND source_concept.vocabulary_id = 'ICD10CM')
     )
-LEFT JOIN {{ cdm_db }}.{{ cdm_schema }}.concept_relationship cr
+LEFT JOIN {{ cdm_db }}.{{ vocabulary }}.concept_relationship cr
     ON source_concept.concept_id = cr.concept_id_1
     AND cr.relationship_id = 'Maps to'
     AND (cr.invalid_reason IS NULL OR cr.invalid_reason = '')
-LEFT JOIN {{ cdm_db }}.{{ cdm_schema }}.concept target_concept
+LEFT JOIN {{ cdm_db }}.{{ vocabulary }}.concept target_concept
     ON cr.concept_id_2 = target_concept.concept_id
     AND target_concept.standard_concept = 'S'
     AND (target_concept.invalid_reason IS NULL OR target_concept.invalid_reason = '');

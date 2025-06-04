@@ -8,3 +8,12 @@
 [submodule "OMOP_SERVERLESS/DataQualityDashboard"]
 	path = OMOP_SERVERLESS/DataQualityDashboard
 	url = https://github.com/OHDSI/DataQualityDashboard.git
+[submodule "OMOP_SERVERLESS/Ares"]
+	path = OMOP_SERVERLESS/Ares
+	url = https://github.com/OHDSI/Ares.git
+[submodule "OMOP_SERVERLESS/Achilles"]
+	path = OMOP_SERVERLESS/Achilles
+	url = https://github.com/Missouri-BMI/Achilles.git
+[submodule "OMOP_SERVERLESS/SqlRender"]
+	path = OMOP_SERVERLESS/SqlRender
+	url = https://github.com/Missouri-BMI/SqlRender.git
