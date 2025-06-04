@@ -157,3 +157,6 @@ ETL_OMOP/vocabulary_v5/*
 **/Achilles/output
 OMOP_ON_PCORNET_CDM/SCRIPTS/config/drivers/*
 OMOP_ON_PCORNET_CDM/SCRIPTS/config/output/*
+OMOP_SERVERLESS/output/*
+OMOP_SERVERLESS/drivers/*
+OMOP_SERVERLESS/data/*

@@ -56,11 +56,11 @@ SELECT DISTINCT
     , NULL::INTEGER AS measurement_event_id
     , NULL::INTEGER AS meas_event_field_concept_id
 FROM {{ pcornet_db }}.{{ pcornet_schema }}.{{ lab_results_table }} lab
-JOIN {{ cdm_db }}.{{ cdm_schema }}.concept c
+JOIN {{ cdm_db }}.{{ vocabulary }}.concept c
     ON lab.lab_loinc = c.concept_code
     AND c.domain_id = 'Measurement'
-LEFT JOIN {{ cdm_db }}.{{ cdm_schema }}.concept u
+LEFT JOIN {{ cdm_db }}.{{ vocabulary }}.concept u
     ON lab.result_unit = u.concept_code
-LEFT JOIN {{ cdm_db }}.{{ cdm_schema }}.concept c_result
+LEFT JOIN {{ cdm_db }}.{{ vocabulary }}.concept c_result
     ON lab.lab_result_source = c_result.concept_code
 ;
