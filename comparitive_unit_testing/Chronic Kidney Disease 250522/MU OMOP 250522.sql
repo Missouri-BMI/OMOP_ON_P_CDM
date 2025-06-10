@@ -16,7 +16,7 @@ create temporary table visits as
 SELECT
 	PERSON_ID,
 	VISIT_END_DATE  AS VISIT_DATE
-FROM OMOP_cdm.cdm.VISIT_OCCURRENCE
+FROM ATLAS_MU_PROD.CDM.VISIT_OCCURRENCE
 WHERE
 	(VISIT_END_DATE >= CAST(DATEADD(YEAR, -5, GETDATE()) AS date) OR VISIT_END_DATE IS NULL) -- Start Date
 	AND VISIT_START_DATE < CAST(GETDATE() AS date) -- End Date
@@ -45,7 +45,7 @@ SELECT DISTINCT
 	,ETHNICITY_CONCEPT_ID AS Ethnicity
 FROM Visit AS V
 	LEFT JOIN
-	OMOP_CDM.CDM.PERSON AS P
+	ATLAS_MU_PROD.CDM.PERSON AS P
 	ON V.PERSON_ID = P.PERSON_ID
 )
 SELECT DISTINCT
@@ -57,11 +57,11 @@ SELECT DISTINCT
 	R.CONCEPT_NAME AS Race,
 	E.CONCEPT_NAME AS Ethnicity
 FROM Demo AS D
-	INNER JOIN OMOP_CDM.CDM.CONCEPT AS G
+	INNER JOIN ATLAS_MU_PROD.CDM.CONCEPT AS G
 	ON D.Gender = G.CONCEPT_ID
-	INNER JOIN OMOP_CDM.CDM.CONCEPT AS R
+	INNER JOIN ATLAS_MU_PROD.CDM.CONCEPT AS R
 	ON D.Race = R.CONCEPT_ID
-	INNER JOIN OMOP_CDM.CDM.CONCEPT AS E
+	INNER JOIN ATLAS_MU_PROD.CDM.CONCEPT AS E
 	ON D.Ethnicity = E.CONCEPT_ID
 	;
 
@@ -149,7 +149,7 @@ ORDER BY Ethnicity;
 
 DROP TABLE IF EXISTS kidney_codes;
 CREATE TEMPORARY TABLE kidney_codes as
-SELECT concept_id, concept_name, concept_code, from OMOP_CDM.CDM.CONCEPT
+SELECT concept_id, concept_name, concept_code, from ATLAS_MU_PROD.CDM.CONCEPT
 WHERE vocabulary_id='ICD10CM' and (CONCEPT_CODE  LIKE 'N18.2%' OR CONCEPT_CODE LIKE 'N18.3%' OR CONCEPT_CODE LIKE 'N18.30%'
 	OR CONCEPT_CODE LIKE 'N18.31%' OR CONCEPT_CODE LIKE 'N18.32%' OR CONCEPT_CODE LIKE 'N18.4%'
 	OR CONCEPT_CODE LIKE 'N18.5%' OR CONCEPT_CODE LIKE 'N18.6%' OR CONCEPT_CODE LIKE 'N18.9%');
@@ -159,7 +159,7 @@ select * from kidney_codes order by CONCEPT_CODE;
 drop table if exists kidney_diagnoses;
 create temporary table kidney_diagnoses as
 select c.person_id,CONDITION_END_DATE,CONDITION_START_DATE from kidney_codes as k
-inner join OMOP_CDM.CDM.CONDITION_OCCURRENCE as c
+inner join ATLAS_MU_PROD.CDM.CONDITION_OCCURRENCE as c
 ON C.CONDITION_SOURCE_CONCEPT_ID = k.CONCEPT_ID;
 select * from kidney_diagnoses;
 
@@ -276,7 +276,7 @@ ORDER BY Ethnicity
 DROP TABLE IF EXISTS LabConceptDim_Creatinine;
 create temporary table LabConceptDim_Creatinine as
 SELECT DISTINCT C.*
-FROM OMOP_CDM.cdm.concept as C
+FROM ATLAS_MU_PROD.CDM.concept as C
 	WHERE
 			lower(C.CONCEPT_NAME) LIKE '%creatinine%'
 		AND (lower(C.CONCEPT_NAME) LIKE '%serum%'
@@ -302,7 +302,7 @@ SELECT DISTINCT
 FROM
 		G8
 		INNER JOIN
-		omop_cdm.cdm.measurement AS M
+		ATLAS_MU_PROD.CDM.measurement AS M
 		ON G8.PERSON_ID = M.PERSON_ID
 		INNER JOIN
 		LabConceptDim_Creatinine AS Dim
@@ -494,20 +494,12 @@ ORDER BY Ethnicity
 
 --	4.2		Create ICD Dim Table
 
-DROP TABLE IF EXISTS Dim_ICD_Dia;
-
-create or replace temporary table Dim_ICD_Dia as
-select * from omop_cdm.cdm.concept
-where  (concept_code LIKE '%Z99.2%' or lower(concept_name) like '%dependence on renal dialysis%' )
-and (concept_name not in ('Intervertebral disc of thoracic spine','Hemodialysis state (machine translation)'));
-
-select * from Dim_ICD_Dia;
-
-drop table DIM_ICD_DIA2;
-create temporary table Dim_ICD_Dia2 as
-select * from omop_cdm.cdm.concept
-where  concept_code LIKE 'Z99.2%';
-
+drop table if exists DIM_ICD_DIA;
+create temporary table Dim_ICD_Dia as
+select * from ATLAS_MU_PROD.CDM.concept
+where  concept_code LIKE 'Z99.2%'
+and vocabulary_id like 'ICD10%';
+select * from dim_icd_dia;
 --	1 Rows;	00m:01s
 
 
@@ -522,10 +514,10 @@ SELECT DISTINCT
 FROM
 	G9 AS COH
 	INNER JOIN
-	omop_cdm.cdm.CONDITION_OCCURRENCE AS C
+	ATLAS_MU_PROD.CDM.CONDITION_OCCURRENCE AS C
 		ON C.PERSON_ID = COH.PERSON_ID
 	INNER JOIN
-	Dim_ICD_Dia2 AS D
+	Dim_ICD_Dia AS D
 		ON C.CONDITION_CONCEPT_ID = D.CONCEPT_ID
 WHERE
 	(CONDITION_END_DATE >= CAST(DATEADD(YEAR, -1, GETDATE()) AS date) OR CONDITION_END_DATE IS NULL) -- Start Date
@@ -537,12 +529,12 @@ select * from ICD_Dia;
 
 
 --	4.4		Look Up CPT Codes
--- select distinct concept_class_id from omop_cdm.cdm.concept where lower(concept_class_id) like '%cpt%';
+-- select distinct concept_class_id from ATLAS_MU_PROD.CDM.concept where lower(concept_class_id) like '%cpt%';
 
 SELECT DISTINCT
 	*
 FROM
-	 omop_cdm.cdm.concept
+	 ATLAS_MU_PROD.CDM.concept
 WHERE
     vocabulary_id like 'CPT4%'
     and
@@ -559,7 +551,7 @@ create temp table Dim_CPT as
 SELECT DISTINCT
 	*
 FROM
-	 omop_cdm.cdm.concept
+	 ATLAS_MU_PROD.CDM.concept
 WHERE
     vocabulary_id like 'CPT4%'
     and
@@ -579,7 +571,7 @@ SELECT DISTINCT
 FROM
 	G9 AS COH
 	INNER JOIN
-	omop_cdm.cdm.PROCEDURE_OCCURRENCE AS P
+	ATLAS_MU_PROD.CDM.PROCEDURE_OCCURRENCE AS P
 		ON P.PERSON_ID = COH.PERSON_ID
 	INNER JOIN
 	Dim_CPT AS D
