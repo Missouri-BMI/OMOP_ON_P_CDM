@@ -17,8 +17,7 @@ CREATE OR REPLACE VIEW {{ cdm_db }}.{{ cdm_schema }}.visit_occurrence AS (
         DATE(enc.admit_date)::DATE AS visit_start_date,
         CONCAT(DATE(enc.admit_date), ' ', enc.admit_time)::TIMESTAMP AS visit_start_datetime,
         DATE(COALESCE(enc.discharge_date, enc.admit_date))::DATE AS visit_end_date,
-        CONCAT(DATE(COALESCE(enc.discharge_date, enc.admit_date)), ' ', 
-        COALESCE(enc.discharge_time, enc.admit_time))::TIMESTAMP AS visit_end_datetime,
+        CONCAT(DATE(COALESCE(enc.discharge_date, enc.admit_date)), ' ', COALESCE(enc.discharge_time, enc.admit_time)) ::TIMESTAMP AS visit_end_datetime,
         44818518::INTEGER AS visit_type_concept_id,
         NULL::INTEGER AS care_site_id,  -- originally planned from facilityid → care_site, still NULL here
         enc.raw_enc_type::VARCHAR(50) AS visit_source_value,

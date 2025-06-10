@@ -4,9 +4,13 @@ CREATE DATABASE atlas_mu_sandbox;
 
 GRANT OWNERSHIP ON DATABASE atlas_mu_sandbox TO ROLE omop_elt REVOKE CURRENT GRANTS;
 
+
 USE ROLE omop_elt;
 
+GRANT USAGE ON DATABASE atlas_mu_sandbox TO ROLE omop_atlas_sandbox;
+
 USE DATABASE atlas_mu_sandbox;
+
 
 CREATE OR REPLACE SCHEMA cdm;
 CREATE OR REPLACE SCHEMA vocabulary;
