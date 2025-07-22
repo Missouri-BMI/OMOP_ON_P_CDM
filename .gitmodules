@@ -4,7 +4,6 @@
 [submodule "OMOP_SERVERLESS/WebAPI"]
 	path = OMOP_SERVERLESS/WebAPI
 	url = https://github.com/Missouri-BMI/WebAPI.git
-
 [submodule "OMOP_SERVERLESS/DataQualityDashboard"]
 	path = OMOP_SERVERLESS/DataQualityDashboard
 	url = https://github.com/OHDSI/DataQualityDashboard.git
@@ -17,3 +16,6 @@
 [submodule "OMOP_SERVERLESS/SqlRender"]
 	path = OMOP_SERVERLESS/SqlRender
 	url = https://github.com/Missouri-BMI/SqlRender.git
+[submodule "aou-ehr-file-check"]
+	path = OMOP_ON_PCORNET_CDM/scripts/analysis/All-of-US/aou-ehr-file-check
+	url = https://github.com/Missouri-BMI/aou-ehr-file-check.git

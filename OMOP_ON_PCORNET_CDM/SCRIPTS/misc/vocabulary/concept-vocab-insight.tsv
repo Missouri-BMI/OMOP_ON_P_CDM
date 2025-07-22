@@ -1,0 +1,299 @@
+DOMAIN_ID	VOCABULARY_ID	CONCEPT_CLASS_ID
+Condition	HCPCS	HCPCS Modifier
+Condition	ICDO3	ICDO Condition
+Condition	Nebraska Lexicon	Clinical Finding
+Condition	Nebraska Lexicon	Procedure
+Condition	Nebraska Lexicon	Context-dependent
+Condition	OMOP Extension	Clinical Finding
+Condition	OPCS4	Clinical Finding
+Condition	SNOMED	Clinical Finding
+Condition	SNOMED	Context-dependent
+Condition	SNOMED Veterinary	Clinical Finding
+Condition Status	Condition Status	Condition Status
+Cost	Cost	Summary
+Cost	Cost	Detail
+Currency	Currency	Currency
+Device	AMT	Trade Product Pack
+Device	AMT	Qualifier Value
+Device	AMT	Clinical Drug Form
+Device	AMT	Med Product Pack
+Device	AMT	Clinical Finding
+Device	AMT	Substance
+Device	AMT	Pharma/Biol Product
+Device	AMT	Containered Pack
+Device	AMT	Trade Product Unit
+Device	AMT	Med Product Unit
+Device	BDPM	Device
+Device	CPT4	CPT4 Modifier
+Device	CPT4	CPT4
+Device	GGR	Med Product Pack
+Device	HCPCS	HCPCS
+Device	HCPCS	HCPCS Modifier
+Device	ICD10PCS	ICD10PCS Hierarchy
+Device	ICD10PCS	ICD10PCS
+Device	JMDC	Device
+Device	KDC	Device
+Device	NDC	Device
+Device	OPCS4	Physical Object
+Device	SNOMED	Pharma/Biol Product
+Device	SNOMED	Substance
+Device	SNOMED	Clinical Drug
+Device	SNOMED	Physical Object
+Device	SNOMED Veterinary	Substance
+Device	SNOMED Veterinary	Physical Object
+Device	dm+d	VMPP
+Device	dm+d	VMP
+Device	dm+d	AMPP
+Device	dm+d	AMP
+Drug	CPT4	CPT4 Modifier
+Drug	CVX	CVX
+Drug	HCPCS	HCPCS
+Drug	RxNorm	Clinical Drug Form
+Drug	RxNorm	Quant Branded Drug
+Drug	RxNorm	Branded Drug
+Drug	RxNorm	Clinical Drug Comp
+Drug	RxNorm	Clinical Drug
+Drug	RxNorm	Quant Clinical Drug
+Drug	RxNorm	Branded Drug Comp
+Drug	RxNorm	Clinical Pack
+Drug	RxNorm	Branded Drug Form
+Drug	RxNorm	Ingredient
+Drug	RxNorm	Branded Pack
+Drug	RxNorm Extension	Clinical Pack Box
+Drug	RxNorm Extension	Branded Drug Comp
+Drug	RxNorm Extension	Clinical Drug Box
+Drug	RxNorm Extension	Marketed Product
+Drug	RxNorm Extension	Branded Drug Box
+Drug	RxNorm Extension	Quant Branded Drug
+Drug	RxNorm Extension	Branded Pack
+Drug	RxNorm Extension	Clinical Drug Form
+Drug	RxNorm Extension	Quant Clinical Box
+Drug	RxNorm Extension	Clinical Drug
+Drug	RxNorm Extension	Branded Drug Form
+Drug	RxNorm Extension	Clinical Pack
+Drug	RxNorm Extension	Ingredient
+Drug	RxNorm Extension	Branded Pack Box
+Drug	RxNorm Extension	Clinical Drug Comp
+Drug	RxNorm Extension	Branded Drug
+Drug	RxNorm Extension	Quant Clinical Drug
+Drug	RxNorm Extension	Quant Branded Box
+Episode	Episode	Disease Extent
+Episode	Episode	Treatment
+Episode	Episode	Disease Dynamic
+Episode	Episode	Episode of Care
+Ethnicity	Ethnicity	Ethnicity
+Gender	Gender	Gender
+Geography	OSM	3rd level
+Geography	OSM	7th level
+Geography	OSM	6th level
+Geography	OSM	11th level
+Geography	OSM	12th level
+Geography	OSM	10th level
+Geography	OSM	9th level
+Geography	OSM	2nd level
+Geography	OSM	4th level
+Geography	OSM	8th level
+Geography	OSM	5th level
+Geography	US Census	US Census Division
+Geography	US Census	US Census Region
+Language	Language	Language
+Language	SNOMED	Qualifier Value
+Meas Value	CPT4	CPT4 Modifier
+Meas Value	LOINC	Doc Kind
+Meas Value	LOINC	Answer
+Meas Value	LOINC	Doc Setting
+Meas Value	LOINC	Doc Subject Matter
+Meas Value	LOINC	Doc Role
+Meas Value	LOINC	Doc Type of Service
+Meas Value	NAACCR	NAACCR Value
+Meas Value	Nebraska Lexicon	Qualifier Value
+Meas Value	OMOP Extension	Qualifier Value
+Meas Value	SNOMED	Qualifier Value
+Meas Value	UK Biobank	Value
+Meas Value Operator	SNOMED	Qualifier Value
+Measurement	CPT4	CPT4
+Measurement	CPT4	CPT4 Hierarchy
+Measurement	CPT4	CPT4 Modifier
+Measurement	Cancer Modifier	Metastasis
+Measurement	Cancer Modifier	Dimension
+Measurement	Cancer Modifier	Margin
+Measurement	Cancer Modifier	Topography
+Measurement	Cancer Modifier	Histopattern
+Measurement	Cancer Modifier	Staging/Grading
+Measurement	Cancer Modifier	Extension/Invasion
+Measurement	Cancer Modifier	Nodes
+Measurement	HCPCS	HCPCS
+Measurement	HCPCS	HCPCS Modifier
+Measurement	LOINC	Clinical Observation
+Measurement	LOINC	Lab Test
+Measurement	NAACCR	NAACCR Variable
+Measurement	Nebraska Lexicon	Staging / Scales
+Measurement	Nebraska Lexicon	Procedure
+Measurement	Nebraska Lexicon	Clinical Finding
+Measurement	OMOP Extension	Procedure
+Measurement	OMOP Extension	Observable Entity
+Measurement	OMOP Extension	Staging / Scales
+Measurement	OMOP Extension	Lab Test
+Measurement	OMOP Extension	Precoordinated pair
+Measurement	OMOP Extension	Social Context
+Measurement	OMOP Genomic	RNA Variant
+Measurement	OMOP Genomic	Protein Variant
+Measurement	OMOP Genomic	Genetic Variation
+Measurement	OMOP Genomic	DNA Variant
+Measurement	OPCS4	Procedure
+Measurement	PPI	Clinical Observation
+Measurement	SNOMED	Staging / Scales
+Measurement	SNOMED	Procedure
+Measurement	SNOMED	Clinical Finding
+Measurement	SNOMED	Observable Entity
+Measurement	SNOMED Veterinary	Procedure
+Metadata	CDM	CDM
+Metadata	CDM	Table
+Metadata	CDM	Field
+Metadata	Metadata	Metadata
+Metadata	Relationship	Relationship
+Note	LOINC	Clinical Observation
+Observation	APC	APC
+Observation	CPT4	CPT4
+Observation	CPT4	CPT4 Modifier
+Observation	DRG	MS-DRG
+Observation	HCPCS	HCPCS Modifier
+Observation	HCPCS	HCPCS
+Observation	ICDO3	ICDO Histology
+Observation	LOINC	Survey
+Observation	LOINC	Clinical Observation
+Observation	LOINC	Claims Attachment
+Observation	LOINC	Lab Test
+Observation	MDC	MDC
+Observation	MMI	Survey
+Observation	NAACCR	NAACCR Variable
+Observation	NAACCR	NAACCR Procedure
+Observation	NAACCR	NAACCR Value
+Observation	NUCC	Observation
+Observation	Nebraska Lexicon	Qualifier Value
+Observation	Nebraska Lexicon	Attribute
+Observation	Nebraska Lexicon	Morph Abnormality
+Observation	Nebraska Lexicon	Procedure
+Observation	Nebraska Lexicon	Clinical Finding
+Observation	Nebraska Lexicon	Substance
+Observation	Nebraska Lexicon	Context-dependent
+Observation	Nebraska Lexicon	Event
+Observation	Nebraska Lexicon	Observable Entity
+Observation	OMOP Extension	Event
+Observation	OMOP Extension	Substance
+Observation	OMOP Extension	Context-dependent
+Observation	OMOP Extension	Clinical Finding
+Observation	OMOP Extension	Qualifier Value
+Observation	OMOP Extension	Observable Entity
+Observation	OMOP Extension	Attribute
+Observation	OPCS4	Attribute
+Observation	OPCS4	Morph Abnormality
+Observation	OPCS4	Procedure
+Observation	OPCS4	Qualifier Value
+Observation	PCORNet	Discharge Status
+Observation	PCORNet	Admitting Source
+Observation	PPI	Module
+Observation	PPI	Question source
+Observation	PPI	Topic
+Observation	PPI	Answer
+Observation	PPI	Question
+Observation	PPI	Clinical Observation
+Observation	PPI	Qualifier Value
+Observation	PPI	PPI Modifier
+Observation	SNOMED	Dose Form
+Observation	SNOMED	Location
+Observation	SNOMED	Event
+Observation	SNOMED	Substance
+Observation	SNOMED	Linkage Concept
+Observation	SNOMED	Pharma/Biol Product
+Observation	SNOMED	Attribute
+Observation	SNOMED	Procedure
+Observation	SNOMED	Clinical Finding
+Observation	SNOMED	Linkage Assertion
+Observation	SNOMED	Physical Force
+Observation	SNOMED	Observable Entity
+Observation	SNOMED	Qualifier Value
+Observation	SNOMED	Disposition
+Observation	SNOMED	Context-dependent
+Observation	SNOMED	Social Context
+Observation	SNOMED	Organism
+Observation	SNOMED	Physical Object
+Observation	SNOMED	Morph Abnormality
+Observation	SNOMED Veterinary	Qualifier Value
+Observation	SNOMED Veterinary	Organism
+Observation	SNOMED Veterinary	Life circumstance
+Observation	SNOMED Veterinary	Observable Entity
+Observation	SNOMED Veterinary	Substance
+Observation	SNOMED Veterinary	Event
+Observation	SNOMED Veterinary	Social Context
+Observation	SNOMED Veterinary	Location
+Observation	SNOMED Veterinary	Clinical Finding
+Observation	SNOMED Veterinary	Morph Abnormality
+Observation	SNOMED Veterinary	Attribute
+Observation	UB04 Pri Typ of Adm	UB04 Pri Typ of Adm
+Observation	UK Biobank	Answer
+Observation	UK Biobank	Question
+Observation	UK Biobank	Variable
+Observation	UK Biobank	Value
+Payer	KNHIS	Payer
+Payer	SOPT	Payer
+Plan	Plan	Metal level
+Plan	Plan	Benefit
+Plan Stop Reason	Plan Stop Reason	Plan Stop Reason
+Procedure	CPT4	CPT4 Modifier
+Procedure	CPT4	CPT4 Hierarchy
+Procedure	CPT4	CPT4
+Procedure	HCPCS	HCPCS
+Procedure	HCPCS	HCPCS Modifier
+Procedure	HemOnc	Context
+Procedure	ICD10PCS	ICD10PCS
+Procedure	ICD10PCS	ICD10PCS Hierarchy
+Procedure	ICD9Proc	Procedure
+Procedure	ICD9Proc	3-dig nonbill code
+Procedure	ICD9Proc	2-dig nonbill code
+Procedure	ICD9Proc	4-dig billing code
+Procedure	ICD9Proc	3-dig billing code
+Procedure	LOINC	Clinical Observation
+Procedure	NAACCR	NAACCR Procedure
+Procedure	NAACCR	NAACCR Value
+Procedure	Nebraska Lexicon	Procedure
+Procedure	OMOP Extension	Procedure
+Procedure	OPCS4	Procedure
+Procedure	SNOMED	Procedure
+Procedure	SNOMED Veterinary	Procedure
+Provider	ABMS	Physician Specialty
+Provider	HES Specialty	Provider
+Provider	HES Specialty	Physician Specialty
+Provider	Medicare Specialty	Physician Specialty
+Provider	Medicare Specialty	Provider
+Provider	NUCC	Provider
+Provider	NUCC	Physician Specialty
+Provider	Provider	Provider
+Provider	Provider	Physician Specialty
+Race	Race	Race
+Regimen	HemOnc	Regimen
+Regimen	HemOnc	Modality
+Relationship	SNOMED	Social Context
+Revenue Code	Korean Revenue Code	Revenue Code
+Revenue Code	Revenue Code	Revenue Code
+Route	SNOMED	Qualifier Value
+Spec Anatomic Site	CPT4	CPT4 Modifier
+Spec Anatomic Site	ICDO3	ICDO Topography
+Spec Anatomic Site	Nebraska Lexicon	Body Structure
+Spec Anatomic Site	OPCS4	Body Structure
+Spec Anatomic Site	SNOMED	Body Structure
+Spec Anatomic Site	SNOMED Veterinary	Body Structure
+Spec Disease Status	SNOMED	Qualifier Value
+Specimen	Nebraska Lexicon	Specimen
+Specimen	SNOMED	Specimen
+Specimen	SNOMED Veterinary	Specimen
+Sponsor	Sponsor	Sponsor
+Type Concept	Type Concept	Type Concept
+Unit	UCUM	Unit
+Unit	UCUM	Canonical Unit
+Visit	CMS Place of Service	Visit
+Visit	HES Specialty	Visit
+Visit	Medicare Specialty	Visit
+Visit	NUCC	Visit
+Visit	UB04 Typ bill	Visit
+Visit	Visit	Visit
