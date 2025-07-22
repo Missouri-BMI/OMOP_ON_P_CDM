@@ -64,6 +64,11 @@
             "mu-id": "provider",
             "mu": "deid_provider",
             "gpc": "gpc_deid_provider"
+        },
+        "harvest_table": {
+            "mu-id": "harvest",
+            "mu": "harvest",
+            "gpc": "gpc_deid_harvest"
         }
     }
 }
