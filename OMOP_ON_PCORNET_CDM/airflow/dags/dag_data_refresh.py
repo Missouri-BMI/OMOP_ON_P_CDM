@@ -27,8 +27,9 @@ with DAG(
 ) as dag:
     # Load environment variables and set ENVIRONMENT as enum: 'sandbox', 'dev', or 'prod'
     ENVIRONMENT = 'prod' # ['sandbox', 'dev', 'prod']
-    env_path = f"/opt/airflow/env/{ENVIRONMENT}/.env"
-
+    ACCOUNT = 'identified' # ['deidentified', 'identified']
+    env_path = f"/opt/airflow/env/{ACCOUNT}/{ENVIRONMENT}/.env"
+    
     # Extract variables from args
     args = dotenv_values(env_path)
     environment = args['ENVIRONMENT']

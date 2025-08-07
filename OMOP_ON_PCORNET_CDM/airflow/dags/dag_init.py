@@ -28,7 +28,8 @@ with DAG(
     
     # Load environment variables and set ENVIRONMENT as enum: 'sandbox', 'dev', or 'prod'
     ENVIRONMENT = 'dev' # ['sandbox', 'dev', 'prod']
-    env_path = f"/opt/airflow/env/{ENVIRONMENT}/.env"
+    ACCOUNT = 'deidentified' # ['deidentified', 'identified']
+    env_path = f"/opt/airflow/env/{ACCOUNT}/{ENVIRONMENT}/.env"
 
     # Extract variables from args
     args = dotenv_values(env_path)
@@ -63,24 +64,15 @@ with DAG(
         'omop_etl_role': omop_etl_role,
         'omop_wh': omop_wh,
         'omop_user': omop_user,
+        'table_or_view': table_or_view,
     }
     
     # Define paths
     BASE_PATH = '/opt/airflow/scripts'
     INIT_PATH = os.path.join(BASE_PATH, 'init')
     
-    grants_sql = read_sql_from_file(os.path.join(INIT_PATH, 'grants','objects.sql'), **kwargs)
-    grants_task = SnowflakeSqlApiOperator(
-        task_id='create_user_wh_task',
-        snowflake_conn_id=snowflake_conn_id,
-        sql=grants_sql,
-        trigger_rule=TriggerRule.ALL_SUCCESS,
-        autocommit=True,
-        retries=0
-    )
-
     omop_cdm_sql = read_sql_from_file(os.path.join(INIT_PATH, 'grants','database.sql'), **kwargs)
-    db_task = SnowflakeSqlApiOperator(
+    grants_task = SnowflakeSqlApiOperator(
         task_id='create_database_and_schema_task',
         snowflake_conn_id=snowflake_conn_id,
         sql=omop_cdm_sql,
@@ -88,7 +80,7 @@ with DAG(
         autocommit=True,
         retries=0
     )
-    grants_task >> db_task
+    
     # grants_task >> db_task >> R DDL >>  LOAD VOCABULARY >> LOAD CROSSWALK >> LOAD MAPPING >> LOAD UTIL/RESULTS
     
     ## set role, 

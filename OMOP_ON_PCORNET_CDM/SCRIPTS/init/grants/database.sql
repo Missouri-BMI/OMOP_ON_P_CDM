@@ -33,3 +33,4 @@ GRANT USAGE ON SCHEMA {{ cdm_db }}.temp TO ROLE {{ omop_role }};
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA {{ cdm_db }}.temp TO ROLE {{ omop_role }};
 GRANT ALL PRIVILEGES ON FUTURE TABLES IN SCHEMA {{ cdm_db }}.temp TO ROLE {{ omop_role }};
 GRANT CREATE TABLE ON SCHEMA {{ cdm_db }}.temp TO ROLE {{ omop_role }};
+

@@ -17,7 +17,7 @@ CONNECTION_STRING <- paste0(
   "&warehouse=", "OMOP_ETL_WH", 
   "&role=", "OMOP_ELT", 
   "&CLIENT_RESULT_COLUMN_CASE_INSENSITIVE=true",
-  "&private_key_file=", "./env/rsa_key.p8",
+  "&private_key_file=", "./env/deidentified/rsa_key.p8",
   "&private_key_file_pwd=", ""
 )
 

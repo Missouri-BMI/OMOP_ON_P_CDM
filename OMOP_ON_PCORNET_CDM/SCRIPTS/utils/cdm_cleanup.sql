@@ -26,10 +26,10 @@ BEGIN
     DO  
         table_type := rec.TABLE_TYPE;
         IF (table_type = 'BASE TABLE') THEN
-            drop_stmt := 'DROP TABLE IF EXISTS ' || rec.TABLE_SCHEMA || '.' || rec.TABLE_NAME;
+            drop_stmt := 'DROP TABLE ' || '{{ cdm_db }}' || '.' || rec.TABLE_SCHEMA || '.' || rec.TABLE_NAME;
             EXECUTE IMMEDIATE :drop_stmt;
         ELSE
-            drop_stmt := 'DROP VIEW IF EXISTS ' || rec.TABLE_SCHEMA || '.' || rec.TABLE_NAME;
+            drop_stmt := 'DROP VIEW ' || '{{ cdm_db }}' || '.' || rec.TABLE_SCHEMA || '.' || rec.TABLE_NAME;
             EXECUTE IMMEDIATE :drop_stmt;
         END IF;
     END FOR;

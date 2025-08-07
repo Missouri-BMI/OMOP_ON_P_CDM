@@ -11,6 +11,26 @@ OMOP CDM is implemented as a wrapper over the PCORnet CDM, enabling OMOP tables 
 #### Add Airflow Connections
 
 To configure Airflow for Snowflake environments, create a `connections.sh` script in the `env/` directory:
+Structure for managing environment variables in local directory:
+The `env/` directory is structured to manage environment-specific configuration files and secrets for both deidentified and identified data environments. Example structure:
+
+```
+env/
+  deidentified/
+    dev/
+      .env                # Environment variables for deidentified dev
+    connections.sh        # Airflow connection script for deidentified
+    rsa_key.p8            # Private key for Snowflake authentication
+  identified/
+    prod/
+      .env                # Environment variables for identified prod
+    connections.sh        # Airflow connection script for identified
+    rsa_key.p8            # Private key for Snowflake authentication
+```
+
+- Place your environment variable files (e.g., `.env`) in the appropriate subdirectory (`dev` for development, `prod` for production).
+- connection scripts run on make build and store in the db using api
+- Store your Snowflake private key as `rsa_key.p8` in the corresponding directory.
 
 ```bash
 #!/bin/bash
