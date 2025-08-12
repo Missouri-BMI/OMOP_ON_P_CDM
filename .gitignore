@@ -158,3 +158,5 @@ ETL_OMOP/vocabulary_v5/*
 OMOP_ON_PCORNET_CDM/output/*
 OMOP_ON_PCORNET_CDM/data/*
 OMOP_ON_PCORNET_CDM/drivers/*
+
+OMOP_ON_PCORNET_CDM/scripts/analysis/All-of-US/stage/cdm/**

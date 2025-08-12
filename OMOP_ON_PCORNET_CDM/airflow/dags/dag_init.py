@@ -64,7 +64,6 @@ with DAG(
         'omop_etl_role': omop_etl_role,
         'omop_wh': omop_wh,
         'omop_user': omop_user,
-        'table_or_view': table_or_view,
     }
     
     # Define paths

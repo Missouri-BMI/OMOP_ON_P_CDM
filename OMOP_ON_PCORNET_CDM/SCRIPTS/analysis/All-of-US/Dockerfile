@@ -1,34 +1,19 @@
-FROM centos
-
-RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
-RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+FROM amazonlinux:2
 
 # install python
-RUN yum install -y python39 python39-pip
+RUN amazon-linux-extras enable python3.8 \
+    && yum install -y python3.8 python3-pip gcc python3-devel \
+    && ln -sf /usr/bin/python3.8 /usr/bin/python3 \
+    && ln -sf /usr/bin/pip3 /usr/bin/pip
 
-# install snowsql
-COPY /conf/snowflake-snowsql-1.2.31-1.x86_64.rpm /opt/
-RUN rpm -i /opt/snowflake-snowsql-1.2.31-1.x86_64.rpm ;\
-    rm /opt/snowflake-snowsql-1.2.31-1.x86_64.rpm
 
-# set workdir to project path
+# aou-ehr-file-check
+COPY aou-ehr-file-check/ /home/aou-ehr-file-check/
+
+
 WORKDIR /home/aou-ehr-file-check/
 
-# aou-ehr-file-chech
-COPY /aou-ehr-file-check/ ./
-RUN mv ./_settings.py ./settings.py
-RUN python3.9 -m pip install -U pip ;\
-    pip install -r ./requirements.txt
+RUN python3.8 -m pip install --upgrade pip && \
+    python3.8 -m pip install -r ./requirements.txt
 
-# RUN sed -i "s|csv_dir = .*|csv_dir = './tests/resources/examples_erroneous' |g" ./settings.py
-RUN sed -i "s|csv_dir = .*|csv_dir = '/home/data' |g" ./settings.py
-
-# copy scripts
-COPY /scripts/ /opt/scripts/
-COPY /conf/snowsql.cnf /etc/
-
-RUN chmod -R 755 ./
-RUN chmod -R 755 /opt/scripts/
-
-
-CMD [ "/opt/scripts/aou-dq"]
+CMD ["python3.8", "./omop_file_validator.py"]
