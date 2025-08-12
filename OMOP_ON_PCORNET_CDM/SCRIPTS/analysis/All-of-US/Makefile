@@ -3,7 +3,10 @@ CONTAINER_NAME=allofus-analysis-container
 HOST_VOLUME=$(PWD)/stage/cdm
 CONTAINER_VOLUME=/home/cdm
 
-.PHONY: build run clean
+.PHONY: stage build run clean
+
+stage: 
+	cd stage && python stage_snowflake.py
 
 build:
 	docker build --platform linux/amd64 -t $(IMAGE_NAME) .

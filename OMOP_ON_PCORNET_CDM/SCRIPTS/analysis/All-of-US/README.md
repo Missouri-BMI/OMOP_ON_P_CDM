@@ -31,6 +31,9 @@ python stage_snowflake.py
 Build Docker container and run using Makefile:
 
 ```bash
+make stage
+
+
 make build
 make run
 ```

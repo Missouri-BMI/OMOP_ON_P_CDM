@@ -43,5 +43,4 @@ GET @{{ SNOWFLAKE_STAGE }}/observation.csv {{ LOCAL_STAGE }};
 GET @{{ SNOWFLAKE_STAGE }}/observation_period.csv {{ LOCAL_STAGE }};
 GET @{{ SNOWFLAKE_STAGE }}/measurement.csv {{ LOCAL_STAGE }};
 GET @{{ SNOWFLAKE_STAGE }}/drug_exposure.csv {{ LOCAL_STAGE }};
-
 GET @{{ SNOWFLAKE_STAGE }}/cdm_source.csv {{ LOCAL_STAGE }};
