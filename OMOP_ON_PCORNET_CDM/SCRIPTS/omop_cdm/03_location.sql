@@ -35,9 +35,9 @@ CREATE TABLE  {{ cdm_db }}.{{ cdm_schema }}.location (
         longitude
     FROM (
         SELECT
-            ADDRESS_STREET::VARCHAR(50) AS address_1,
-            ADDRESS_DETAIL::VARCHAR(50) AS address_2,
-            ADDRESS_CITY::VARCHAR(50) AS city,
+            LEFT(ADDRESS_STREET, 50)::VARCHAR(50) AS address_1,
+            LEFT(ADDRESS_DETAIL, 50)::VARCHAR(50) AS address_2,
+            LEFT(ADDRESS_CITY, 50)::VARCHAR(50) AS city,
             ADDRESS_STATE::VARCHAR(2) AS state,
             COALESCE(ADDRESS_ZIP9, ADDRESS_ZIP5)::VARCHAR(9) AS zip,
             LEFT(ADDRESS_COUNTY, 20)::VARCHAR(20) AS county,
@@ -97,6 +97,7 @@ CREATE TABLE  {{ cdm_db }}.{{ cdm_schema }}.location (
         NULL::VARCHAR(80) AS country_source_value,
         NULL::NUMERIC AS latitude,
         NULL::NUMERIC AS longitude
+    WHERE 1=0;
 {% else %}
     SELECT
         1::INTEGER AS location_id,
@@ -111,5 +112,6 @@ CREATE TABLE  {{ cdm_db }}.{{ cdm_schema }}.location (
         NULL::VARCHAR(80) AS country_source_value,
         NULL::NUMERIC AS latitude,
         NULL::NUMERIC AS longitude
+    WHERE 1=0;
 {% endif %}
 ;

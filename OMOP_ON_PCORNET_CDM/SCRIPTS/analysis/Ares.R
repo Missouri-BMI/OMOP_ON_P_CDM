@@ -21,18 +21,18 @@ cdmVersion = "5.4"
 
 # Build JDBC connection string
 CONNECTION_STRING <- paste0(
-  "jdbc:snowflake://", "TKNLTGA-I2B2DB", 
-  ".snowflakecomputing.com/?db=", "atlas_mu_dev",
+  "jdbc:snowflake://", "TKNLTGA-XP02744", 
+  ".snowflakecomputing.com/?db=", "OMOP_CDM",
   "&schema=", "RESULTS",
-  "&warehouse=", "OMOP_ETL_WH", 
+  "&warehouse=", "ATLAS_WH", 
   "&role=", "OMOP_ELT", 
   "&CLIENT_RESULT_COLUMN_CASE_INSENSITIVE=true",
-  "&private_key_file=", "./env/rsa_key.p8",
+  "&private_key_file=", "./env/identified/rsa_key.p8",
   "&private_key_file_pwd=", ""
 )
 
 keyring::key_set_with_value("connectionString", password = CONNECTION_STRING)
-keyring::key_set_with_value("user", password = "ATLAS_ETL_USER")
+keyring::key_set_with_value("user", password = "SERVICE_USER_OMOP_ETL")
 keyring::key_set_with_value("password", password = "")
 
 # Create connection details directly using credentials
