@@ -10,37 +10,42 @@ FIELD_OPTIONALLY_ENCLOSED_BY='"'; -- file format
 
 CREATE OR REPLACE STAGE {{ SNOWFLAKE_STAGE }} FILE_FORMAT = {{ FILE_FORMAT }}; --stage
 
+CREATE OR REPLACE PROCEDURE download_sample_tables()
+RETURNS STRING
+LANGUAGE SQL
+AS
+$$
+DECLARE
+    table_cursor CURSOR FOR 
+        SELECT table_name 
+        FROM information_schema.tables 
+        WHERE table_schema = CURRENT_SCHEMA()
+          AND table_name IN ('PERSON','DEATH','LOCATION','CARE_SITE','VISIT_OCCURRENCE',
+                             'VISIT_DETAIL','PROCEDURE_OCCURRENCE','CONDITION_OCCURRENCE',
+                             'CONDITION_ERA','OBSERVATION','OBSERVATION_PERIOD',
+                             'MEASUREMENT','DRUG_EXPOSURE','CDM_SOURCE');
+    table_name VARCHAR;
+    copy_sql VARCHAR;
+BEGIN
+    FOR table_record IN table_cursor DO
+        table_name := table_record.table_name;
+        copy_sql := 'COPY INTO @{{ SNOWFLAKE_STAGE }}/' || LOWER(table_name) || '.csv ' ||
+                    'FROM (SELECT * FROM ' || table_name || ' {{ LIMIT_PARAM }}) ' ||
+                    '{{ COPY_PARAMETERS }};';
+        EXECUTE IMMEDIATE copy_sql;
+    END FOR;
 
-COPY INTO @{{ SNOWFLAKE_STAGE }}/person.csv FROM (SELECT * FROM person {{ LIMIT_PARAM }}) {{ COPY_PARAMETERS }};
-COPY INTO @{{ SNOWFLAKE_STAGE }}/death.csv FROM (SELECT * FROM death {{ LIMIT_PARAM }}) {{ COPY_PARAMETERS }};
-
-COPY INTO @{{ SNOWFLAKE_STAGE }}/location.csv FROM (SELECT * FROM location {{ LIMIT_PARAM }}) {{ COPY_PARAMETERS }};
-COPY INTO @{{ SNOWFLAKE_STAGE }}/care_site.csv FROM (SELECT * FROM care_site {{ LIMIT_PARAM }}) {{ COPY_PARAMETERS }};
-COPY INTO @{{ SNOWFLAKE_STAGE }}/visit_occurrence.csv FROM (SELECT * FROM visit_occurrence {{ LIMIT_PARAM }}) {{ COPY_PARAMETERS }};
-COPY INTO @{{ SNOWFLAKE_STAGE }}/visit_detail.csv FROM (SELECT * FROM visit_detail {{ LIMIT_PARAM }}) {{ COPY_PARAMETERS }};
-COPY INTO @{{ SNOWFLAKE_STAGE }}/procedure_occurrence.csv FROM (SELECT * FROM procedure_occurrence {{ LIMIT_PARAM }}) {{ COPY_PARAMETERS }};
-COPY INTO @{{ SNOWFLAKE_STAGE }}/condition_occurrence.csv FROM (SELECT * FROM condition_occurrence {{ LIMIT_PARAM }}) {{ COPY_PARAMETERS }};
-COPY INTO @{{ SNOWFLAKE_STAGE }}/condition_era.csv FROM (SELECT * FROM condition_era {{ LIMIT_PARAM }}) {{ COPY_PARAMETERS }};
-COPY INTO @{{ SNOWFLAKE_STAGE }}/observation.csv FROM (SELECT * FROM observation {{ LIMIT_PARAM }}) {{ COPY_PARAMETERS }};
-COPY INTO @{{ SNOWFLAKE_STAGE }}/observation_period.csv FROM (SELECT * FROM observation_period {{ LIMIT_PARAM }}) {{ COPY_PARAMETERS }};
-COPY INTO @{{ SNOWFLAKE_STAGE }}/measurement.csv FROM (SELECT * FROM measurement {{ LIMIT_PARAM }}) {{ COPY_PARAMETERS }};
-COPY INTO @{{ SNOWFLAKE_STAGE }}/drug_exposure.csv FROM (SELECT * FROM drug_exposure {{ LIMIT_PARAM }}) {{ COPY_PARAMETERS }};
-
-COPY INTO @{{ SNOWFLAKE_STAGE }}/cdm_source.csv FROM (SELECT * FROM cdm_source {{ LIMIT_PARAM }}) {{ COPY_PARAMETERS }};
+    RETURN 'Files written to @{{ SNOWFLAKE_STAGE }}';
+END;
+$$;
 
 
-GET @{{ SNOWFLAKE_STAGE }}/person.csv {{ LOCAL_STAGE }};
-GET @{{ SNOWFLAKE_STAGE }}/death.csv {{ LOCAL_STAGE }};
+-- Call the stored procedure
+CALL download_sample_tables();
 
-GET @{{ SNOWFLAKE_STAGE }}/location.csv {{ LOCAL_STAGE }};
-GET @{{ SNOWFLAKE_STAGE }}/care_site.csv {{ LOCAL_STAGE }};
-GET @{{ SNOWFLAKE_STAGE }}/visit_occurrence.csv {{ LOCAL_STAGE }};
-GET @{{ SNOWFLAKE_STAGE }}/visit_detail.csv {{ LOCAL_STAGE }};
-GET @{{ SNOWFLAKE_STAGE }}/procedure_occurrence.csv {{ LOCAL_STAGE }};
-GET @{{ SNOWFLAKE_STAGE }}/condition_occurrence.csv {{ LOCAL_STAGE }};
-GET @{{ SNOWFLAKE_STAGE }}/condition_era.csv {{ LOCAL_STAGE }};
-GET @{{ SNOWFLAKE_STAGE }}/observation.csv {{ LOCAL_STAGE }};
-GET @{{ SNOWFLAKE_STAGE }}/observation_period.csv {{ LOCAL_STAGE }};
-GET @{{ SNOWFLAKE_STAGE }}/measurement.csv {{ LOCAL_STAGE }};
-GET @{{ SNOWFLAKE_STAGE }}/drug_exposure.csv {{ LOCAL_STAGE }};
-GET @{{ SNOWFLAKE_STAGE }}/cdm_source.csv {{ LOCAL_STAGE }};
+-- Now download from stage to local folder
+GET @{{ SNOWFLAKE_STAGE }}/ {{ LOCAL_STAGE }}
+  PATTERN='.*\.csv(\.gz)?$'
+  OVERWRITE=TRUE;
+
+

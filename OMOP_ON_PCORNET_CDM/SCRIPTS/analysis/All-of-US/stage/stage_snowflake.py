@@ -6,6 +6,7 @@ import csv
 import snowflake.connector
 from dotenv import dotenv_values
 from jinja2 import Template
+from io import StringIO
 
 # Configure logging
 logging.basicConfig(
@@ -71,13 +72,14 @@ def main():
             "LIMIT_PARAM": LIMIT_PARAM,
         }
 
+        
         # Read SQL file
         sql_path = Path('download_sample.sql')
         if not sql_path.is_file():
             raise FileNotFoundError(f"SQL file not found: {sql_path}")
 
         try:
-            with open(sql_path, 'r') as sql_file:
+            with open(sql_path, 'r', encoding='utf-8') as sql_file:
                 sql_content = sql_file.read()
             logger.info(f"SQL file {sql_path} loaded successfully")
         except Exception as e:
@@ -91,27 +93,23 @@ def main():
         try:
             template = Template(sql_content)
             rendered_sql = template.render(**kwargs)
-            logger.info(f"SQL template rendered successfully")
+            logger.info("SQL template rendered successfully")
         except Exception as e:
             logger.error(f"Failed to render SQL template: {e}")
             raise
 
-        # Execute the SQL query
-        cursor = conn.cursor()
-        try:
-            # Split the SQL into individual statements
-            sql_statements = [stmt.strip() for stmt in rendered_sql.split(';') if stmt.strip()]
-            
-            for i, statement in enumerate(sql_statements, 1):
-                logger.info(f"Executing statement {i}/{len(sql_statements)}")
-                cursor.execute(statement)
                 
-            logger.info("All SQL statements executed successfully")
+        # Execute the SQL query as a stream (multi-statement, no manual splitting)
+        try:
+            sql_stream = StringIO(rendered_sql)
+            with conn.cursor() as cur:
+                for result_cursor in conn.execute_stream(sql_stream,remove_comments=True):
+                    for result in result_cursor:
+                        logger.info(f"Result: {result}")
+                logger.info("All SQL statements executed successfully via stream")
         except Exception as e:
-            logger.error(f"Error executing SQL: {e} for statement:\n\n {statement}")
+            logger.error(f"Error executing SQL stream: {e}")
             raise
-        finally:
-            cursor.close()
 
         # Process CSV files
         csv_files = [f for f in os.listdir(CSV_DIR) if f.endswith('.csv')]
