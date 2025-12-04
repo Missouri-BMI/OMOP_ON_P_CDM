@@ -26,8 +26,8 @@ with DAG(
     tags=["omop_data_refresh"],
 ) as dag:
     # Load environment variables and set ENVIRONMENT as enum: 'sandbox', 'dev', or 'prod'
-    ENVIRONMENT = 'prod' # ['sandbox', 'dev', 'prod']
-    ACCOUNT = 'identified' # ['deidentified', 'identified']
+    ENVIRONMENT = 'gpc' # ['sandbox', 'dev', 'prod']
+    ACCOUNT = 'deidentified' # ['deidentified', 'identified']
     env_path = f"/opt/airflow/env/{ACCOUNT}/{ENVIRONMENT}/.env"
     
     # Extract variables from args

@@ -27,7 +27,7 @@ with DAG(
 ) as dag:
     
     # Load environment variables and set ENVIRONMENT as enum: 'sandbox', 'dev', or 'prod'
-    ENVIRONMENT = 'dev' # ['sandbox', 'dev', 'prod']
+    ENVIRONMENT = 'gpc' # ['sandbox', 'dev', 'prod']
     ACCOUNT = 'deidentified' # ['deidentified', 'identified']
     env_path = f"/opt/airflow/env/{ACCOUNT}/{ENVIRONMENT}/.env"
 

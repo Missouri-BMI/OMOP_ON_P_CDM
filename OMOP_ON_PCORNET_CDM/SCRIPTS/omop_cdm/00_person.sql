@@ -22,7 +22,7 @@ SELECT
     {% if site in ['mu', 'mu-id'] %}
         demographic.patid
     {% elif site == 'gpc' %}
-        demographic.person_num
+        demographic.patient_num
     {% else %}
         demographic.patid
     {% endif %} ::INTEGER AS person_id,
