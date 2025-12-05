@@ -26,7 +26,7 @@ SELECT DISTINCT
     {% if site in ['mu', 'mu-id'] %}
         enc.patid::INTEGER AS person_id,
     {% elif site == 'gpc' %}
-        enc.person_num::INTEGER AS person_id,
+        enc.patient_num::INTEGER AS person_id,
     {% else %}
         enc.patid::INTEGER AS person_id,
     {% endif %}

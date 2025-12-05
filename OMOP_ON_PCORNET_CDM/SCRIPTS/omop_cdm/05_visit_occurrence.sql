@@ -23,7 +23,7 @@ SELECT
         enc.patid::INTEGER AS person_id,
     {% elif site == 'gpc' %}
         enc.encounter_num::INTEGER AS visit_occurrence_id,
-        enc.person_num::INTEGER AS person_id,
+        enc.patient_num::INTEGER AS person_id,
     {% else %}
         enc.encounterid::INTEGER AS visit_occurrence_id,
         enc.patid::INTEGER AS person_id,
@@ -47,7 +47,7 @@ SELECT
     as_map.source_concept_id::INTEGER AS admitted_from_concept_id,
     enc.raw_admitting_source::VARCHAR(50) AS admitted_from_source_value,
     ds_map.source_concept_id::INTEGER AS discharged_to_concept_id,
-    enc.raw_discharge_status::VARCHAR(50) AS discharged_to_source_value,
+    substr(enc.raw_discharge_status,0,50)::VARCHAR(50) AS discharged_to_source_value,
     NULL::INTEGER AS preceding_visit_occurrence_id
 FROM {{ pcornet_db }}.{{ pcornet_schema }}.{{ encounter_table }} enc
 -- Mapping admitted_from

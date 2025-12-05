@@ -25,7 +25,7 @@ SELECT
         enc.patid::INTEGER AS person_id,
     {% elif site == 'gpc' %}
         enc.encounter_num::INTEGER AS visit_detail_id,
-        enc.person_num::INTEGER AS person_id,
+        enc.patient_num::INTEGER AS person_id,
     {% else %}
         enc.encounterid::INTEGER AS visit_detail_id,
         enc.patid::INTEGER AS person_id,
@@ -48,12 +48,12 @@ SELECT
     0                                     AS visit_detail_source_concept_id,
     as_map.source_concept_id::INTEGER     AS admitted_from_concept_id, 
     enc.raw_admitting_source::VARCHAR(50) AS admitted_from_source_value,
-    enc.raw_discharge_status::VARCHAR(50) AS discharged_to_source_value,
+    substr(enc.raw_discharge_status,0,50)::VARCHAR(50) AS discharged_to_source_value,
     ds_map.source_concept_id::INTEGER     AS discharged_to_concept_id,
     {% if site in ['mu', 'mu-id'] %}
         lag(enc.encounterid) OVER (PARTITION BY enc.patid ORDER BY enc.admit_date) AS preceding_visit_detail_id,
     {% elif site == 'gpc' %}
-        lag(enc.encounter_num) OVER (PARTITION BY enc.person_num ORDER BY enc.admit_date) AS preceding_visit_detail_id,
+        lag(enc.encounter_num) OVER (PARTITION BY enc.patient_num ORDER BY enc.admit_date) AS preceding_visit_detail_id,
     {% else %}
         lag(enc.encounterid) OVER (PARTITION BY enc.patid ORDER BY enc.admit_date) AS preceding_visit_detail_id,
     {% endif %}

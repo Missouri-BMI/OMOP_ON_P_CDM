@@ -22,8 +22,8 @@ SELECT
         ROW_NUMBER() OVER (ORDER BY procedures.patid)::INTEGER AS procedure_occurrence_id,
         procedures.patid::INTEGER AS person_id,
     {% elif site == 'gpc' %}
-        ROW_NUMBER() OVER (ORDER BY procedures.person_num)::INTEGER AS procedure_occurrence_id,
-        procedures.person_num::INTEGER AS person_id,
+        ROW_NUMBER() OVER (ORDER BY procedures.patient_num)::INTEGER AS procedure_occurrence_id,
+        procedures.patient_num::INTEGER AS person_id,
     {% else %}
         ROW_NUMBER() OVER (ORDER BY procedures.patid)::INTEGER AS procedure_occurrence_id,
         procedures.patid::INTEGER AS person_id,

@@ -26,8 +26,8 @@ SELECT
           ROW_NUMBER() OVER (ORDER BY diagnosis.patid)::INTEGER AS condition_occurrence_id,
           diagnosis.patid::INTEGER AS person_id,
      {% elif site == 'gpc' %}
-          ROW_NUMBER() OVER (ORDER BY diagnosis.person_num)::INTEGER AS condition_occurrence_id,
-          diagnosis.person_num::INTEGER AS person_id,
+          ROW_NUMBER() OVER (ORDER BY diagnosis.patient_num)::INTEGER AS condition_occurrence_id,
+          diagnosis.patient_num::INTEGER AS person_id,
      {% else %}
           ROW_NUMBER() OVER (ORDER BY diagnosis.patid)::INTEGER AS condition_occurrence_id,
           diagnosis.patid::INTEGER AS person_id,
@@ -98,8 +98,8 @@ SELECT
           ROW_NUMBER() OVER (ORDER BY condition.patid)::INTEGER AS condition_occurrence_id,
           condition.patid::INTEGER AS person_id,
      {% elif site == 'gpc' %}
-          ROW_NUMBER() OVER (ORDER BY condition.person_num)::INTEGER AS condition_occurrence_id,
-          condition.person_num::INTEGER AS person_id,
+          ROW_NUMBER() OVER (ORDER BY condition.patient_num)::INTEGER AS condition_occurrence_id,
+          condition.patient_num::INTEGER AS person_id,
      {% else %}
           ROW_NUMBER() OVER (ORDER BY condition.patid)::INTEGER AS condition_occurrence_id,
           condition.patid::INTEGER AS person_id,

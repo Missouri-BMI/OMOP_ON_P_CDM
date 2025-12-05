@@ -10,7 +10,7 @@ SELECT
     {% if site in ['mu', 'mu-id'] %}
         enrl.patid
     {% elif site == 'gpc' %}
-        enrl.person_num
+        enrl.patient_num
     {% else %}
         enrl.patid
     {% endif %} ::INTEGER AS person_id,
