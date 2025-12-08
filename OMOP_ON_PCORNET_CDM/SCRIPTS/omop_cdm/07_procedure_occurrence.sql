@@ -61,10 +61,15 @@ JOIN {{ cdm_db }}.{{ vocabulary }}.source_to_source_vocab_map srctosrcvm
         CASE 
             WHEN procedures.px_type = '09' THEN 'ICD9Proc'
             WHEN procedures.px_type = '10' THEN 'ICD10PCS'
-            WHEN procedures.px_type = 'CH' THEN 
-                CASE 
-                    WHEN procedures.raw_px_type = 'CPT4' THEN 'CPT4'
-                    ELSE 'HCPCS'
+            WHEN procedures.px_type = 'CH' THEN
+                CASE
+                    WHEN (
+                        rlike(procedures.px,'\\D.*')
+                        and length(procedures.px) in (3,5)
+                        and procedures.px not in ('V-CPT','V-SRC')
+                        or procedures.px in ('KM','KN','P0')
+                        )       THEN 'HCPCS'
+                    ELSE 'CPT4'
                 END
         END
     AND srctosrcvm.source_domain_id = 'Procedure'
