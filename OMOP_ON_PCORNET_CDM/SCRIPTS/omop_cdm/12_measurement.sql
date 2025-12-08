@@ -34,7 +34,7 @@ SELECT DISTINCT
     {% if site in ['mu', 'mu-id'] %}
         , lab.patid::INTEGER AS person_id
     {% elif site == 'gpc' %}
-        , lab.person_num::INTEGER AS person_id
+        , lab.patient_num::INTEGER AS person_id
     {% else %}
         , lab.patid::INTEGER AS person_id
     {% endif %}
