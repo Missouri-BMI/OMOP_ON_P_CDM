@@ -1,6 +1,6 @@
 CREATE TABLE  {{ cdm_db }}.{{ cdm_schema }}.death (
-    person_id integer NULL, --TODO: this should be not nullable, 90k out of 2 million
-    death_date date NULL, --TODO: this should be not nullable, 11 out of 2 million (they also have null date)
+    person_id integer NOT NULL, --TODO: this should be not nullable,11 out of 2 million (they also have null date)
+    death_date date NOT NULL, 
     death_datetime TIMESTAMP NULL,
     death_type_concept_id integer NULL,
     cause_concept_id integer NULL,
@@ -121,4 +121,5 @@ LEFT JOIN {{ cdm_db }}.{{ vocabulary }}.concept c_icd10
 LEFT JOIN {{ cdm_db }}.{{ vocabulary }}.concept c_snomed 
     ON dc.death_cause = c_snomed.concept_code
     AND c_snomed.vocabulary_id = 'SNOMED'
-    AND dc.death_cause_code = 'SM';
+    AND dc.death_cause_code = 'SM'
+where d.death_date is not null;
