@@ -137,4 +137,5 @@ LEFT JOIN {{ cdm_db }}.{{ vocabulary }}.source_to_standard_vocab_map srctostdvm
      AND srctostdvm.target_domain_id = srctosrcvm.source_domain_id 
      AND srctostdvm.source_vocabulary_id = srctosrcvm.source_vocabulary_id
      AND srctostdvm.target_standard_concept = 'S'
-     AND srctostdvm.target_invalid_reason IS NULL;
+     AND srctostdvm.target_invalid_reason IS NULL
+WHERE condition.report_date IS NOT NULL;
