@@ -17,4 +17,6 @@ SELECT
     enrl.enr_start_date::DATE AS observation_period_start_date,
     enrl.enr_end_date::DATE AS observation_period_end_date,
     44814722::INTEGER AS period_type_concept_id
-FROM {{ pcornet_db }}.{{ pcornet_schema }}.{{ enrollment_table }} enrl;
+FROM {{ pcornet_db }}.{{ pcornet_schema }}.{{ enrollment_table }} enrl
+where enrl.enr_end_date is not null
+;
