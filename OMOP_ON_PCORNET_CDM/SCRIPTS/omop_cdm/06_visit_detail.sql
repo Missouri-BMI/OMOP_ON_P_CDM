@@ -43,7 +43,7 @@ SELECT
     {% else %}
         enc.providerid::INTEGER AS provider_id,
     {% endif %}
-    NULL::INTEGER AS care_site_id,
+    enc.facilityid::INTEGER               AS care_site_id,
     enc.raw_enc_type::VARCHAR(50)         AS visit_detail_source_value,
     0                                     AS visit_detail_source_concept_id,
     as_map.source_concept_id::INTEGER     AS admitted_from_concept_id, 
