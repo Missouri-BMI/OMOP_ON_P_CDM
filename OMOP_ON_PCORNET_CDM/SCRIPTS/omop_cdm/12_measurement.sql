@@ -90,3 +90,4 @@ LEFT JOIN {{ cdm_db }}.{{ vocabulary }}.concept u
     ON lab.result_unit = u.concept_code
 LEFT JOIN {{ cdm_db }}.{{ vocabulary }}.concept c_result
     ON lab.lab_result_source = c_result.concept_code;
+--where lab.result_date is not null;

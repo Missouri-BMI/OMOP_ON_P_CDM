@@ -88,3 +88,4 @@ LEFT JOIN {{ cdm_db }}.{{ vocabulary }}.concept msdrg
     AND msdrg.concept_class_id = 'MS-DRG'
     AND msdrg.invalid_reason IS NULL
 WHERE enc.drg IS NOT NULL;
+--and rlike(enc.providerid, '\\d{1,}');
