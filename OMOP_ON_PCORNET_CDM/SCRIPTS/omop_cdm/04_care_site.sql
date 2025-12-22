@@ -15,6 +15,8 @@ SELECT DISTINCT
     LEFT(enc.facilityid, 50)::VARCHAR(50)                          AS care_site_source_value,
     LEFT(enc.facility_type, 50)::VARCHAR(50)                       AS place_of_service_source_value
 FROM {{ pcornet_db }}.{{ pcornet_schema }}.{{ encounter_table }} enc
+left join { pcornet_db }}.{{ pcornet_schema }}.{{ facility_table }} fac
+on fac.facilityid = enc.facilityid
 LEFT JOIN {{ cdm_db }}.{{ crosswalk }}.omop_pcornet_valueset_mapping place
   ON place.pcornet_valueset_item    = enc.facility_type
   AND place.source_concept_id       IS NOT NULL
