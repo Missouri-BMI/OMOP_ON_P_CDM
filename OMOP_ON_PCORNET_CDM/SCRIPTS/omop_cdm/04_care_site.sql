@@ -6,7 +6,6 @@ CREATE TABLE  {{ cdm_db }}.{{ cdm_schema }}.care_site (
     care_site_source_value varchar(50) NULL,
     place_of_service_source_value varchar(50) NULL
 ) AS
-with
 SELECT DISTINCT
     enc.facilityid::INTEGER                                        AS care_site_id,
     NULL::VARCHAR(255)                                             AS care_site_name,
