@@ -1,6 +1,6 @@
 CREATE TABLE  {{ cdm_db }}.{{ cdm_schema }}.death (
     person_id integer NOT NULL, --TODO: this should be not nullable,11 out of 2 million (they also have null date)
-    death_date date NOT NULL,
+    death_date date NOT NULL, --TODO: this should be not nullable. currently filtering out null death dates
     death_datetime TIMESTAMP NULL,
     death_type_concept_id integer NULL,
     cause_concept_id integer NULL,
