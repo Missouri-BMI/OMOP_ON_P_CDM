@@ -121,5 +121,5 @@ LEFT JOIN {{ cdm_db }}.{{ vocabulary }}.concept c_icd10
 LEFT JOIN {{ cdm_db }}.{{ vocabulary }}.concept c_snomed 
     ON dc.death_cause = c_snomed.concept_code
     AND c_snomed.vocabulary_id = 'SNOMED'
-    AND dc.death_cause_code = 'SM'
-where d.death_date is not null;
+    AND dc.death_cause_code = 'SM';
+--where d.death_date is not null;
