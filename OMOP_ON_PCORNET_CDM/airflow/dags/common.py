@@ -27,6 +27,19 @@ def read_sql_from_file(file_path: str, **kwargs) -> str:
     rendered_sql = template.render(**kwargs)
     return rendered_sql
 
+def resolve_site(account: str, site: str) -> str:
+    """
+    Resolve the effective site identifier used everywhere (SQL context + table_mapping.json key).
+
+    Rules:
+      - deidentified -> mu, gpc (no suffix)
+      - identified   -> mu-id (suffix)
+    """
+    if account == "identified" and site == "mu":
+        return f"{site}-id"
+    return site
+
+
 def extract_table_mapping_from_file(filename, project_key):
     with open(filename, 'r') as f:
         data = json.load(f)

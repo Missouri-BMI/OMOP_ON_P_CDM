@@ -16,15 +16,10 @@ The `env/` directory is structured to manage environment-specific configuration 
 
 ```
 env/
-  deidentified/
-    dev/
-      .env                # Environment variables for deidentified dev
-    connections.sh        # Airflow connection script for deidentified
-    rsa_key.p8            # Private key for Snowflake authentication
-  identified/
-    prod/
-      .env                # Environment variables for identified prod
-    connections.sh        # Airflow connection script for identified
+  [deidentified, identified]/
+    [dev, prod, sandbox]/
+        mu.env,gpc.env,mu-id.env              # Environment variables for deidentified dev
+    connections.sh        # Airflow connection script 
     rsa_key.p8            # Private key for Snowflake authentication
 ```
 
@@ -32,42 +27,99 @@ env/
 - connection scripts run on make build and store in the db using api
 - Store your Snowflake private key as `rsa_key.p8` in the corresponding directory.
 
+Sample connection.sh
 ```bash
 #!/bin/bash
+set -euo pipefail
 
-# Example for sandbox environment
-SANDBOX_CDM_SCHEMA="CDM"
-SANDBOX_CDM_DB="atlas_mu_sandbox"
-airflow connections add 'snowflake_conn_sandbox' \
-  --conn-type 'snowflake' \
-  --conn-login "${USERNAME}" \
-  --conn-password "${PRIVATE_KEY_PASSWORD}" \
-  --conn-schema "${SANDBOX_CDM_SCHEMA}" \
-  --conn-extra "{\"account\": \"${ACCOUNT}\", \"database\": \"${SANDBOX_CDM_DB}\", \"warehouse\": \"${WAREHOUSE}\", \"role\": \"${ROLE}\", \"private_key_file\": \"${PRIVATE_KEY_FILE}\"}"
-echo "✅ Airflow connections created!"
+# -----------------------------
+# Global Snowflake parameters
+# -----------------------------
+USERNAME="${SNOWFLAKE_USERNAME:-ATLAS_ETL_USER}"
+ACCOUNT="TKNLTGA-I2B2DB"
+WAREHOUSE="OMOP_ETL_WH"
+ROLE="OMOP_ELT"
+PRIVATE_KEY_FILE="/opt/airflow/env/deidentified/rsa_key.p8"
+
+
+PASSWORD="${SNOWFLAKE_PASSWORD:-your_pass}"
+
+CDM_SCHEMA="CDM"
+
+# -----------------------------
+# Helper function
+# -----------------------------
+create_snowflake_conn () {
+  local conn_id="$1"
+  local database="$2"
+
+  echo "🔧 Creating Airflow connection: ${conn_id}"
+
+  airflow connections add "${conn_id}" \
+    --conn-type "snowflake" \
+    --conn-login "${USERNAME}" \
+    --conn-password "${PASSWORD}" \
+    --conn-schema "${CDM_SCHEMA}" \
+    --conn-extra "{
+      \"account\": \"${ACCOUNT}\",
+      \"database\": \"${database}\",
+      \"warehouse\": \"${WAREHOUSE}\",
+      \"role\": \"${ROLE}\",
+      \"private_key_file\": \"${PRIVATE_KEY_FILE}\"
+    }"
+}
+
+# -----------------------------
+# Sandbox
+# -----------------------------
+create_snowflake_conn \
+  "snowflake_conn_deidentified_sandbox_mu" \
+  "atlas_mu_sandbox"
+
+# -----------------------------
+# Dev
+# -----------------------------
+create_snowflake_conn \
+  "snowflake_conn_deidentified_dev_mu" \
+  "atlas_mu_dev"
+
+create_snowflake_conn \
+  "snowflake_conn_deidentified_dev_gpc" \
+  "atlas_gpc_dev"
+
+# -----------------------------
+# Prod
+# -----------------------------
+create_snowflake_conn \
+  "snowflake_conn_deidentified_prod_mu" \
+  "atlas_mu_prod"
+
+create_snowflake_conn \
+  "snowflake_conn_deidentified_prod_gpc" \
+  "atlas_gpc_prod"
+
+echo "✅ All Airflow Snowflake connections created successfully!"
+
 ```
 
 #### Set Environment Variables
 
-Add environment variable files in the appropriate `env/[dev|prod|sandbox]` directory.  
-Example `env/dev` file:
+Example `.env` file:
 
 ```env
-CONNECTION_ID=snowflake_conn_dev
-PROJECT=mu
-ENVIRONMENT=dev
+CONNECTION_ID=snowflake_conn_deidentified_dev_mu
 
-# Source (PCORnet CDM)
+# source
 PCORNET_DB=DEIDENTIFIED_PCORNET_CDM
 PCORNET_SCHEMA=CDM
 
-# Target (OMOP CDM)
+# target
 CDM_DB=atlas_mu_dev
 CDM_SCHEMA=CDM
 VOCABULARY_SCHEMA=CDM
 CROSSWALK_SCHEMA=CROSSWALK
 
-# Snowflake objects and roles
+# objects
 OMOP_ETL_ROLE=OMOP_ELT
 OMOP_ROLE=OMOP_ATLAS_DEV
 OMOP_WH=omop_atlas_dev_wh
@@ -79,21 +131,14 @@ OMOP_USER=SERVICE_USER_ATLAS
 The `Makefile` provides commands to streamline setup and management of the OMOP on PCORnet CDM environment:
 
 - **Build Stack**:  
-  `make build` checks for `docker-compose.yaml` and downloads it from the official Apache Airflow documentation if missing.
+  `airflow-omop-build` checks for `docker-compose.yaml` and downloads it from the official Apache Airflow documentation if missing.
 
 - **Start Airflow Services**:  
-  `make deploy` starts all Airflow services using Docker Compose.
+  `airflow-omop-deploy` starts all Airflow services using Docker Compose.
 
-### Airflow DAGs
+- **Create Airflow Connections**:  
+  `airflow-omop-connections` create all Airflow database connections.
 
-1. **INIT**
-  - CREATE DATABASE
-  - CREATE SCHEMA CDM, RESULTS, TEMP, VOCABULARY (CDM)
-  - GENERATE DDL using R
-
-2. **DATA REFRESH**
-  - CDM REFRESH
-  - ARES ANALYSIS and EXPORT RESULT TO S3
 
 ## OMOP_SERVERLESS
 

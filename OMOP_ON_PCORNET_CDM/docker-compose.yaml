@@ -288,10 +288,6 @@ services:
         echo
         ls -la /opt/airflow/{logs,dags,plugins,config}
         echo
-        # echo "Creating datasource de-identified connections..."
-        # bash /opt/airflow/env/deidentified/connections.sh
-        # echo "Creating datasource identified connections..."
-        # bash /opt/airflow/env/identified/connections.sh
 
     # yamllint enable rule:line-length
     environment:

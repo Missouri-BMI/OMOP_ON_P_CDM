@@ -1,4 +1,4 @@
-CREATE  TABLE  {{ cdm_db }}.{{ cdm_schema }}.visit_detail (
+CREATE TABLE {{ cdm_db }}.{{ cdm_schema }}.visit_detail (
     visit_detail_id integer NOT NULL,
     person_id integer NOT NULL,
     visit_detail_concept_id integer NOT NULL,
@@ -25,17 +25,24 @@ SELECT
         enc.patid::INTEGER AS person_id,
     {% elif site == 'gpc' %}
         enc.encounter_num::INTEGER AS visit_detail_id,
-        enc.person_num::INTEGER AS person_id,
+        enc.patient_num::INTEGER AS person_id,
     {% else %}
         enc.encounterid::INTEGER AS visit_detail_id,
         enc.patid::INTEGER AS person_id,
     {% endif %}
+
     COALESCE(enctyp.source_concept_id, 0)::INTEGER AS visit_detail_concept_id,
     DATE(enc.admit_date)::DATE AS visit_detail_start_date,
     CONCAT(DATE(enc.admit_date), ' ', enc.admit_time)::TIMESTAMP AS visit_detail_start_datetime,
     DATE(COALESCE(enc.discharge_date, enc.admit_date))::DATE AS visit_detail_end_date,
-    CONCAT(DATE(COALESCE(enc.discharge_date, enc.admit_date)), ' ', COALESCE(enc.discharge_time, enc.admit_time))::TIMESTAMP AS visit_detail_end_datetime,
+    CONCAT(
+      DATE(COALESCE(enc.discharge_date, enc.admit_date)),
+      ' ',
+      COALESCE(enc.discharge_time, enc.admit_time)
+    )::TIMESTAMP AS visit_detail_end_datetime,
+
     32827::INTEGER AS visit_detail_type_concept_id,
+
     {% if site in ['mu', 'mu-id'] %}
         enc.providerid::INTEGER AS provider_id,
     {% elif site == 'gpc' %}
@@ -43,35 +50,47 @@ SELECT
     {% else %}
         enc.providerid::INTEGER AS provider_id,
     {% endif %}
-    enc.facilityid::INTEGER               AS care_site_id,
+
+    m.care_site_id::INTEGER               AS care_site_id,
     enc.raw_enc_type::VARCHAR(50)         AS visit_detail_source_value,
-    0                                     AS visit_detail_source_concept_id,
+    0::INTEGER                            AS visit_detail_source_concept_id,
     as_map.source_concept_id::INTEGER     AS admitted_from_concept_id, 
-    enc.raw_admitting_source::VARCHAR(50) AS admitted_from_source_value,
-    enc.raw_discharge_status::VARCHAR(50) AS discharged_to_source_value,
+    LEFT(COALESCE(enc.raw_admitting_source, ''), 50)::VARCHAR(50) AS admitted_from_source_value,
+    LEFT(COALESCE(enc.raw_discharge_status, ''), 50) ::VARCHAR(50) AS discharged_to_source_value,
     ds_map.source_concept_id::INTEGER     AS discharged_to_concept_id,
+
     {% if site in ['mu', 'mu-id'] %}
-        lag(enc.encounterid) OVER (PARTITION BY enc.patid ORDER BY enc.admit_date) AS preceding_visit_detail_id,
+        LAG(enc.encounterid) OVER (PARTITION BY enc.patid ORDER BY enc.admit_date) AS preceding_visit_detail_id,
     {% elif site == 'gpc' %}
-        lag(enc.encounter_num) OVER (PARTITION BY enc.person_num ORDER BY enc.admit_date) AS preceding_visit_detail_id,
+        LAG(enc.encounter_num) OVER (PARTITION BY enc.patient_num ORDER BY enc.admit_date) AS preceding_visit_detail_id,
     {% else %}
-        lag(enc.encounterid) OVER (PARTITION BY enc.patid ORDER BY enc.admit_date) AS preceding_visit_detail_id,
+        LAG(enc.encounterid) OVER (PARTITION BY enc.patid ORDER BY enc.admit_date) AS preceding_visit_detail_id,
     {% endif %}
-    NULL                                  AS parent_visit_detail_id,
-    visit_detail_id                       AS visit_occurrence_id
+
+    NULL::INTEGER AS parent_visit_detail_id,
+    {% if site in ['mu', 'mu-id'] %}
+        enc.encounterid::INTEGER AS visit_occurrence_id
+    {% elif site == 'gpc' %}
+        enc.encounter_num::INTEGER AS visit_occurrence_id
+    {% else %}
+        enc.encounterid::INTEGER AS visit_occurrence_id
+    {% endif %}
+
 FROM {{ pcornet_db }}.{{ pcornet_schema }}.{{ encounter_table }} enc
--- Mapping admitted_from
+LEFT JOIN {{ cdm_db }}.{{ cdm_schema }}.care_site_map m
+  ON m.facilityid_source = enc.facilityid
 LEFT JOIN {{ cdm_db }}.{{ crosswalk }}.omop_pcornet_valueset_mapping as_map
     ON as_map.pcornet_table_name = 'ENCOUNTER'
-    AND as_map.pcornet_field_name = 'ADMITTING SOURCE'
-    AND as_map.pcornet_valueset_item = enc.admitting_source
--- Mapping discharged_to
+   AND as_map.pcornet_field_name = 'ADMITTING SOURCE'
+   AND as_map.pcornet_valueset_item = enc.admitting_source
+
 LEFT JOIN {{ cdm_db }}.{{ crosswalk }}.omop_pcornet_valueset_mapping ds_map
     ON ds_map.pcornet_table_name = 'ENCOUNTER'
-    AND ds_map.pcornet_field_name = 'DISCHARGE STATUS'
-    AND ds_map.pcornet_valueset_item = enc.discharge_status
--- Mapping visit concept from enc_type
+   AND ds_map.pcornet_field_name = 'DISCHARGE STATUS'
+   AND ds_map.pcornet_valueset_item = enc.discharge_status
+
 LEFT JOIN {{ cdm_db }}.{{ crosswalk }}.omop_pcornet_valueset_mapping enctyp
     ON enctyp.pcornet_table_name = 'ENCOUNTER'
-    AND enctyp.pcornet_field_name = 'ENC TYPE'
-    AND enctyp.pcornet_valueset_item = enc.enc_type;
+   AND enctyp.pcornet_field_name = 'ENC TYPE'
+   AND enctyp.pcornet_valueset_item = enc.enc_type
+;
