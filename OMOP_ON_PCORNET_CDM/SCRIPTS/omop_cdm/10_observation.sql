@@ -56,7 +56,12 @@ SELECT DISTINCT
     END AS value_as_concept_id,
     4269228 AS qualifier_concept_id,
     NULL AS unit_concept_id,
-    enc.providerid AS provider_id,
+    CASE
+        WHEN rlike(enc.providerid, '\\d{1,}')
+            THEN enc.providerid
+        ELSE NULL
+    END AS provider_id,
+    --enc.providerid AS provider_id,
     {% if site in ['mu', 'mu-id'] %}
         enc.encounterid::INTEGER AS visit_occurrence_id,
     {% elif site == 'gpc' %}
@@ -88,4 +93,3 @@ LEFT JOIN {{ cdm_db }}.{{ vocabulary }}.concept msdrg
     AND msdrg.concept_class_id = 'MS-DRG'
     AND msdrg.invalid_reason IS NULL
 WHERE enc.drg IS NOT NULL;
---and rlike(enc.providerid, '\\d{1,}');
