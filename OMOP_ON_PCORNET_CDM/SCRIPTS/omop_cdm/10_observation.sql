@@ -1,15 +1,12 @@
 {% if site in ['mu', 'mu-id'] %}
   {% set person_id_expr = "enc.patid::INTEGER" %}
   {% set visit_occurrence_id_expr = "enc.encounterid::INTEGER" %}
-  {% set provider_id_expr = "enc.providerid::INTEGER" %}
 {% elif site == 'gpc' %}
   {% set person_id_expr = "enc.patient_num::INTEGER" %}
   {% set visit_occurrence_id_expr = "enc.encounter_num::INTEGER" %}
-  {% set provider_id_expr = "-1::INTEGER" %}
 {% else %}
   {% set person_id_expr = "enc.patid::INTEGER" %}
   {% set visit_occurrence_id_expr = "enc.encounterid::INTEGER" %}
-  {% set provider_id_expr = "enc.providerid::INTEGER" %}
 {% endif %}
 
 
@@ -69,7 +66,7 @@ SELECT
     4269228::INTEGER                                          AS qualifier_concept_id,
     NULL::INTEGER                                             AS unit_concept_id,
 
-    {{ provider_id_expr }}                                    AS provider_id,
+    pm.provider_id                                            AS provider_id,
     {{ visit_occurrence_id_expr }}                            AS visit_occurrence_id,
     {{ visit_occurrence_id_expr }}                            AS visit_detail_id,
 
@@ -94,6 +91,8 @@ SELECT
     NULL::INTEGER                                             AS obs_event_field_concept_id
 
 FROM {{ pcornet_db }}.{{ pcornet_schema }}.{{ observation_table }} enc
+LEFT JOIN {{ cdm_db }}.{{ cdm_schema }}.provider_id_map pm
+  ON pm.providerid_source = enc.providerid
 LEFT JOIN {{ cdm_db }}.{{ vocabulary }}.concept drg
   ON enc.drg = drg.concept_code
  AND drg.concept_class_id = 'DRG'

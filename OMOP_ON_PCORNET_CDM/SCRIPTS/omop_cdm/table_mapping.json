@@ -65,6 +65,11 @@
             "mu": "deid_provider",
             "gpc": "gpc_deid_provider"
         },
+        "vital_table": {
+            "mu-id": "vital",
+            "mu": "deid_vital",
+            "gpc": "gpc_deid_vital"
+        },
         "harvest_table": {
             "mu-id": "harvest",
             "mu": "harvest",

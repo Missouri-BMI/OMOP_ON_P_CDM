@@ -9,24 +9,8 @@
   {% set visit_occurrence_id_expr = "presc.encounterid::INTEGER" %}
 {% endif %}
 
-
-CREATE OR REPLACE SEQUENCE {{ cdm_db }}.{{ cdm_schema }}.drug_exposure_id_seq START = 1 INCREMENT = 1;
--- 1) Create a mapping table to generate drug_exposure_id values
-CREATE OR REPLACE TABLE {{ cdm_db }}.{{ cdm_schema }}.drug_exposure_id_map AS
-WITH ids AS (
-  SELECT distinct
-    presc.prescribingid     AS drug_exposureid_source
-  FROM {{ pcornet_db }}.{{ pcornet_schema }}.{{ prescribing_table }} presc
-  WHERE presc.prescribingid IS NOT NULL
-)
-SELECT
-  drug_exposureid_source,
-  {{ cdm_db }}.{{ cdm_schema }}.drug_exposure_id_seq.NEXTVAL::INTEGER AS drug_exposure_id
-FROM ids
-;
-
-CREATE TABLE {{ cdm_db }}.{{ cdm_schema }}.drug_exposure( 
-    drug_exposure_id integer NOT NULL,
+CREATE TABLE {{ cdm_db }}.{{ cdm_schema }}.drug_exposure (
+    drug_exposure_id integer IDENTITY(1,1) NOT NULL,
     person_id integer NOT NULL,
     drug_concept_id integer NOT NULL,
     drug_exposure_start_date date NOT NULL,
@@ -49,9 +33,33 @@ CREATE TABLE {{ cdm_db }}.{{ cdm_schema }}.drug_exposure(
     drug_source_concept_id integer NULL,
     route_source_value varchar(50) NULL,
     dose_unit_source_value varchar(50) NULL
-) AS
+);
+
+INSERT INTO {{ cdm_db }}.{{ cdm_schema }}.drug_exposure (
+    person_id,
+    drug_concept_id,
+    drug_exposure_start_date,
+    drug_exposure_start_datetime,
+    drug_exposure_end_date,
+    drug_exposure_end_datetime,
+    verbatim_end_date,
+    drug_type_concept_id,
+    stop_reason,
+    refills,
+    quantity,
+    days_supply,
+    sig,
+    route_concept_id,
+    lot_number,
+    provider_id,
+    visit_occurrence_id,
+    visit_detail_id,
+    drug_source_value,
+    drug_source_concept_id,
+    route_source_value,
+    dose_unit_source_value
+)
 SELECT
-    idmap.drug_exposure_id                                              AS drug_exposure_id,
     {{ person_id_expr }}                                                AS person_id,
     COALESCE(rxnorm.concept_id, 0)::INTEGER                             AS drug_concept_id,
     presc.rx_start_date::DATE                                           AS drug_exposure_start_date,
@@ -75,16 +83,16 @@ SELECT
       END, 0
     )::INTEGER                                                          AS route_concept_id,
     NULL::VARCHAR(50)                                                   AS lot_number,
-    NULL::INTEGER                                                       AS provider_id,
+    pm.provider_id                                                      AS provider_id,
     {{ visit_occurrence_id_expr }}                                      AS visit_occurrence_id,
     {{ visit_occurrence_id_expr }}                                      AS visit_detail_id,
     COALESCE(LEFT(presc.raw_rx_med_name, 50), ' ')::VARCHAR(50)         AS drug_source_value,
     COALESCE(rxnorm.concept_id, 0)::INTEGER                             AS drug_source_concept_id,
-    LEFT(COALESCE(presc.rx_route, ''), 50)::VARCHAR(50)                  AS route_source_value,
-    LEFT(COALESCE(presc.rx_dose_ordered_unit, ''), 50)::VARCHAR(50)      AS dose_unit_source_value
+    LEFT(COALESCE(presc.rx_route, ''), 50)::VARCHAR(50)                 AS route_source_value,
+    LEFT(COALESCE(presc.rx_dose_ordered_unit, ''), 50)::VARCHAR(50)     AS dose_unit_source_value
 FROM {{ pcornet_db }}.{{ pcornet_schema }}.{{ prescribing_table }} presc
-JOIN {{ cdm_db }}.{{ cdm_schema }}.drug_exposure_id_map idmap
-  ON idmap.drug_exposureid_source = presc.prescribingid
+LEFT JOIN {{ cdm_db }}.{{ cdm_schema }}.provider_id_map pm
+  ON pm.providerid_source = presc.rx_providerid
 LEFT JOIN {{ cdm_db }}.{{ vocabulary }}.concept rxnorm
   ON presc.rxnorm_cui = rxnorm.concept_code
  AND rxnorm.vocabulary_id = 'RxNorm'
@@ -93,4 +101,4 @@ LEFT JOIN {{ cdm_db }}.{{ crosswalk }}.omop_pcornet_valueset_mapping route
   ON route.pcornet_field_name = 'RX ROUTE'
  AND presc.rx_route = route.pcornet_valueset_item
 WHERE presc.rx_start_date IS NOT NULL 
-  AND presc.rxnorm_cui IS NOT NULL;-- only include records with start date with rxnorm code
+  AND presc.rxnorm_cui IS NOT NULL; -- only include records with start date with rxnorm code

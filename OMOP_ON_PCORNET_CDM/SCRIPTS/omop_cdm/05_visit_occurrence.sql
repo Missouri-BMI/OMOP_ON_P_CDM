@@ -1,15 +1,12 @@
 {% if site in ['mu', 'mu-id'] %}
   {% set visit_occurrence_id_expr = "enc.encounterid::INTEGER" %}
   {% set person_id_expr = "enc.patid::INTEGER" %}
-  {% set provider_id_expr = "enc.providerid::INTEGER" %}
 {% elif site == 'gpc' %}
   {% set visit_occurrence_id_expr = "enc.encounter_num::INTEGER" %}
   {% set person_id_expr = "enc.patient_num::INTEGER" %}
-  {% set provider_id_expr = "-1::INTEGER" %}
 {% else %}
   {% set visit_occurrence_id_expr = "enc.encounterid::INTEGER" %}
   {% set person_id_expr = "enc.patid::INTEGER" %}
-  {% set provider_id_expr = "enc.providerid::INTEGER" %}
 {% endif %}
 
 CREATE TABLE {{ cdm_db }}.{{ cdm_schema }}.visit_occurrence (
@@ -44,7 +41,7 @@ SELECT
       COALESCE(enc.discharge_time, enc.admit_time)
     )::TIMESTAMP                                                    AS visit_end_datetime,
     44818518::INTEGER                                               AS visit_type_concept_id,
-    {{ provider_id_expr }}                                          AS provider_id,
+    pm.provider_id                                                  AS provider_id,
     m.care_site_id::INTEGER                                         AS care_site_id,
     LEFT(COALESCE(enc.raw_enc_type, ''), 50)::VARCHAR(50)           AS visit_source_value,
     NULL::INTEGER                                                   AS visit_source_concept_id,
@@ -56,6 +53,8 @@ SELECT
 FROM {{ pcornet_db }}.{{ pcornet_schema }}.{{ encounter_table }} enc
 LEFT JOIN {{ cdm_db }}.{{ cdm_schema }}.care_site_map m
   ON m.facilityid_source = enc.facilityid
+LEFT JOIN {{ cdm_db }}.{{ cdm_schema }}.provider_id_map pm
+  ON pm.providerid_source = enc.providerid
 -- Mapping admitted_from
 LEFT JOIN {{ cdm_db }}.{{ crosswalk }}.omop_pcornet_valueset_mapping as_map
   ON as_map.pcornet_table_name = 'ENCOUNTER'

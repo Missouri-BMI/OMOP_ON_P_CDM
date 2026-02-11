@@ -43,14 +43,7 @@ SELECT
 
     32827::INTEGER AS visit_detail_type_concept_id,
 
-    {% if site in ['mu', 'mu-id'] %}
-        enc.providerid::INTEGER AS provider_id,
-    {% elif site == 'gpc' %}
-        -1::INTEGER AS provider_id,
-    {% else %}
-        enc.providerid::INTEGER AS provider_id,
-    {% endif %}
-
+    pm.provider_id                         AS provider_id,
     m.care_site_id::INTEGER               AS care_site_id,
     enc.raw_enc_type::VARCHAR(50)         AS visit_detail_source_value,
     0::INTEGER                            AS visit_detail_source_concept_id,
@@ -79,6 +72,8 @@ SELECT
 FROM {{ pcornet_db }}.{{ pcornet_schema }}.{{ encounter_table }} enc
 LEFT JOIN {{ cdm_db }}.{{ cdm_schema }}.care_site_map m
   ON m.facilityid_source = enc.facilityid
+LEFT JOIN {{ cdm_db }}.{{ cdm_schema }}.provider_id_map pm
+  ON pm.providerid_source = enc.providerid
 LEFT JOIN {{ cdm_db }}.{{ crosswalk }}.omop_pcornet_valueset_mapping as_map
     ON as_map.pcornet_table_name = 'ENCOUNTER'
    AND as_map.pcornet_field_name = 'ADMITTING SOURCE'

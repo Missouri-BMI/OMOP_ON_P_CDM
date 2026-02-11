@@ -83,18 +83,38 @@ health-check-atlas:
 	curl -X GET "https://atlas-dev.nextgenbmi.umsystem.edu/atlas"
 
 
-## ARES
-
-IMAGE_NAME       := ohdsi-ares
-CONTAINER_NAME   := ohdsi-ares
-HOST_DATA_DIR    := ../OMOP_ON_PCORNET_CDM/output/data
+IMAGE_NAME         := ohdsi-ares
+CONTAINER_NAME     := ohdsi-ares
+# Use abspath for reliability across different OS environments
+HOST_DATA_DIR      := $(abspath ../OMOP_ON_PCORNET_CDM/output/data)
 CONTAINER_DATA_DIR := /usr/share/nginx/html/ares/data
 
-ares-build:
-	docker build -t $(IMAGE_NAME) Ares
 
+## Build the OHDSI Ares image
+ares-build:
+	docker build --rm -t $(IMAGE_NAME) Ares
+
+## Run the container with automatic cleanup of existing instances
 ares-run:
+	@echo "Checking for existing container..."
+	-docker stop $(CONTAINER_NAME) >/dev/null 2>&1
+	-docker rm $(CONTAINER_NAME) >/dev/null 2>&1
+	@if [ ! -d "$(HOST_DATA_DIR)" ]; then \
+		echo "ERROR: Host data directory does not exist: $(HOST_DATA_DIR)"; \
+		exit 1; \
+	fi
+	@echo "Starting $(CONTAINER_NAME) mounting $(HOST_DATA_DIR)..."
 	docker run --name $(CONTAINER_NAME) \
 		-p 8081:80 \
-		-v $(HOST_DATA_DIR):$(CONTAINER_DATA_DIR) \
+		-v "$(HOST_DATA_DIR):$(CONTAINER_DATA_DIR):ro" \
 		-d $(IMAGE_NAME)
+	@echo "Ares is running at http://localhost:8081"
+
+## Stop the running container
+ares-stop:
+	docker stop $(CONTAINER_NAME)
+
+## Remove the container and the image
+ares-clean:
+	-docker rm -f $(CONTAINER_NAME)
+	-docker rmi $(IMAGE_NAME)

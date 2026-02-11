@@ -67,7 +67,7 @@ Achilles::achilles(
   cdmDatabaseSchema = cdmDatabaseSchema ,
   resultsDatabaseSchema= resultsDatabaseSchema,
   vocabDatabaseSchema = vocabDatabaseSchema,
-  numThreads = numThreads,
+  numThreads = 1,
   cdmVersion = cdmVersion,
   createIndices = F,
   createTable = T,
