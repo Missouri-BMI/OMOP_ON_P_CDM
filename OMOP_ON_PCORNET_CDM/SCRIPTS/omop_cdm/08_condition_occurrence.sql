@@ -94,6 +94,7 @@ LEFT JOIN {{ cdm_db }}.{{ vocabulary }}.source_to_standard_vocab_map srctostdvm
  AND srctostdvm.target_domain_id = 'Condition'
  AND srctostdvm.source_vocabulary_id = srctosrcvm.source_vocabulary_id
  AND srctostdvm.target_standard_concept = 'S'
+WHERE COALESCE(diagnosis.dx_date, diagnosis.admit_date) IS NOT NULL
 
 UNION ALL
 
@@ -128,4 +129,4 @@ LEFT JOIN {{ cdm_db }}.{{ vocabulary }}.source_to_standard_vocab_map srctostdvm
  AND srctostdvm.target_domain_id = 'Condition'
  AND srctostdvm.source_vocabulary_id = srctosrcvm.source_vocabulary_id
  AND srctostdvm.target_standard_concept = 'S'
- WHERE condition.report_date IS NOT NULL;
+WHERE condition.report_date IS NOT NULL;

@@ -1,100 +1,90 @@
-# Variables for Atlas
-ATLAS_DEV_REPO=500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-atlas
-ATLAS_PROD_REPO=063312575449.dkr.ecr.us-east-2.amazonaws.com/ohdsi-atlas
-ATLAS_DEV_WEBAPI_URL=https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/
-ATLAS_PROD_WEBAPI_URL=https://ohdsi-webapi.nextgenbmi.umsystem.edu/WebAPI/
+# ==========================================
+# Environment Configuration
+# ==========================================
+# Default to 'dev' if ENV is not passed in the command line
+ENV ?= dev
 
-# Variables for WebAPI
-WEBAPI_DEV_REPO=500206249851.dkr.ecr.us-east-2.amazonaws.com/ohdsi-webapi
-WEBAPI_PROD_REPO=063312575449.dkr.ecr.us-east-2.amazonaws.com/ohdsi-webapi
+ifeq ($(ENV), prod)
+    AWS_ACCOUNT_ID := 063312575449
+    AWS_PROFILE    := mhmcb-prod
+    WEBAPI_URL     := https://ohdsi-webapi.nextgenbmi.umsystem.edu/WebAPI/
+    ATLAS_URL      := https://atlas.nextgenbmi.umsystem.edu/atlas
+else
+    AWS_ACCOUNT_ID := 500206249851
+    AWS_PROFILE    := mhmcb
+    WEBAPI_URL     := https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/
+    ATLAS_URL      := https://atlas-dev.nextgenbmi.umsystem.edu/atlas
+endif
 
-# Variables
-AWS_PROFILE_DEV := mhmcb
-AWS_PROFILE_PROD := mhmcb-prod
+# Common AWS & ECR Variables
 AWS_REGION := us-east-2
-ECR_REPO_DEV :=  500206249851.dkr.ecr.us-east-2.amazonaws.com
-ECR_REPO_PROD := 063312575449.dkr.ecr.us-east-2.amazonaws.com
+ECR_REPO   := $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
+TAG        := latest
 
-TAG := latest
-
-# AWS Login
-aws-login-dev:
-	aws sso login --profile $(AWS_PROFILE_DEV)
-
-aws-login-prod:
-	aws sso login --profile $(AWS_PROFILE_PROD)
-
-# Docker Login
-docker-login-dev:
-	aws ecr get-login-password --region $(AWS_REGION) --profile $(AWS_PROFILE_DEV) | docker login --username AWS --password-stdin $(ECR_REPO_DEV)
-
-docker-login-prod:
-	aws ecr get-login-password --region $(AWS_REGION) --profile $(AWS_PROFILE_PROD) | docker login --username AWS --password-stdin $(ECR_REPO_PROD)
-
-# Targets for Atlas
-atlas-dev:
-	docker build --platform=linux/amd64 \
-		-t $(ATLAS_DEV_REPO) \
-		--no-cache \
-		--build-arg WEBAPI_URL=$(ATLAS_DEV_WEBAPI_URL) \
-		Atlas
-
-atlas-prod:
-	docker build --platform=linux/amd64 \
-		-t $(ATLAS_PROD_REPO) \
-		--no-cache \
-		--build-arg WEBAPI_URL=$(ATLAS_PROD_WEBAPI_URL) \
-		Atlas
-
-# Targets for WebAPI
-webapi-dev:
-	docker build --platform=linux/amd64 \
-		-t $(WEBAPI_DEV_REPO) \
-		--no-cache \
-		--build-arg ENV=dev \
-		WebAPI
-
-webapi-prod:
-	docker build --platform=linux/amd64 \
-		-t $(WEBAPI_PROD_REPO) \
-		--no-cache \
-		--build-arg ENV=prod \
-		WebAPI
-
-
-# Snowflake DDL Scripts
-snowflake-ddl-results:
-	curl -X GET "https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/ddl/results?dialect=snowflake&schema=results&vocabSchema=cdm&tempSchema=temp&initConceptHierarchy=true" -o RESULTS_SNOWFLAKE.sql
-
-snowflake-ddl-achilles:
-	curl -X GET "https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/ddl/achilles?dialect=snowflake&schema=results&vocabSchema=cdm" -o ACHILLES_SNOWFLAKE.sql
-
-webapi-refresh:
-	curl -X GET "https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/source/refresh"
-
-webapi-sources:
-	curl -X GET "https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/source/sources"
-
-# Health Checks
-health-check-webapi:
-	curl -X GET "https://ohdsi-webapi-dev.nextgenbmi.umsystem.edu/WebAPI/info"
-
-health-check-atlas:
-	curl -X GET "https://atlas-dev.nextgenbmi.umsystem.edu/atlas"
-
-
+# Ares Variables
 IMAGE_NAME         := ohdsi-ares
 CONTAINER_NAME     := ohdsi-ares
-# Use abspath for reliability across different OS environments
 HOST_DATA_DIR      := $(abspath ../OMOP_ON_PCORNET_CDM/output/data)
 CONTAINER_DATA_DIR := /usr/share/nginx/html/ares/data
 
 
-## Build the OHDSI Ares image
+# ==========================================
+# AWS & Docker Login
+# ==========================================
+aws-login:
+	aws sso login --profile $(AWS_PROFILE)
+
+docker-login:
+	aws ecr get-login-password --region $(AWS_REGION) --profile $(AWS_PROFILE) | \
+	docker login --username AWS --password-stdin $(ECR_REPO)
+
+
+# ==========================================
+# Atlas & WebAPI Build
+# ==========================================
+atlas:
+	docker build --platform=linux/amd64 \
+		-t $(ECR_REPO)/ohdsi-atlas:$(TAG) \
+		--no-cache \
+		--build-arg WEBAPI_URL=$(WEBAPI_URL) \
+		Atlas
+
+webapi:
+	docker build --platform=linux/amd64 \
+		-t $(ECR_REPO)/ohdsi-webapi:$(TAG) \
+		--no-cache \
+		--build-arg ENV=$(ENV) \
+		WebAPI
+
+
+# ==========================================
+# Utilities & Health Checks
+# ==========================================
+snowflake-ddl-results:
+	curl -X GET "$(WEBAPI_URL)ddl/results?dialect=snowflake&schema=results&vocabSchema=cdm&tempSchema=temp&initConceptHierarchy=true" -o RESULTS_SNOWFLAKE.sql
+
+snowflake-ddl-achilles:
+	curl -X GET "$(WEBAPI_URL)ddl/achilles?dialect=snowflake&schema=results&vocabSchema=cdm" -o ACHILLES_SNOWFLAKE.sql
+
+webapi-refresh:
+	curl -X GET "$(WEBAPI_URL)source/refresh"
+
+webapi-sources:
+	curl -X GET "$(WEBAPI_URL)source/sources"
+
+health-check-webapi:
+	curl -X GET "$(WEBAPI_URL)info"
+
+health-check-atlas:
+	curl -X GET "$(ATLAS_URL)"
+
+
+# ==========================================
+# Ares Local Container
+# ==========================================
 ares-build:
 	docker build --rm -t $(IMAGE_NAME) Ares
 
-## Run the container with automatic cleanup of existing instances
 ares-run:
 	@echo "Checking for existing container..."
 	-docker stop $(CONTAINER_NAME) >/dev/null 2>&1
@@ -110,11 +100,9 @@ ares-run:
 		-d $(IMAGE_NAME)
 	@echo "Ares is running at http://localhost:8081"
 
-## Stop the running container
 ares-stop:
 	docker stop $(CONTAINER_NAME)
 
-## Remove the container and the image
 ares-clean:
 	-docker rm -f $(CONTAINER_NAME)
 	-docker rmi $(IMAGE_NAME)

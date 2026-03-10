@@ -155,6 +155,7 @@ ETL_OMOP/vocabulary_v5/*
 **/Achilles/drivers/*
 **/Achilles/errorReportSql.txt
 **/Achilles/output
+*.claude
 OMOP_ON_PCORNET_CDM/output/*
 OMOP_ON_PCORNET_CDM/data/*
 OMOP_ON_PCORNET_CDM/drivers/*

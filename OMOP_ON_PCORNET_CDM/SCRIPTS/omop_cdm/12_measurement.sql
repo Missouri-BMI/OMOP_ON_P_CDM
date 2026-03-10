@@ -331,4 +331,5 @@ LEFT JOIN {{ cdm_db }}.{{ cdm_schema }}.concept o
 LEFT JOIN {{ cdm_db }}.{{ cdm_schema }}.concept val_vocab
   ON val_vocab.concept_code = v.value_as_string
  AND val_vocab.vocabulary_id = 'LOINC'
- AND val_vocab.standard_concept = 'S';
+ AND val_vocab.standard_concept = 'S'
+WHERE v.measure_date IS NOT NULL;

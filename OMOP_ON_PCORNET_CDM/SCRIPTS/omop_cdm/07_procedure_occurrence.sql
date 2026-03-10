@@ -92,4 +92,5 @@ LEFT JOIN {{ cdm_db }}.{{ vocabulary }}.source_to_standard_vocab_map srctostdvm
  AND srctostdvm.source_vocabulary_id = srctosrcvm.source_vocabulary_id
  AND srctostdvm.target_standard_concept = 'S'
  AND srctostdvm.target_invalid_reason IS NULL
+ WHERE COALESCE(procedures.px_date, procedures.admit_date) IS NOT NULL;
  ;

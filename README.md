@@ -4,7 +4,7 @@ This repository offers tools and resources for converting PCORnet CDM data to OM
 
 ## OMOP_ON_PCORNET_CDM
 
-OMOP CDM is implemented as a wrapper over the PCORnet CDM, enabling OMOP tables and schemas to be defined as views or tables on top of PCORnet data in Snowflake. This approach allows seamless data refreshes and integration with OHDSI tools like Atlas, Achilles, Data Quality Dashboard (DQDashboard), and ARES.
+OMOP CDM is implemented from the PCORnet CDM, enabling OMOP tables and schemas to be defined as views or tables on top of PCORnet data in Snowflake. This repository offers OMOP data install, refreshes and integration with OHDSI tools like Atlas, Achilles, Data Quality Dashboard (DQDashboard), and ARES.
 
 ### Project Configuration
 
